@@ -1,0 +1,3 @@
+<launch>
+  <node name="rvizvisualisation" pkg="rviz2" exec="rviz2" output="log" args="/home/drone/Documents/rohit_ros_bridge_sample/ros2_ws_fplanner/src/Fast-Planner-for-ubuntu20.04/fast_planner/plan_manage/config/traj.rviz" />
+</launch>
