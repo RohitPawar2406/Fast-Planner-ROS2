@@ -36,9 +36,9 @@ ${OpenCV_INCLUDE_DIRS}
 )
 
 add_library( plan_env 
-#     #src/sdf_map.cpp 
+    src/sdf_map.cpp 
     src/obj_predictor.cpp 
-    # src/edt_environment.cpp 
+    #src/edt_environment.cpp 
     src/raycast.cpp
     )
 

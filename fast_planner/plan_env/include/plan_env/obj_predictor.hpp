@@ -150,7 +150,7 @@ private:
 
 public:
   ObjPredictor(/* args */);
-  ObjPredictor(rclcpp::Node::SharedPtr& node);
+  ObjPredictor(rclcpp::Node::SharedPtr node);
   ~ObjPredictor();
 
   void init();

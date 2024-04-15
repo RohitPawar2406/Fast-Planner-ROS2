@@ -13,7 +13,7 @@ namespace fast_planner {
 int ObjHistory::queue_size_;
 int ObjHistory::skip_num_;
 rclcpp::Time ObjHistory::global_start_time_;
-
+auto node_time = rclcpp::Node::make_shared("time_node");
 void ObjHistory::init(int id) {
   clear();
   skip_ = 0;
@@ -26,11 +26,13 @@ void ObjHistory::poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr m
 
   Eigen::Vector4d pos_t;
   pos_t(0) = msg->pose.position.x, pos_t(1) = msg->pose.position.y, pos_t(2) = msg->pose.position.z;
-  pos_t(3) = (rclcpp::Time::now() - ObjHistory::global_start_time_).seconds();
+  pos_t(3) = (node_time->get_clock()->now() - ObjHistory::global_start_time_).seconds();
 
   history_.push_back(pos_t);
+  int h1 = history_.size();
+  double h2 = (double) h1;
 
-  if (history_.size() > queue_size_) history_.pop_front();
+  if (h2 > queue_size_) history_.pop_front();
 
   skip_ = 0;
 }
@@ -159,9 +161,9 @@ void ObjPredictor::predictCallback() {
 
 void ObjPredictor::markerCallback(const visualization_msgs::msg::Marker::SharedPtr msg) {
   int idx = msg->id;
-  (*obj_scale_)  = msg->scale.x;
-  (*obj_scale_)  = msg->scale.y;
-  (*obj_scale_)  = msg->scale.z;
+  (*obj_scale_)[idx](0) = msg->scale.x;
+  (*obj_scale_)[idx](1) = msg->scale.y;
+  (*obj_scale_)[idx](2) = msg->scale.z;
 
   scale_init_[idx] = true;
 
