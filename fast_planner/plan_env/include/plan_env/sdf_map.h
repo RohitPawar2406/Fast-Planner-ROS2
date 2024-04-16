@@ -240,7 +240,7 @@ private:
 
   // get depth image and camera pose
     void depthPoseCallback(const sensor_msgs::msg::Image::ConstSharedPtr img,const geometry_msgs::msg::PoseStamped::ConstSharedPtr pose);
-    void depthOdomCallback(const sensor_msgs::msg::Image::SharedPtr img, const nav_msgs::msg::Odometry::SharedPtr odom);
+    void depthOdomCallback(const sensor_msgs::msg::Image::ConstSharedPtr img, const nav_msgs::msg::Odometry::ConstSharedPtr odom);
     void depthCallback(const sensor_msgs::msg::Image::SharedPtr img);
     void cloudCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr img);
     void poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr pose);
@@ -276,6 +276,7 @@ std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image>> depth_sub_
 std::shared_ptr<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>> pose_sub_;
 std::shared_ptr<message_filters::Subscriber<nav_msgs::msg::Odometry>> odom_sub_;
 SynchronizerImagePose sync_image_pose_;
+//std::shared_ptr<message_filters::Synchronizer<SyncPolicyImagePose>> sync_image_pose_;
 SynchronizerImageOdom sync_image_odom_;
 
 rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr indep_depth_sub_;
@@ -287,7 +288,7 @@ rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr esdf_pub_;
 rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr map_inf_pub_;
 rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr update_range_pub_;
 rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr unknown_pub_;
-rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr depth_pub_;
+rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr depth_pub_;
 rclcpp::TimerBase::SharedPtr occ_timer_;
 rclcpp::TimerBase::SharedPtr esdf_timer_;
 rclcpp::TimerBase::SharedPtr vis_timer_;

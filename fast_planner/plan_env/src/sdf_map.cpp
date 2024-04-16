@@ -38,43 +38,43 @@ void SDFMap::initMap(rclcpp::Node::SharedPtr node) {
   node_->get_parameter_or("sdf_map/map_size_y", y_size, -1.0);
   node_->get_parameter_or("sdf_map/map_size_z", z_size, -1.0);
   node_->get_parameter_or("sdf_map/local_update_range_x", mp_.local_update_range_(0), -1.0);
-  node_->get_parameter_or("sdf_map/local_update_range_y", local_update_range[1], local_update_range[1]);
-  node_->get_parameter_or("sdf_map/local_update_range_z", local_update_range[2], local_update_range[2]);
-  node_->get_parameter_or("sdf_map/obstacles_inflation", obstacles_inflation, obstacles_inflation);
+  node_->get_parameter_or("sdf_map/local_update_range_y", mp_.local_update_range_(1), -1.0);
+  node_->get_parameter_or("sdf_map/local_update_range_z", mp_.local_update_range_(2), -1.0);
+  node_->get_parameter_or("sdf_map/obstacles_inflation", mp_.obstacles_inflation_, -1.0);
 
-  node_.param("sdf_map/fx", mp_.fx_, -1.0);
-  node_.param("sdf_map/fy", mp_.fy_, -1.0);
-  node_.param("sdf_map/cx", mp_.cx_, -1.0);
-  node_.param("sdf_map/cy", mp_.cy_, -1.0);
+  node_->get_parameter_or("sdf_map/fx", mp_.fx_, -1.0);
+  node_->get_parameter_or("sdf_map/fy", mp_.fy_, -1.0);
+  node_->get_parameter_or("sdf_map/cx", mp_.cx_, -1.0);
+  node_->get_parameter_or("sdf_map/cy", mp_.cy_, -1.0);
 
-  node_.param("sdf_map/use_depth_filter", mp_.use_depth_filter_, true);
-  node_.param("sdf_map/depth_filter_tolerance", mp_.depth_filter_tolerance_, -1.0);
-  node_.param("sdf_map/depth_filter_maxdist", mp_.depth_filter_maxdist_, -1.0);
-  node_.param("sdf_map/depth_filter_mindist", mp_.depth_filter_mindist_, -1.0);
-  node_.param("sdf_map/depth_filter_margin", mp_.depth_filter_margin_, -1);
-  node_.param("sdf_map/k_depth_scaling_factor", mp_.k_depth_scaling_factor_, -1.0);
-  node_.param("sdf_map/skip_pixel", mp_.skip_pixel_, -1);
+  node_->get_parameter_or("sdf_map/use_depth_filter", mp_.use_depth_filter_, true);
+  node_->get_parameter_or("sdf_map/depth_filter_tolerance", mp_.depth_filter_tolerance_, -1.0);
+  node_->get_parameter_or("sdf_map/depth_filter_maxdist", mp_.depth_filter_maxdist_, -1.0);
+  node_->get_parameter_or("sdf_map/depth_filter_mindist", mp_.depth_filter_mindist_, -1.0);
+  node_->get_parameter_or("sdf_map/depth_filter_margin", mp_.depth_filter_margin_, -1);
+  node_->get_parameter_or("sdf_map/k_depth_scaling_factor", mp_.k_depth_scaling_factor_, -1.0);
+  node_->get_parameter_or("sdf_map/skip_pixel", mp_.skip_pixel_, -1);
 
-  node_.param("sdf_map/p_hit", mp_.p_hit_, 0.70);
-  node_.param("sdf_map/p_miss", mp_.p_miss_, 0.35);
-  node_.param("sdf_map/p_min", mp_.p_min_, 0.12);
-  node_.param("sdf_map/p_max", mp_.p_max_, 0.97);
-  node_.param("sdf_map/p_occ", mp_.p_occ_, 0.80);
-  node_.param("sdf_map/min_ray_length", mp_.min_ray_length_, -0.1);
-  node_.param("sdf_map/max_ray_length", mp_.max_ray_length_, -0.1);
+  node_->get_parameter_or("sdf_map/p_hit", mp_.p_hit_, 0.70);
+  node_->get_parameter_or("sdf_map/p_miss", mp_.p_miss_, 0.35);
+  node_->get_parameter_or("sdf_map/p_min", mp_.p_min_, 0.12);
+  node_->get_parameter_or("sdf_map/p_max", mp_.p_max_, 0.97);
+  node_->get_parameter_or("sdf_map/p_occ", mp_.p_occ_, 0.80);
+  node_->get_parameter_or("sdf_map/min_ray_length", mp_.min_ray_length_, -0.1);
+  node_->get_parameter_or("sdf_map/max_ray_length", mp_.max_ray_length_, -0.1);
 
-  node_.param("sdf_map/esdf_slice_height", mp_.esdf_slice_height_, -0.1);
-  node_.param("sdf_map/visualization_truncate_height", mp_.visualization_truncate_height_, -0.1);
-  node_.param("sdf_map/virtual_ceil_height", mp_.virtual_ceil_height_, -0.1);
+  node_->get_parameter_or("sdf_map/esdf_slice_height", mp_.esdf_slice_height_, -0.1);
+  node_->get_parameter_or("sdf_map/visualization_truncate_height", mp_.visualization_truncate_height_, -0.1);
+  node_->get_parameter_or("sdf_map/virtual_ceil_height", mp_.virtual_ceil_height_, -0.1);
 
-  node_.param("sdf_map/show_occ_time", mp_.show_occ_time_, false);
-  node_.param("sdf_map/show_esdf_time", mp_.show_esdf_time_, false);
-  node_.param("sdf_map/pose_type", mp_.pose_type_, 1);
+  node_->get_parameter_or("sdf_map/show_occ_time", mp_.show_occ_time_, false);
+  node_->get_parameter_or("sdf_map/show_esdf_time", mp_.show_esdf_time_, false);
+  node_->get_parameter_or("sdf_map/pose_type", mp_.pose_type_, 1);
 
-  node_.param("sdf_map/frame_id", mp_.frame_id_, string("world"));
-  node_.param("sdf_map/local_bound_inflate", mp_.local_bound_inflate_, 1.0);
-  node_.param("sdf_map/local_map_margin", mp_.local_map_margin_, 1);
-  node_.param("sdf_map/ground_height", mp_.ground_height_, 1.0);
+  node_->get_parameter_or("sdf_map/frame_id", mp_.frame_id_, string("world"));
+  node_->get_parameter_or("sdf_map/local_bound_inflate", mp_.local_bound_inflate_, 1.0);
+  node_->get_parameter_or("sdf_map/local_map_margin", mp_.local_map_margin_, 1);
+  node_->get_parameter_or("sdf_map/ground_height", mp_.ground_height_, 1.0);
 
   // Initialize other parameters
     mp_.local_bound_inflate_ = std::max(mp_.resolution_, mp_.local_bound_inflate_);
@@ -88,15 +88,32 @@ void SDFMap::initMap(rclcpp::Node::SharedPtr node) {
     // Initialize other buffers...
 
     // Initialize subscribers and publishers
-    depth_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
-        "/sdf_map/depth", 50, std::bind(&SDFMap::depthCallback, this, std::placeholders::_1));
+    depth_sub_ = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>();
+    depth_sub_->subscribe(node_.get(), "/sdf_map/depth");
+    //depth_sub_.subscribe(node_.get(), "/sdf_map/depth");
+    //
+    // depth_sub_ = <node_->create_subscription<sensor_msgs::msg::Image>(
+    // "/sdf_map/depth", 50, std::bind(&SDFMap::depthCallback, this, std::placeholders::_1));
 
     if (mp_.pose_type_ == POSE_STAMPED) {
-        pose_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
-            "/sdf_map/pose", 25, std::bind(&SDFMap::poseCallback, this, std::placeholders::_1));
+        // pose_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
+        //     "/sdf_map/pose", 25, std::bind(&SDFMap::poseCallback, this, std::placeholders::_1));
+      //pose_sub_ = std::make_shared<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>>(node_.get(), "/sdf_map/pose", 25);
+      pose_sub_ = std::make_shared<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>>();
+      pose_sub_->subscribe(node_.get(), "/sdf_map/pose");
+      sync_image_pose_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImagePose>>(std::move(SyncPolicyImagePose(3)),*depth_sub_, *pose_sub_);
+      sync_image_pose_->registerCallback(std::bind(&SDFMap::depthPoseCallback, this, std::placeholders::_1,std::placeholders::_2 ));
+
     } else if (mp_.pose_type_ == ODOMETRY) {
-        odom_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
-            "/sdf_map/odom", 100, std::bind(&SDFMap::odomCallback, this, std::placeholders::_1));
+        // odom_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
+        //     "/sdf_map/odom", 100, std::bind(&SDFMap::odomCallback, this, std::placeholders::_1));
+        //odom_sub_ = std::make_shared<message_filters::Subscriber<nav_msgs::msg::Odometry>>(node_.get(), "/sdf_map/odom", 100);
+
+        odom_sub_ = std::make_shared<message_filters::Subscriber<nav_msgs::msg::Odometry>>();
+        odom_sub_->subscribe(node_.get(), "/sdf_map/odom");
+
+        sync_image_odom_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImageOdom>>(std::move(SyncPolicyImageOdom(3)),*depth_sub_, *odom_sub_);
+        sync_image_odom_->registerCallback(std::bind(&SDFMap::depthOdomCallback, this, std::placeholders::_1,std::placeholders::_2));
     }
 
     indep_cloud_sub_ = node_->create_subscription<sensor_msgs::msg::PointCloud2>(
@@ -1167,8 +1184,8 @@ void SDFMap::getSurroundPts(const Eigen::Vector3d& pos, Eigen::Vector3d pts[2][2
   }
 }
 
-void SDFMap::depthOdomCallback(const sensor_msgs::msg::Image::SharedPtr img,
-                               const nav_msgs::msg::Odometry::SharedPtr odom) {
+void SDFMap::depthOdomCallback(const sensor_msgs::msg::Image::ConstSharedPtr img,
+                               const nav_msgs::msg::Odometry::ConstSharedPtr odom) {
   /* Get pose */
   md_.camera_pos_(0) = odom->pose.pose.position.x;
   md_.camera_pos_(1) = odom->pose.pose.position.y;

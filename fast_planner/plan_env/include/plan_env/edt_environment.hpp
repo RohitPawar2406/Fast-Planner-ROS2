@@ -31,7 +31,7 @@
 #include <utility>
 
 #include "plan_env/obj_predictor.hpp"
-#include "plan_env/sdf_map.hpp"
+#include "plan_env/sdf_map.h"
 
 namespace fast_planner {
 

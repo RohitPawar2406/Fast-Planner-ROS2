@@ -38,7 +38,7 @@ ${OpenCV_INCLUDE_DIRS}
 add_library( plan_env 
     src/sdf_map.cpp 
     src/obj_predictor.cpp 
-    #src/edt_environment.cpp 
+    src/edt_environment.cpp 
     src/raycast.cpp
     )
 
@@ -46,14 +46,14 @@ target_link_libraries(plan_env
 ${PCL_LIBRARIES}
 ${Eigen3_LIBRARIES})
 
-# add_executable(obj_generator
-#     src/obj_generator.cpp 
-#   )
-# target_link_libraries(obj_generator 
-# ${PCL_LIBRARIES}
-# ${Eigen3_LIBRARIES})
+add_executable(obj_generator
+    src/obj_generator.cpp 
+  )
+target_link_libraries(obj_generator 
+${PCL_LIBRARIES}
+${Eigen3_LIBRARIES})
 
-# ament_target_dependencies(obj_generator rclcpp geometry_msgs)
+ament_target_dependencies(obj_generator rclcpp geometry_msgs visualization_msgs nav_msgs)
 
 ament_target_dependencies(plan_env 
 rclcpp
