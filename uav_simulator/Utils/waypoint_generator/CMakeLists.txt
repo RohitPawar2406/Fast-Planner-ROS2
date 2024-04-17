@@ -20,6 +20,9 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 #find_package(Eigen3 REQUIRED)
 include_directories(include)
 
@@ -28,7 +31,9 @@ target_link_libraries(waypoint_generator)
 
 ament_target_dependencies(waypoint_generator
   rclcpp
+  nav_msgs
   tf2
-  nav_msgs)
+  tf2_ros
+  tf2_geometry_msgs)
 
 ament_package()
