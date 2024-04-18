@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(poly_traj)
+project(path_searching)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -19,24 +19,28 @@ endif()
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
-# find_package(<dependency> REQUIRED)
-
 find_package(Eigen3 REQUIRED)
-find_package(rclcpp)
-find_package(std_msgs)
+find_package(PCL 1.7 REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(plan_env REQUIRED)
+find_package(cv_bridge REQUIRED)
 
-message("=========")
-message(${PROJECT_SOURCE_DIR}/include)
-include_directories(
-   ${PROJECT_SOURCE_DIR}/include
-  ${EIGEN3_INCLUDE_DIR}
+include_directories( 
+    include 
+    ${Eigen3_INCLUDE_DIRS} 
+    ${PCL_INCLUDE_DIRS}
+    ${plan_env_INCLUDE_DIRS}
 )
 
-add_library( poly_traj 
-    src/polynomial_traj.cpp 
+add_library( path_searching 
+    src/kinodynamic_astar.cpp 
+    src/astar.cpp
+    src/topo_prm.cpp
     )
-
-target_link_libraries( poly_traj
-
+target_link_libraries( path_searching
+${plan_env_LIBRARIES}
     ) 
 ament_package()

@@ -299,4 +299,4 @@ PolynomialTraj fastLine4deg(Eigen::Vector3d start, Eigen::Vector3d end, double m
                             double max_jerk);
 PolynomialTraj fastLine3deg(Eigen::Vector3d start, Eigen::Vector3d end, double max_vel, double max_acc);
 
-// #endif
+#endif

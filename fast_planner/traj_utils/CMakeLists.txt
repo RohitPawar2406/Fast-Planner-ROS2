@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(poly_traj)
+project(traj_utils)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -18,25 +18,6 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(bspline REQUIRED)
 
-find_package(Eigen3 REQUIRED)
-find_package(rclcpp)
-find_package(std_msgs)
-
-message("=========")
-message(${PROJECT_SOURCE_DIR}/include)
-include_directories(
-   ${PROJECT_SOURCE_DIR}/include
-  ${EIGEN3_INCLUDE_DIR}
-)
-
-add_library( poly_traj 
-    src/polynomial_traj.cpp 
-    )
-
-target_link_libraries( poly_traj
-
-    ) 
 ament_package()

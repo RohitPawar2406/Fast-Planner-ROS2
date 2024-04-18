@@ -67,4 +67,15 @@ install(DIRECTORY include/
   DESTINATION include/)  
 
 ament_export_include_directories(include)
+ament_export_libraries(plan_env)
+ament_export_dependencies(
+    rclcpp
+    std_msgs
+    visualization_msgs
+    cv_bridge
+    message_filters
+    Eigen3
+    PCL
+    OpenCV
+)
 ament_package()
