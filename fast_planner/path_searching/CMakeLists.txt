@@ -25,9 +25,9 @@ find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
-find_package(plan_env REQUIRED)
-find_package(cv_bridge REQUIRED)
 
+find_package(cv_bridge REQUIRED)
+include(ConfigExtras.cmake)
 include_directories( 
     include 
     ${Eigen3_INCLUDE_DIRS} 
@@ -37,10 +37,27 @@ include_directories(
 
 add_library( path_searching 
     src/kinodynamic_astar.cpp 
-    src/astar.cpp
-    src/topo_prm.cpp
+    #src/astar.cpp
+    #src/topo_prm.cpp
     )
+
+ament_target_dependencies(path_searching 
+rclcpp
+rclpy
+std_msgs
+plan_env
+) 
 target_link_libraries( path_searching
 ${plan_env_LIBRARIES}
+rclcpp
     ) 
-ament_package()
+
+install(TARGETS path_searching
+ARCHIVE DESTINATION lib
+LIBRARY DESTINATION lib
+RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY include/
+DESTINATION include/) 
+ament_package(CONFIG_EXTRAS ConfigExtras.cmake)

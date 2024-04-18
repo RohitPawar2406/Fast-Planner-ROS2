@@ -29,13 +29,14 @@ find_package(PCL 1.7 REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-include_directories(include
+include_directories(
+include
 ${Eigen3_INCLUDE_DIRS} 
 ${PCL_INCLUDE_DIRS}
 ${OpenCV_INCLUDE_DIRS}
 )
 
-add_library( plan_env 
+add_library( plan_env
     src/sdf_map.cpp 
     src/obj_predictor.cpp 
     src/edt_environment.cpp 
@@ -64,8 +65,17 @@ visualization_msgs
 geometry_msgs
 )
 install(DIRECTORY include/
-  DESTINATION include/)  
+  DESTINATION include/${PROJECT_NAME}) 
 
+install(
+    TARGETS plan_env
+    EXPORT export_${PROJECT_NAME}
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
+  ) 
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
 ament_export_libraries(plan_env)
 ament_export_dependencies(
@@ -77,5 +87,7 @@ ament_export_dependencies(
     Eigen3
     PCL
     OpenCV
+    nav_msgs
+    #plan_env
 )
 ament_package()
