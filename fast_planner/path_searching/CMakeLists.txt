@@ -24,12 +24,14 @@ find_package(PCL 1.7 REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(plan_env REQUIRED)
 find_package(visualization_msgs REQUIRED)
 
 find_package(cv_bridge REQUIRED)
 include(ConfigExtras.cmake)
 include_directories( 
-    include 
+    include
+    include/plan_env
     ${Eigen3_INCLUDE_DIRS} 
     ${PCL_INCLUDE_DIRS}
     ${plan_env_INCLUDE_DIRS}
@@ -46,11 +48,14 @@ rclcpp
 rclpy
 std_msgs
 plan_env
+
 ) 
+
 target_link_libraries( path_searching
 ${plan_env_LIBRARIES}
 rclcpp
-    ) 
+plan_env
+) 
 
 install(TARGETS path_searching
 ARCHIVE DESTINATION lib
@@ -60,4 +65,4 @@ RUNTIME DESTINATION bin
 
 install(DIRECTORY include/
 DESTINATION include/) 
-ament_package(CONFIG_EXTRAS ConfigExtras.cmake)
+ament_package()

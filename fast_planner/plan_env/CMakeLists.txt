@@ -64,8 +64,11 @@ nav_msgs
 visualization_msgs
 geometry_msgs
 )
-install(DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME}) 
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
 
 install(
     TARGETS plan_env
@@ -73,7 +76,6 @@ install(
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
   ) 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)

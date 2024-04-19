@@ -7,7 +7,7 @@
 #include <queue>
 #include <unordered_map>
 #include <utility>
-#include "plan_env/edt_environment.h"
+#include <plan_env/edt_environment.hpp>
 
 namespace fast_planner {
 
