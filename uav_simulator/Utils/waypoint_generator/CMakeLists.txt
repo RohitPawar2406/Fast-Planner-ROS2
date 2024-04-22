@@ -36,4 +36,8 @@ ament_target_dependencies(waypoint_generator
   tf2_ros
   tf2_geometry_msgs)
 
+install(TARGETS
+  waypoint_generator
+  DESTINATION lib/${PROJECT_NAME})
+
 ament_package()

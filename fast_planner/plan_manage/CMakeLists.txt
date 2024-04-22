@@ -20,16 +20,21 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(quadrotor_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
+find_package(bspline REQUIRED)
+
 
 include_directories(include
+include/bspline
 ${Eigen3_INCLUDE_DIRS} 
-${PCL_INCLUDE_DIRS})  
+${PCL_INCLUDE_DIRS}
+${bspline_INCLUDE_DIRS})  
 
 
 # rosidl_generate_interfaces(${PROJECT_NAME}
@@ -62,21 +67,20 @@ ${PCL_INCLUDE_DIRS})
 #   nav_msgs
 #   visualization_msgs)
 
-# add_executable(traj_server src/traj_server.cpp)
-# target_link_libraries(traj_server 
-# ${PCL_LIBRARIES}
-# ${Eigen3_LIBRARIES})
-# ament_target_dependencies(traj_server           ######### ERROR
-#   rclcpp
-#   std_msgs
-#   nav_msgs
-#   visualization_msgs)
-# # add_dependencies(traj_server ${${PROJECT_NAME}_EXPORTED_TARGETS})
-# # CHANGED TO : 
-# ament_target_dependencies(traj_server
-#   rclcpp
-#   std_msgs
-#   nav_msgs) 
+add_executable(traj_server src/traj_server.cpp)
+target_link_libraries(traj_server 
+${PCL_LIBRARIES}
+${Eigen3_LIBRARIES}
+${bspline_LIBRARIES}
+bspline)
+ament_target_dependencies(traj_server           ######### ERROR
+  rclcpp
+  std_msgs
+  nav_msgs
+  visualization_msgs
+  bspline
+  quadrotor_msgs)
+
 
 install(DIRECTORY
   launch
