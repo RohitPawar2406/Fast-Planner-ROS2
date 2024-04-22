@@ -24,7 +24,7 @@ find_package(PCL 1.7 REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(visualization_msgs REQUIRED)
-#find_package(plan_env REQUIRED)
+find_package(plan_env REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -52,6 +52,7 @@ ${Eigen3_LIBRARIES})
 
 
 install(TARGETS bspline
+  EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -60,6 +61,6 @@ install(TARGETS bspline
 install(DIRECTORY include/
   DESTINATION include/)  
 
-
+ament_export_targets(export_${PROJECT_NAME} )
 ament_export_include_directories(include)
 ament_package()

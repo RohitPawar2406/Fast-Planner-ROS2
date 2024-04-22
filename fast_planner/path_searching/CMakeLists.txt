@@ -40,7 +40,7 @@ include_directories(
 add_library( path_searching 
     src/kinodynamic_astar.cpp 
     #src/astar.cpp
-    #src/topo_prm.cpp
+    src/topo_prm.cpp
     )
 
 ament_target_dependencies(path_searching 
@@ -58,6 +58,7 @@ plan_env
 ) 
 
 install(TARGETS path_searching
+EXPORT export_${PROJECT_NAME}
 ARCHIVE DESTINATION lib
 LIBRARY DESTINATION lib
 RUNTIME DESTINATION bin
@@ -65,4 +66,8 @@ RUNTIME DESTINATION bin
 
 install(DIRECTORY include/
 DESTINATION include/) 
+
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_include_directories(include)
+ament_export_libraries(path_searching)
 ament_package()

@@ -19,5 +19,53 @@ endif()
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 find_package(bspline REQUIRED)
+find_package(bspline_opt REQUIRED)
+find_package(path_searching REQUIRED)
+find_package(poly_traj REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(PCL 1.7 REQUIRED)
+find_package(plan_env REQUIRED)
+
+include_directories( 
+    include 
+    include/bspline
+    include/path_searching
+    include/plan_env
+    include/poly_traj
+    ${Eigen3_INCLUDE_DIRS} 
+    ${PCL_INCLUDE_DIRS}
+    ${bspline_INCLUDE_DIRS}
+    ${path_searching_INCLUDE_DIRS}
+    ${plan_env_INCLUDE_DIRS}
+    ${poly_traj_INCLUDE_DIRS}
+)
+
+
+link_directories(${PCL_LIBRARY_DIRS})
+
+add_library( traj_utils
+    src/planning_visualization.cpp 
+    )
+
+ament_target_dependencies(traj_utils
+    rclcpp
+    rclpy
+    std_msgs
+    bspline
+    path_searching
+    plan_env
+    poly_traj
+    ) 
+target_link_libraries( traj_utils
+${bspline_LIBRARIES}
+${poly_traj_LIBRARIES}
+)  
+
 
 ament_package()

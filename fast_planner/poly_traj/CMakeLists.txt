@@ -36,7 +36,21 @@ add_library( poly_traj
     src/polynomial_traj.cpp 
     )
 
-target_link_libraries( poly_traj
+target_link_libraries( poly_traj)
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
 
-    ) 
+install(
+    TARGETS poly_traj
+    EXPORT export_${PROJECT_NAME}
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+  ) 
+
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_include_directories(include)
+ament_export_libraries(poly_traj)
 ament_package()

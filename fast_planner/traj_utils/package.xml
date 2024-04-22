@@ -10,7 +10,11 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_lint_common</test_depend> 
+  <depend>bspline</depend>
+  <depend>bspline_opt</depend>
+  <depend>path_searching</depend>
+  <depend>poly_traj</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

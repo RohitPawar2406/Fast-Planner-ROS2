@@ -45,32 +45,32 @@ ${PCL_INCLUDE_DIRS})
 # #  DEPENDS system_lib
 # )
 
-add_executable(fast_planner_node
-  src/fast_planner_node.cpp 
-  src/kino_replan_fsm.cpp
-  src/topo_replan_fsm.cpp
-  src/planner_manager.cpp
-  )
+# add_executable(fast_planner_node
+#   src/fast_planner_node.cpp 
+#   src/kino_replan_fsm.cpp
+#   src/topo_replan_fsm.cpp
+#   src/planner_manager.cpp
+#   )
 
-target_link_libraries(fast_planner_node
-  ${PCL_LIBRARIES}
-  ${Eigen3_LIBRARIES}
-)
-ament_target_dependencies(fast_planner_node           ######### ERROR
-  rclcpp
-  std_msgs
-  nav_msgs
-  visualization_msgs)
+# target_link_libraries(fast_planner_node
+#   ${PCL_LIBRARIES}
+#   ${Eigen3_LIBRARIES}
+# )
+# ament_target_dependencies(fast_planner_node           ######### ERROR
+#   rclcpp
+#   std_msgs
+#   nav_msgs
+#   visualization_msgs)
 
-add_executable(traj_server src/traj_server.cpp)
-target_link_libraries(traj_server 
-${PCL_LIBRARIES}
-${Eigen3_LIBRARIES})
-ament_target_dependencies(traj_server           ######### ERROR
-  rclcpp
-  std_msgs
-  nav_msgs
-  visualization_msgs)
+# add_executable(traj_server src/traj_server.cpp)
+# target_link_libraries(traj_server 
+# ${PCL_LIBRARIES}
+# ${Eigen3_LIBRARIES})
+# ament_target_dependencies(traj_server           ######### ERROR
+#   rclcpp
+#   std_msgs
+#   nav_msgs
+#   visualization_msgs)
 # # add_dependencies(traj_server ${${PROJECT_NAME}_EXPORTED_TARGETS})
 # # CHANGED TO : 
 # ament_target_dependencies(traj_server
@@ -85,9 +85,9 @@ install(DIRECTORY
 install(DIRECTORY include/
   DESTINATION include)          # this line works
   
-install(TARGETS
-  fast_planner_node
-  DESTINATION lib/${PROJECT_NAME})
+# install(TARGETS
+#   fast_planner_node
+#   DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
 
