@@ -35,7 +35,7 @@ ${Eigen3_INCLUDE_DIRS}
 ${PCL_INCLUDE_DIRS}
 )  
 
-add_library(bspline 
+add_library(bspline SHARED
 src/non_uniform_bspline.cpp )
 
 ament_target_dependencies(bspline 
@@ -50,17 +50,17 @@ target_link_libraries(bspline
 ${PCL_LIBRARIES}
 ${Eigen3_LIBRARIES})
 
+ament_export_libraries(bspline)
+ament_export_include_directories(include)
+
+install(DIRECTORY include/
+  DESTINATION include/)  
 
 install(TARGETS bspline
-  EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
 
-install(DIRECTORY include/
-  DESTINATION include/)  
-
-ament_export_targets(export_${PROJECT_NAME} )
 ament_export_include_directories(include)
 ament_package()

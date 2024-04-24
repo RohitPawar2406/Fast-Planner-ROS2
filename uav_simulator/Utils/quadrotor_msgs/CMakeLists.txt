@@ -30,7 +30,8 @@ find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "src/quadrotor_msgs/msg/PositionCommand.msg"
+  "src/quadrotor_msgs/msg/Bspline.msg"
  )
 
-
+ament_export_dependencies(rosidl_default_runtime)
 ament_package()

@@ -1,22 +1,22 @@
 
+#include "bspline/non_uniform_bspline.h"
 #include "nav_msgs/msg/odometry.hpp"
 #include "quadrotor_msgs/msg/position_command.hpp"
 #include "std_msgs/msg/empty.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "bspline/non_uniform_bspline.h"
+#include "quadrotor_msgs/msg/bspline.hpp"
 
 using namespace std::chrono_literals;
 
 using NonUniformBspline = fast_planner::NonUniformBspline;
-
 class TrajServer : public rclcpp::Node {
 public:
     TrajServer() : Node("traj_server") {
-        bspline_sub = this->create_subscription<plan_manage_msgs::msg::Bspline>("planning/bspline", 10, std::bind(&TrajServer::bsplineCallback, this, _1));
-        replan_sub = this->create_subscription<std_msgs::msg::Empty>("planning/replan", 10, std::bind(&TrajServer::replanCallback, this, _1));
-        new_sub = this->create_subscription<std_msgs::msg::Empty>("planning/new", 10, std::bind(&TrajServer::newCallback, this, _1));
-        odom_sub = this->create_subscription<nav_msgs::msg::Odometry>("/odom_world", 50, std::bind(&TrajServer::odomCallback, this, _1));
+        bspline_sub = this->create_subscription<quadrotor_msgs::msg::Bspline>("planning/bspline", 10, std::bind(&TrajServer::bsplineCallback, this, std::placeholders::_1));
+        replan_sub = this->create_subscription<std_msgs::msg::Empty>("planning/replan", 10, std::bind(&TrajServer::replanCallback, this, std::placeholders::_1));
+        new_sub = this->create_subscription<std_msgs::msg::Empty>("planning/new", 10, std::bind(&TrajServer::newCallback, this, std::placeholders::_1));
+        odom_sub = this->create_subscription<nav_msgs::msg::Odometry>("/odom_world", 50, std::bind(&TrajServer::odomCallbck, this, std::placeholders::_1));
 
         cmd_vis_pub = this->create_publisher<visualization_msgs::msg::Marker>("planning/position_cmd_vis", 10);
         pos_cmd_pub = this->create_publisher<quadrotor_msgs::msg::PositionCommand>("/position_cmd", 50);
@@ -102,7 +102,7 @@ public:
 
 
 private:
-  void bsplineCallback(const plan_manage::msg::Bspline::SharedPtr msg) {
+  void bsplineCallback(const quadrotor_msgs::msg::Bspline::SharedPtr msg) {
       Eigen::MatrixXd pos_pts(msg->pos_pts.size(), 3);
       Eigen::VectorXd knots(msg->knots.size());
       for (size_t i = 0; i < msg->knots.size(); ++i) {
@@ -143,22 +143,22 @@ private:
   void replanCallback(const std_msgs::msg::Empty::SharedPtr msg) {
       /* reset duration */
       const double time_out = 0.01;
-      rclcpp::Time time_now = node->now();
+      rclcpp::Time time_now = this->now();
       double t_stop = (time_now - start_time_).seconds() + time_out;
       traj_duration_ = std::min(t_stop, traj_duration_);
   }
 
 
-    void newCallback(const std_msgs::msg::Empty::SharedPtr msg) {
-    traj_cmd_.clear();
-    traj_real_.clear();
-    }
+  void newCallback(const std_msgs::msg::Empty::SharedPtr msg) {
+  traj_cmd_.clear();
+  traj_real_.clear();
+  }
 
 
   void odomCallbck(const nav_msgs::msg::Odometry::SharedPtr msg) {
     if (msg->child_frame_id == "X" || msg->child_frame_id == "O") return;
 
-    odom = *msg;
+    //odom = *msg;
 
     traj_real_.push_back(
         Eigen::Vector3d(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z));
@@ -175,7 +175,7 @@ private:
       /* no publishing before receive traj_ */
       if (!receive_traj_) return;
 
-      rclcpp::Time time_now = node->now();
+      rclcpp::Time time_now = this->now();
       double t_cur = (time_now - start_time_).seconds();
 
       Eigen::Vector3d pos, vel, acc, pos_f;
@@ -251,7 +251,7 @@ private:
 }
 
 
-    rclcpp::Subscription<plan_manage_msgs::msg::Bspline>::SharedPtr bspline_sub;
+    rclcpp::Subscription<quadrotor_msgs::msg::Bspline>::SharedPtr bspline_sub;
     rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr replan_sub, new_sub;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub;
 
@@ -259,6 +259,14 @@ private:
     rclcpp::Publisher<quadrotor_msgs::msg::PositionCommand>::SharedPtr pos_cmd_pub;
 
     rclcpp::TimerBase::SharedPtr cmd_timer, vis_timer;
+    rclcpp::Time start_time_;
+    int traj_id_;
+    double traj_duration_;
+    bool receive_traj_ = false;
+    vector<Eigen::Vector3d> traj_cmd_, traj_real_;
+    double last_yaw_;
+    vector<NonUniformBspline> traj_;
+    quadrotor_msgs::msg::PositionCommand cmd;
 };
 
 int main(int argc, char** argv) {

@@ -12,7 +12,7 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-Wall -Wextra -Wpedantic )
 endif()
 
 # find dependencies
@@ -32,23 +32,12 @@ find_package(bspline REQUIRED)
 
 include_directories(include
 include/bspline
+bspline
 ${Eigen3_INCLUDE_DIRS} 
 ${PCL_INCLUDE_DIRS}
-${bspline_INCLUDE_DIRS})  
+${bspline_INCLUDE_DIRS}
+)  
 
-
-# rosidl_generate_interfaces(${PROJECT_NAME}
-
-#   DEPENDENCIES
-#   nav_msgs
-#   # Add more message files as needed
-# )
-# ament_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES plan_manage
-#   #DEPENDS plan_env path_searching bspline bspline_opt traj_utils message_runtime
-# #  DEPENDS system_lib
-# )
 
 # add_executable(fast_planner_node
 #   src/fast_planner_node.cpp 
@@ -68,18 +57,22 @@ ${bspline_INCLUDE_DIRS})
 #   visualization_msgs)
 
 add_executable(traj_server src/traj_server.cpp)
+link_directories(${ament_cmake_LIBRARY_DIRS})
+
 target_link_libraries(traj_server 
-${PCL_LIBRARIES}
-${Eigen3_LIBRARIES}
-${bspline_LIBRARIES}
-bspline)
+  ${PCL_LIBRARIES}
+  ${Eigen3_LIBRARIES}
+  ${bspline_LIBRARIES}
+)
+
 ament_target_dependencies(traj_server           ######### ERROR
   rclcpp
   std_msgs
   nav_msgs
   visualization_msgs
   bspline
-  quadrotor_msgs)
+  quadrotor_msgs
+)
 
 
 install(DIRECTORY
@@ -88,19 +81,30 @@ install(DIRECTORY
 )
 install(DIRECTORY include/
   DESTINATION include)          # this line works
+
+install(TARGETS
+  traj_server
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
   
 # install(TARGETS
 #   fast_planner_node
 #   DESTINATION lib/${PROJECT_NAME})
 
+# ament_export_libraries(plan_manage bspline)
+# ament_export_include_directories(include)
+# ament_export_libraries(${library_name})
+# ament_export_dependencies(${dependencies})
 ament_package()
 
-######################## NOTES 
-# Invoke ament_package instead but after all targets have been registered.
+# ######################## NOTES 
+# # Invoke ament_package instead but after all targets have been registered.
 
-# The only valid argument for ament_package is CONFIG_EXTRAS. All other arguments are covered by separate functions which all need to be invoked before ament_package:
-#     Instead of passing CATKIN_DEPENDS ... call ament_export_dependencies(...) before.
-#     Instead of passing INCLUDE_DIRS ... call ament_export_include_directories(...) before.
-#     Instead of passing LIBRARIES ... call ament_export_libraries(...) before.
+# # The only valid argument for ament_package is CONFIG_EXTRAS. All other arguments are covered by separate functions which all need to be invoked before ament_package:
+# #     Instead of passing CATKIN_DEPENDS ... call ament_export_dependencies(...) before.
+# #     Instead of passing INCLUDE_DIRS ... call ament_export_include_directories(...) before.
+# #     Instead of passing LIBRARIES ... call ament_export_libraries(...) before.
 
 
