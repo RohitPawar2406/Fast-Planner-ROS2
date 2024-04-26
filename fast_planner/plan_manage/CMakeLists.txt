@@ -33,29 +33,34 @@ find_package(bspline REQUIRED)
 include_directories(include
 include/bspline
 bspline
+include/bspline_opt
+bspline_opt
 ${Eigen3_INCLUDE_DIRS} 
 ${PCL_INCLUDE_DIRS}
 ${bspline_INCLUDE_DIRS}
+${bspline_opt_INCLUDE_DIRS}
 )  
 
 
-# add_executable(fast_planner_node
-#   src/fast_planner_node.cpp 
-#   src/kino_replan_fsm.cpp
-#   src/topo_replan_fsm.cpp
-#   src/planner_manager.cpp
-#   )
+add_executable(fast_planner_node
+  # src/fast_planner_node.cpp 
+  # src/kino_replan_fsm.cpp
+  # src/topo_replan_fsm.cpp
+  src/planner_manager.cpp
+  )
 
-# target_link_libraries(fast_planner_node
-#   ${PCL_LIBRARIES}
-#   ${Eigen3_LIBRARIES}
-# )
-# ament_target_dependencies(fast_planner_node           ######### ERROR
-#   rclcpp
-#   std_msgs
-#   nav_msgs
-#   visualization_msgs)
+target_link_libraries(fast_planner_node
+  ${PCL_LIBRARIES}
+  ${Eigen3_LIBRARIES}
+  ${bspline_opt_LIBRARIES}
+)
+ament_target_dependencies(fast_planner_node 
+  rclcpp
+  std_msgs
+  nav_msgs
+  visualization_msgs)
 
+  
 add_executable(traj_server src/traj_server.cpp)
 link_directories(${ament_cmake_LIBRARY_DIRS})
 

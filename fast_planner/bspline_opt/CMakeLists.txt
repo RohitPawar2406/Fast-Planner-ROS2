@@ -18,18 +18,52 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # uncomment the line when this package is not in a git repo
-  #set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(plan_env REQUIRED)
 
+include_directories( 
+    include 
+    include/plan_env   
+    ${Eigen3_INCLUDE_DIRS} 
+    ${PCL_INCLUDE_DIRS}
+    ${NLOPT_INCLUDE_DIR}
+    ${plan_env_INCLUDE_DIRS}
+)
+
+add_library( bspline_opt 
+    src/bspline_optimizer.cpp 
+    )
+
+ament_target_dependencies(bspline_opt
+    rclcpp
+    rclpy
+    std_msgs
+    visualization_msgs
+    cv_bridge
+    plan_env
+)
+
+target_link_libraries( bspline_opt
+    ${NLOPT_LIBRARIES}
+    ${Eigen3_LIBRARIES}
+    # /usr/local/lib/libnlopt.so
+    ${plan_env_LIBRARIES}
+    #plan_env
+    ) 
+
+install(DIRECTORY include/
+  DESTINATION include/)  
+
+install(TARGETS bspline_opt
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+ament_export_libraries(bspline_opt)
+ament_export_include_directories(include)
 ament_package()
