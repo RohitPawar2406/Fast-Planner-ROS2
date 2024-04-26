@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
-#include "bspline/non_uniform_bspline.hpp"
-#include "poly_traj/polynomial_traj.hpp"
+#include "bspline/non_uniform_bspline.h"
+#include "poly_traj/polynomial_traj.h"
 #include "path_searching/topo_prm.hpp"
 
 namespace fast_planner {

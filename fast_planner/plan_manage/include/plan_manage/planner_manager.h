@@ -6,9 +6,9 @@
 
 #include <path_searching/astar.h>
 #include <path_searching/kinodynamic_astar.h>
-#include <path_searching/topo_prm.h>
+#include <path_searching/topo_prm.hpp>
 
-#include <plan_env/edt_environment.h>
+#include <plan_env/edt_environment.hpp>
 
 #include <plan_manage/plan_container.hpp>
 

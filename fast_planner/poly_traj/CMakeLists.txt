@@ -44,13 +44,10 @@ install(
 
 install(
     TARGETS poly_traj
-    EXPORT export_${PROJECT_NAME}
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
   ) 
 
-ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
-ament_export_libraries(poly_traj)
 ament_package()

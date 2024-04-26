@@ -28,13 +28,18 @@ find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(bspline REQUIRED)
+find_package(bspline_opt REQUIRED)
+find_package(path_searching REQUIRED)
+find_package(plan_env REQUIRED)
+find_package(poly_traj REQUIRED)
 
 
 include_directories(include
 include/bspline
-bspline
 include/bspline_opt
-bspline_opt
+include/path_searching
+include/plan_env
+include/poly_traj
 ${Eigen3_INCLUDE_DIRS} 
 ${PCL_INCLUDE_DIRS}
 ${bspline_INCLUDE_DIRS}
@@ -47,18 +52,28 @@ add_executable(fast_planner_node
   # src/kino_replan_fsm.cpp
   # src/topo_replan_fsm.cpp
   src/planner_manager.cpp
-  )
+)
 
 target_link_libraries(fast_planner_node
   ${PCL_LIBRARIES}
   ${Eigen3_LIBRARIES}
-  ${bspline_opt_LIBRARIES}
 )
 ament_target_dependencies(fast_planner_node 
   rclcpp
   std_msgs
   nav_msgs
-  visualization_msgs)
+  visualization_msgs
+  path_searching
+  plan_env
+  poly_traj
+  bspline_opt
+)
+
+ament_export_include_directories(include)
+
+install(TARGETS fast_planner_node
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
   
 add_executable(traj_server src/traj_server.cpp)

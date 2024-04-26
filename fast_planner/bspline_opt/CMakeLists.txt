@@ -64,6 +64,5 @@ install(TARGETS bspline_opt
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
-ament_export_libraries(bspline_opt)
 ament_export_include_directories(include)
 ament_package()

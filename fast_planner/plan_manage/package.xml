@@ -14,6 +14,10 @@
   <depend>visualization_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>bspline</depend>
+  <depend>bspline_opt</depend>
+  <depend>path_searching</depend>
+  <depend>plan_env</depend>
+  <depend>poly_traj</depend>
   <depend>quadrotor_msgs</depend>
   <exec_depend>ros2launch</exec_depend>
   
