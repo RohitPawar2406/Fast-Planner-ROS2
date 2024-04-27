@@ -25,8 +25,8 @@ public:
   BsplineOptimizer() {}
   ~BsplineOptimizer() {}
 
-  /* main API */
-  void setEnvironment(const EDTEnvironment::Ptr& env);
+  /* main API */ 
+  void setEnvironment(const std::shared_ptr<EDTEnvironment> env);
   void setParam(rclcpp::Node::SharedPtr& nh);
   Eigen::MatrixXd BsplineOptimizeTraj(const Eigen::MatrixXd& points, const double& ts,
                                       const int& cost_function, int max_num_id, int max_time_id);
@@ -50,7 +50,7 @@ public:
   std::vector<Eigen::Vector3d> matrixToVectors(const Eigen::MatrixXd& ctrl_pts);
 
 private:
-  EDTEnvironment::Ptr edt_environment_;
+  std::shared_ptr<EDTEnvironment> edt_environment_;
 
   // main input
   Eigen::MatrixXd control_points_;     // B-spline control points, N x dim

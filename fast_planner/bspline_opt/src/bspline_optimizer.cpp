@@ -17,7 +17,7 @@ const int BsplineOptimizer::GUIDE_PHASE = BsplineOptimizer::SMOOTHNESS | Bspline
 const int BsplineOptimizer::NORMAL_PHASE =
     BsplineOptimizer::SMOOTHNESS | BsplineOptimizer::DISTANCE | BsplineOptimizer::FEASIBILITY;
 
-void BsplineOptimizer::setParam(const rclcpp::Node::SharedPtr& nh) {
+void BsplineOptimizer::setParam(rclcpp::Node::SharedPtr& nh) {
   nh->get_parameter("optimization/lambda1", lambda1_);
   nh->get_parameter("optimization/lambda2", lambda2_);
   nh->get_parameter("optimization/lambda3", lambda3_);
@@ -48,8 +48,8 @@ void BsplineOptimizer::setParam(const rclcpp::Node::SharedPtr& nh) {
   nh->get_parameter("optimization/order", order_);
 }
 
-void BsplineOptimizer::setEnvironment(const EDTEnvironment::SharedPtr& env) {
-  this->edt_environment_ = env;
+void BsplineOptimizer::setEnvironment(const std::shared_ptr<EDTEnvironment> env) {
+  edt_environment_ = env;
 }
 
 void BsplineOptimizer::setControlPoints(const Eigen::MatrixXd& points) {
