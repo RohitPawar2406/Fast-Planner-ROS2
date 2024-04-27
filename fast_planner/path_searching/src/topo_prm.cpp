@@ -11,7 +11,7 @@
 #include <path_searching/topo_prm.hpp>
 
 namespace fast_planner {
-TopologyPRM::TopologyPRM(/* args */) {}
+TopologyPRM::TopologyPRM() {}
 
 TopologyPRM::~TopologyPRM() {}
 
