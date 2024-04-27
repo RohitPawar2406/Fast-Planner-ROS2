@@ -20,7 +20,7 @@ namespace fast_planner {
 // Fast Planner Manager
 // Key algorithms of mapping and planning are called
 
-class FastPlannerManager {
+class FastPlannerManager : public rclcpp::Node {
   // SECTION stable
 public:
   FastPlannerManager();
@@ -34,7 +34,7 @@ public:
 
   void planYaw(const Eigen::Vector3d& start_yaw);
 
-  void initPlanModules(ros::NodeHandle& nh);
+  void initPlanModules();
   void setGlobalWaypoints(vector<Eigen::Vector3d>& waypoints);
 
   bool checkTrajCollision(double& distance);

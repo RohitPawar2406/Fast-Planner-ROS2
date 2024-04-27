@@ -1,4 +1,5 @@
-
+#ifndef _TOPO_PRM_H
+#define _TOPO_PRM_H
 #include <memory>
 #include <vector>
 #include <list>
@@ -83,7 +84,7 @@ public:
   typedef std::shared_ptr<GraphNode> Ptr;
 };
 
-class TopologyPRM {
+class TopologyPRM : public rclcpp::Node {
 private:
   EDTEnvironment::Ptr edt_environment_;  // environment representation
 
@@ -176,3 +177,4 @@ public:
 
 }  // namespace fast_planner
 
+#endif
