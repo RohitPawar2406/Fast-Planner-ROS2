@@ -6,7 +6,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "plan_manage/planner_manager.h"
-
+//rclcpp::Clock(RCL_ROS_TIME).now()
 namespace fast_planner {
 
 FastPlannerManager::FastPlannerManager() {}
@@ -272,7 +272,7 @@ bool FastPlannerManager::planGlobalTraj(const Eigen::Vector3d& start_pos) {
 
   PolynomialTraj gl_traj = minSnapTraj(pos, zero, zero, zero, zero, time);
 
-  auto time_now = rclcpp::Time::now();
+  auto time_now = rclcpp::Clock(RCL_ROS_TIME).now();
   global_data_.setGlobalTraj(gl_traj, time_now);
 
   // Truncate a local trajectory
@@ -295,7 +295,7 @@ bool FastPlannerManager::topoReplan(bool collide) {
   rclcpp::Time t1, t2;
 
   /* truncate a new local segment for replanning */
-  rclcpp::Time time_now = this->get_clock()->now();
+  rclcpp::Time time_now = rclcpp::Clock(RCL_ROS_TIME).now();
   double t_now = (time_now - global_data_.global_start_time_).seconds();
   double local_traj_dt, local_traj_duration;
   double time_inc = 0.0;
@@ -326,10 +326,9 @@ bool FastPlannerManager::topoReplan(bool collide) {
       /* search topological distinctive paths */
       RCLCPP_INFO(rclcpp::get_logger("INFO:planner_manager"), "[Topo]: ---------");
       plan_data_.clearTopoPaths();
-            <fast_planner::GraphNode::SharedPtr> graph;
+      list<GraphNode::Ptr> graph;
       std::vector<std::vector<Eigen::Vector3d>> raw_paths, filtered_paths, select_paths;
-      topo_prm_->findTopoPaths(colli_start.front(), colli_end.back(), start_pts, end_pts, graph,
-                               raw_paths, filtered_paths, select_paths);
+      topo_prm_->findTopoPaths(colli_start.front(), colli_end.back(), start_pts, end_pts, graph, raw_paths, filtered_paths, select_paths);
 
       if (select_paths.size() == 0) {
         RCLCPP_WARN(rclcpp::get_logger("WARN: planner_manager"), "No path.");
@@ -339,7 +338,7 @@ bool FastPlannerManager::topoReplan(bool collide) {
 
       /* optimize trajectory using different topo paths */
       RCLCPP_INFO(rclcpp::get_logger("INFO:planner_manager"), "[Optimize]: ---------");
-      t1 = this->get_clock()->now();
+      t1 = rclcpp::Clock(RCL_ROS_TIME).now();
 
       plan_data_.topo_traj_pos1_.resize(select_paths.size());
       plan_data_.topo_traj_pos2_.resize(select_paths.size());
@@ -352,7 +351,7 @@ bool FastPlannerManager::topoReplan(bool collide) {
       }
       for (int i = 0; i < select_paths.size(); ++i) optimize_threads[i].join();
 
-      double t_opt = (this->get_clock()->now() - t1).seconds();
+      double t_opt = (rclcpp::Clock(RCL_ROS_TIME).now() - t1).seconds();
       std::cout << "[planner]: optimization time: " << t_opt << std::endl;
       selectBestTraj(best_traj);
       refineTraj(best_traj, time_inc);
@@ -367,7 +366,7 @@ bool FastPlannerManager::topoReplan(bool collide) {
 }
 
 void FastPlannerManager::selectBestTraj(NonUniformBspline& traj) {
-    <NonUniformBspline>& trajs = plan_data_.topo_traj_pos2_;
+  vector<NonUniformBspline>& trajs = plan_data_.topo_traj_pos2_;
   std::sort(trajs.begin(), trajs.end(),
        [&](NonUniformBspline& tj1, NonUniformBspline& tj2) { return tj1.getJerk() < tj2.getJerk(); });
   traj = trajs[0];
@@ -375,7 +374,7 @@ void FastPlannerManager::selectBestTraj(NonUniformBspline& traj) {
 
 
 void FastPlannerManager::refineTraj(NonUniformBspline& best_traj, double& time_inc) {
-  rclcpp::Time t1 = this->get_clock()->now();
+  rclcpp::Time t1 = rclcpp::Clock(RCL_ROS_TIME).now();
   time_inc = 0.0;
   double dt, t_inc;
   const int max_iter = 1;
@@ -392,7 +391,7 @@ void FastPlannerManager::refineTraj(NonUniformBspline& best_traj, double& time_i
 
   ctrl_pts = bspline_optimizers_[0]->BsplineOptimizeTraj(ctrl_pts, dt, cost_function, 1, 1);
   best_traj = NonUniformBspline(ctrl_pts, 3, dt);
-  RCLCPP_WARN_STREAM(rclcpp::get_logger("WARN: planner_manager"), "[Refine]: cost " << (this->get_clock()->now() - t1).seconds()
+  RCLCPP_WARN_STREAM(rclcpp::get_logger("WARN: planner_manager"), "[Refine]: cost " << (rclcpp::Clock(RCL_ROS_TIME).now() - t1).seconds()
                                     << " seconds, time change is: " << time_inc);
 }
 
@@ -431,10 +430,10 @@ void FastPlannerManager::reparamBspline(NonUniformBspline& bspline, double ratio
 
 void FastPlannerManager::optimizeTopoBspline(double start_t, double duration,
                                              std::vector<Eigen::Vector3d> guide_path, int traj_id) {
-  rclcpp::Time t1 = this->get_clock()->now();
+  rclcpp::Time t1 = rclcpp::Clock(RCL_ROS_TIME).now();
   double tm1, tm2, tm3;
 
-  t1 = this->get_clock()->now();
+  t1 = rclcpp::Clock(RCL_ROS_TIME).now();
 
   // Parameterize B-spline according to the length of guide path
   int seg_num = topo_prm_->pathLength(guide_path) / pp_.ctrl_pt_dist;
@@ -456,8 +455,8 @@ void FastPlannerManager::optimizeTopoBspline(double start_t, double duration,
   if (static_cast<int>(guide_pt.size()) != static_cast<int>(ctrl_pts.rows()) - 6)
     RCLCPP_WARN(rclcpp::get_logger("WARN: planner_manager"), "what guide");
 
-  tm1 = (this->get_clock()->now() - t1).seconds();
-  t1  = this->get_clock()->now();
+  tm1 = (rclcpp::Clock(RCL_ROS_TIME).now() - t1).seconds();
+  t1  = rclcpp::Clock(RCL_ROS_TIME).now();
 
   // First phase, path-guided optimization
 
@@ -467,8 +466,8 @@ void FastPlannerManager::optimizeTopoBspline(double start_t, double duration,
 
   plan_data_.topo_traj_pos1_[traj_id] = NonUniformBspline(opt_ctrl_pts1, 3, dt);
 
-  tm2 = (this->get_clock()->now() - t1).seconds();
-  t1  = this->get_clock()->now();
+  tm2 = (rclcpp::Clock(RCL_ROS_TIME).now() - t1).seconds();
+  t1  = rclcpp::Clock(RCL_ROS_TIME).now();
 
   // Second phase, normal optimization
 
@@ -477,7 +476,7 @@ void FastPlannerManager::optimizeTopoBspline(double start_t, double duration,
 
   plan_data_.topo_traj_pos2_[traj_id] = NonUniformBspline(opt_ctrl_pts2, 3, dt);
 
-  tm3 = (this->get_clock()->now() - t1).seconds();
+  tm3 = (rclcpp::Clock(RCL_ROS_TIME).now() - t1).seconds();
   RCLCPP_INFO(rclcpp::get_logger("INFO:planner_manager"), "optimization %d cost %lf, %lf, %lf seconds.", traj_id, tm1, tm2, tm3);
 }
 

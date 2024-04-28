@@ -18,7 +18,7 @@ namespace fast_planner {
 #define INCLOSESET 'a'
 #define INOPENSET 'b'
 #define NOTEXPAND 'c'
-#define inf 1 >> 30
+#define INF 1 >> 30
 
 class Node {
 public:
