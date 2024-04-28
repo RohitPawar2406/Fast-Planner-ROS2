@@ -1,6 +1,8 @@
 #include <path_searching/kinodynamic_astar.h>
 #include <sstream>
 #include <plan_env/sdf_map.h>
+// #include <rclcpp/logging.hpp>
+#include "rcutils/logging_macros.h"
 
 using namespace std;
 using namespace Eigen;
@@ -77,7 +79,7 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
         estimateHeuristic(cur_node->state, end_state, time_to_goal);
         computeShotTraj(cur_node->state, end_state, time_to_goal);
         if (init_search)
-          RCLCPP_ERROR(this->get_logger(), "Shot in first search loop!");
+          RCUTILS_LOG_ERROR("error from kinodynamic_astar", "Shot in first search loop!");
       }
     }
     if (reach_horizon)
@@ -298,7 +300,7 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
   cout << "iter num: " << iter_num_ << endl;
   return NO_PATH;
 }
-void KinodynamicAstar::setParam(rclcpp::Node::SharedPtr nh)
+void KinodynamicAstar::setParam(rclcpp::Node::SharedPtr &nh)
 {
   nh->get_parameter("search/max_tau", max_tau_);
   nh->get_parameter("search/init_max_tau", init_max_tau_);

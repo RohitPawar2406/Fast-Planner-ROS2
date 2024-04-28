@@ -28,7 +28,7 @@ find_package(plan_env REQUIRED)
 find_package(visualization_msgs REQUIRED)
 
 find_package(cv_bridge REQUIRED)
-include(ConfigExtras.cmake)
+
 include_directories( 
     include
     include/plan_env
@@ -37,17 +37,17 @@ include_directories(
     ${plan_env_INCLUDE_DIRS}
 )
 
-add_library( path_searching 
-    src/kinodynamic_astar.cpp 
-    src/astar.cpp
-    src/topo_prm.cpp
+add_library(path_searching 
+   src/kinodynamic_astar.cpp 
+   src/astar.cpp
+   src/topo_prm.cpp
 )
 
 ament_target_dependencies(path_searching 
-rclcpp
-rclpy
-std_msgs
-plan_env
+  rclcpp
+  rclpy
+  std_msgs
+  plan_env
 
 ) 
 

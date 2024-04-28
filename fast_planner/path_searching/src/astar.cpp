@@ -27,7 +27,7 @@ int Astar::search(Eigen::Vector3d start_pt, Eigen::Vector3d end_pt, bool dynamic
 
   end_index = posToIndex(end_pt);
   cur_node->f_score = lambda_heu_ * getEuclHeu(cur_node->position, end_pt);
-  cur_node->node_state = IN_OPEN_SET;
+  cur_node->node_state = INOPENSET;
 
   open_set_.push(cur_node);
   use_node_num_ += 1;
@@ -70,7 +70,7 @@ int Astar::search(Eigen::Vector3d start_pt, Eigen::Vector3d end_pt, bool dynamic
 
     /* ---------- pop node and add to close set ---------- */
     open_set_.pop();
-    cur_node->node_state = IN_CLOSE_SET;
+    cur_node->node_state = INCLOSESET;
     iter_num_ += 1;
 
     /* ---------- init neighbor expansion ---------- */
@@ -108,7 +108,7 @@ int Astar::search(Eigen::Vector3d start_pt, Eigen::Vector3d end_pt, bool dynamic
           NodePtr pro_node =
               dynamic ? expanded_nodes_.find(pro_id, pro_t_id) : expanded_nodes_.find(pro_id);
 
-          if (pro_node != nullptr && pro_node->node_state == IN_CLOSE_SET) {
+          if (pro_node != nullptr && pro_node->node_state == INCLOSESET) {
             // RCLCPP_INFO(get_logger(), "in closeset");
             continue;
           }
@@ -135,7 +135,7 @@ int Astar::search(Eigen::Vector3d start_pt, Eigen::Vector3d end_pt, bool dynamic
             pro_node->f_score = tmp_f_score;
             pro_node->g_score = tmp_g_score;
             pro_node->parent = cur_node;
-            pro_node->node_state = IN_OPEN_SET;
+            pro_node->node_state = INOPENSET;
             if (dynamic) {
               pro_node->time = cur_node->time + 1.0;
               pro_node->time_idx = timeToIndex(pro_node->time);
@@ -152,7 +152,7 @@ int Astar::search(Eigen::Vector3d start_pt, Eigen::Vector3d end_pt, bool dynamic
               // RCLCPP_INFO(get_logger(), "run out of memory.");
               return NO_PATH;
             }
-          } else if (pro_node->node_state == IN_OPEN_SET) {
+          } else if (pro_node->node_state == INOPENSET) {
             if (tmp_g_score < pro_node->g_score) {
               // pro_node->index = pro_id;
               pro_node->position = pro_pos;
@@ -184,6 +184,7 @@ void Astar::setParam(rclcpp::Node::SharedPtr& nh) {
   nh->get_parameter("astar/allocate_num", allocate_num_);
   tie_breaker_ = 1.0 + 1.0 / 10000;
 
+  RCLCPP_INFO(rclcpp::get_logger("path_searching/astar"), "margin: %f", margin_);
   // RCLCPP_INFO(get_logger(), "margin: %f", margin_);
 }
 
@@ -275,7 +276,7 @@ void Astar::reset() {
   for (int i = 0; i < use_node_num_; i++) {
     NodePtr node = path_node_pool_[i];
     node->parent = nullptr;
-    node->node_state = NOT_EXPAND;
+    node->node_state = NOTEXPAND;
   }
 
   use_node_num_ = 0;

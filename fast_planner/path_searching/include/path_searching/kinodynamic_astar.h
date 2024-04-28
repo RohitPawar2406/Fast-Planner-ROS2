@@ -90,7 +90,7 @@ public:
     }
 };
 
-class KinodynamicAstar : public rclcpp::Node{
+class KinodynamicAstar {
 private:
     std::vector<PathNodePtr> path_node_pool_;
     int use_node_num_, iter_num_;

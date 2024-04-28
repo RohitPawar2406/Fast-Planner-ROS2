@@ -84,7 +84,7 @@ public:
   typedef std::shared_ptr<GraphNode> Ptr;
 };
 
-class TopologyPRM : public rclcpp::Node {
+class TopologyPRM {
 private:
   EDTEnvironment::Ptr edt_environment_;  // environment representation
 

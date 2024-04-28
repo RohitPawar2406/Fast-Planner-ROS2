@@ -15,9 +15,9 @@
 
 namespace fast_planner {
 
-#define IN_CLOSE_SET 'a'
-#define IN_OPEN_SET 'b'
-#define NOT_EXPAND 'c'
+#define INCLOSESET 'a'
+#define INOPENSET 'b'
+#define NOTEXPAND 'c'
 #define inf 1 >> 30
 
 class Node {
@@ -33,7 +33,7 @@ public:
 
   Node() {
     parent = nullptr;
-    node_state = NOT_EXPAND;
+    node_state = NOTEXPAND;
   }
   ~Node(){}
 };
