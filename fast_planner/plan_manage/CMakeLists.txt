@@ -76,23 +76,23 @@ install(TARGETS fast_planner_node
 )
 
   
-add_executable(traj_server src/traj_server.cpp)
-link_directories(${ament_cmake_LIBRARY_DIRS})
+# add_executable(traj_server src/traj_server.cpp)
+# link_directories(${ament_cmake_LIBRARY_DIRS})
 
-target_link_libraries(traj_server 
-  ${PCL_LIBRARIES}
-  ${Eigen3_LIBRARIES}
-  ${bspline_LIBRARIES}
-)
+# target_link_libraries(traj_server 
+#   ${PCL_LIBRARIES}
+#   ${Eigen3_LIBRARIES}
+#   ${bspline_LIBRARIES}
+# )
 
-ament_target_dependencies(traj_server           ######### ERROR
-  rclcpp
-  std_msgs
-  nav_msgs
-  visualization_msgs
-  bspline
-  quadrotor_msgs
-)
+# ament_target_dependencies(traj_server           ######### ERROR
+#   rclcpp
+#   std_msgs
+#   nav_msgs
+#   visualization_msgs
+#   bspline
+#   quadrotor_msgs
+# )
 
 
 install(DIRECTORY
@@ -102,12 +102,12 @@ install(DIRECTORY
 install(DIRECTORY include/
   DESTINATION include)          # this line works
 
-install(TARGETS
-  traj_server
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
+# install(TARGETS
+#   traj_server
+#   ARCHIVE DESTINATION lib
+#   LIBRARY DESTINATION lib
+#   RUNTIME DESTINATION bin
+# )
   
 # install(TARGETS
 #   fast_planner_node
