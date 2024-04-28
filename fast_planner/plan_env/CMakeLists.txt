@@ -41,29 +41,37 @@ add_library( plan_env
     src/obj_predictor.cpp 
     src/edt_environment.cpp 
     src/raycast.cpp
-    )
+  )
 
 target_link_libraries(plan_env 
 ${PCL_LIBRARIES}
-${Eigen3_LIBRARIES})
+${Eigen3_LIBRARIES}
+${OpenCV_LIBS}
+)
 
 add_executable(obj_generator
     src/obj_generator.cpp 
-  )
+)
+
 target_link_libraries(obj_generator 
 ${PCL_LIBRARIES}
-${Eigen3_LIBRARIES})
+${Eigen3_LIBRARIES}
+)
 
 ament_target_dependencies(obj_generator rclcpp geometry_msgs visualization_msgs nav_msgs)
 
 ament_target_dependencies(plan_env 
-rclcpp
-rclpy
-std_msgs
-nav_msgs
-visualization_msgs
-geometry_msgs
+  rclcpp
+  rclpy
+  std_msgs
+  nav_msgs
+  visualization_msgs
+  geometry_msgs
+  cv_bridge
 )
+
+ament_export_libraries(plan_env)
+ament_export_include_directories(include)
 
 install(
   DIRECTORY include/
@@ -74,19 +82,20 @@ install(
     TARGETS plan_env
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
+    # RUNTIME DESTINATION lib/${PROJECT_NAME}
     RUNTIME DESTINATION bin
   ) 
-ament_export_include_directories(include)
+# ament_export_include_directories(include)
 ament_export_dependencies(
-    rclcpp
-    std_msgs
-    visualization_msgs
-    cv_bridge
-    message_filters
+    # rclcpp
+    # std_msgs
+    # visualization_msgs
+    # cv_bridge
+    # message_filters
     Eigen3
     PCL
     OpenCV
-    nav_msgs
+    # nav_msgs
     #plan_env
 )
 ament_package()

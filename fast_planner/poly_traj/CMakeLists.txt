@@ -34,9 +34,14 @@ include_directories(
 
 add_library( poly_traj 
     src/polynomial_traj.cpp 
-    )
+  )
 
-target_link_libraries( poly_traj)
+ament_target_dependencies( poly_traj
+  rclcpp
+  std_msgs
+)
+# target_link_libraries(poly_traj)
+
 install(
   DIRECTORY include/
   DESTINATION include
@@ -49,5 +54,6 @@ install(
     RUNTIME DESTINATION bin
   ) 
 
+ament_export_libraries(poly_traj)
 ament_export_include_directories(include)
 ament_package()

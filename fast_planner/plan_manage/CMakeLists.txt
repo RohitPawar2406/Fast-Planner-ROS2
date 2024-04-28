@@ -54,22 +54,32 @@ add_executable(fast_planner_node
   src/planner_manager.cpp
 )
 
+set(req_deps
+  "rclcpp"
+  "std_msgs"
+  "nav_msgs"
+  "visualization_msgs"
+  "path_searching"
+  "bspline_opt"
+  # other libs
+)
+
+# ament_auto_find_build_dependencies(REQUIRED ${req_deps})
+ament_target_dependencies(fast_planner_node 
+  ${req_deps}
+  poly_traj
+  plan_env
+  path_searching
+  bspline
+  bspline_opt
+)
+
 target_link_libraries(fast_planner_node
   ${PCL_LIBRARIES}
   ${Eigen3_LIBRARIES}
 )
-ament_target_dependencies(fast_planner_node 
-  rclcpp
-  std_msgs
-  nav_msgs
-  visualization_msgs
-  path_searching
-  plan_env
-  poly_traj
-  bspline_opt
-)
 
-ament_export_include_directories(include)
+# ament_export_include_directories(include)
 
 install(TARGETS fast_planner_node
   RUNTIME DESTINATION lib/${PROJECT_NAME}

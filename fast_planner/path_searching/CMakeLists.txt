@@ -34,7 +34,6 @@ include_directories(
     include/plan_env
     ${Eigen3_INCLUDE_DIRS} 
     ${PCL_INCLUDE_DIRS}
-    ${plan_env_INCLUDE_DIRS}
 )
 
 add_library(path_searching 
@@ -48,14 +47,16 @@ ament_target_dependencies(path_searching
   rclpy
   std_msgs
   plan_env
-
+  cv_bridge
 ) 
 
-target_link_libraries( path_searching
-${plan_env_LIBRARIES}
-rclcpp
-plan_env
-) 
+# target_link_libraries( path_searching
+# rclcpp
+# plan_env
+# ) 
+
+ament_export_libraries(plan_env)
+ament_export_include_directories(include)
 
 install(TARGETS path_searching
 ARCHIVE DESTINATION lib
@@ -63,8 +64,10 @@ LIBRARY DESTINATION lib
 RUNTIME DESTINATION bin
 )
 
+
 install(DIRECTORY include/
 DESTINATION include/) 
 
+ament_export_libraries(path_searching)
 ament_export_include_directories(include)
 ament_package()

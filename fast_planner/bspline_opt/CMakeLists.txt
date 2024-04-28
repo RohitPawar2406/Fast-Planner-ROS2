@@ -18,20 +18,24 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
-
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(plan_env REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(NLopt REQUIRED)
+
+set(NLopt_INCLUDE_DIRS ${NLOPT_INCLUDE_DIR})
+
 
 include_directories( 
     include 
     include/plan_env   
     ${Eigen3_INCLUDE_DIRS} 
     ${PCL_INCLUDE_DIRS}
-    ${NLOPT_INCLUDE_DIR}
+    ${NLOPT_INCLUDE_DIRS}
     ${plan_env_INCLUDE_DIRS}
 )
 
@@ -48,13 +52,14 @@ ament_target_dependencies(bspline_opt
     plan_env
 )
 
-target_link_libraries( bspline_opt
-    ${NLOPT_LIBRARIES}
-    ${Eigen3_LIBRARIES}
+target_link_libraries(bspline_opt
+    # ${NLOPT_LIBRARIES}
+    Eigen3::Eigen
+    /home/charvi/workspace/iiit-r/nlopt/build/libnlopt.so
     # /usr/local/lib/libnlopt.so
-    ${plan_env_LIBRARIES}
+    # ${plan_env_LIBRARIES}
     #plan_env
-    ) 
+) 
 
 install(DIRECTORY include/
   DESTINATION include/)  
@@ -64,5 +69,7 @@ install(TARGETS bspline_opt
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
+
+ament_export_libraries(bspline_opt)
 ament_export_include_directories(include)
 ament_package()
