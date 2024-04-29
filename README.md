@@ -2,7 +2,12 @@
 # ROS2 porting of Fast-Planner
 
 ## Host build
-<!-- Please update steps here... -->
+
+```bash
+git clone -b  basavaraj/fix-compilation https://github.com/RohitPawar2406/Fast-Planner-ROS2.git
+cd Fast-Planner-ROS2
+colcon build
+```
 
 ## Docker build  
 
