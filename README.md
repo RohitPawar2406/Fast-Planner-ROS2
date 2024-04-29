@@ -22,11 +22,7 @@ git clone -b  basavaraj/fix-compilation https://github.com/RohitPawar2406/Fast-P
 ```bash
 cd  Fast-Planner-ROS2/src
 ./build.sh # This will build the docker image
-```
-
-### Run
-
-```bash
+# RUN and build the workspace
 ./run.sh # This will build the docker image
 colcon build 
 ```
