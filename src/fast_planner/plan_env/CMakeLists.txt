@@ -36,13 +36,15 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS}
 )
 
-add_library( plan_env
+add_library( plan_env SHARED
     src/sdf_map.cpp 
     src/obj_predictor.cpp 
     src/edt_environment.cpp 
     src/raycast.cpp
   )
-
+target_include_directories(plan_env PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
 
 add_executable(obj_generator 
     src/obj_generator.cpp 
@@ -86,9 +88,8 @@ install(
     RUNTIME DESTINATION bin
     INCLUDES DESTINATION include
   ) 
-# ament_export_include_directories(include)
-ament_export_libraries(plan_env)
 ament_export_include_directories(include)
+ament_export_libraries(plan_env)
 ament_export_dependencies(
     # rclcpp
     # std_msgs
@@ -101,4 +102,5 @@ ament_export_dependencies(
     # nav_msgs
     # plan_env
 )
+# ament_export_include_directories(include)
 ament_package()
