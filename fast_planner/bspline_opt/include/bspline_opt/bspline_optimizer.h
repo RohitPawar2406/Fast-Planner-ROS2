@@ -1,14 +1,41 @@
-#ifndef BSPLINE_OPTIMIZER_HPP_
-#define BSPLINE_OPTIMIZER_HPP_
+/**
+* This file is part of Fast-Planner.
+*
+* Copyright 2019 Boyu Zhou, Aerial Robotics Group, Hong Kong University of Science and Technology, <uav.ust.hk>
+* Developed by Boyu Zhou <bzhouai at connect dot ust dot hk>, <uv dot boyuzhou at gmail dot com>
+* for more information see <https://github.com/HKUST-Aerial-Robotics/Fast-Planner>.
+* If you use this code, please cite the respective publications as
+* listed on the above website.
+*
+* Fast-Planner is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Fast-Planner is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with Fast-Planner. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+
+#ifndef _BSPLINE_OPTIMIZER_H_
+#define _BSPLINE_OPTIMIZER_H_
 
 #include <Eigen/Eigen>
-#include <vector>
+#include <plan_env/edt_environment.h>
+#include <ros/ros.h>
 
-#include "plan_env/edt_environment.hpp"
-#include "rclcpp/rclcpp.hpp"
+// Gradient and elasitc band optimization
 
+// Input: a signed distance field and a sequence of points
+// Output: the optimized sequence of points
+// The format of points: N x 3 matrix, each row is a point
 namespace fast_planner {
-
 class BsplineOptimizer {
 
 public:
@@ -25,9 +52,9 @@ public:
   BsplineOptimizer() {}
   ~BsplineOptimizer() {}
 
-  /* main API */ 
-  void setEnvironment(const std::shared_ptr<EDTEnvironment> env);
-  void setParam(rclcpp::Node::SharedPtr& nh);
+  /* main API */
+  void            setEnvironment(const EDTEnvironment::Ptr& env);
+  void            setParam(ros::NodeHandle& nh);
   Eigen::MatrixXd BsplineOptimizeTraj(const Eigen::MatrixXd& points, const double& ts,
                                       const int& cost_function, int max_num_id, int max_time_id);
 
@@ -40,17 +67,17 @@ public:
   void setTerminateCond(const int& max_num_id, const int& max_time_id);
 
   // optional inputs
-  void setGuidePath(const std::vector<Eigen::Vector3d>& guide_pt);
-  void setWaypoints(const std::vector<Eigen::Vector3d>& waypts,
-                    const std::vector<int>&             waypt_idx);  // N-2 constraints at most
+  void setGuidePath(const vector<Eigen::Vector3d>& guide_pt);
+  void setWaypoints(const vector<Eigen::Vector3d>& waypts,
+                    const vector<int>&             waypt_idx);  // N-2 constraints at most
 
   void optimize();
 
   Eigen::MatrixXd         getControlPoints();
-  std::vector<Eigen::Vector3d> matrixToVectors(const Eigen::MatrixXd& ctrl_pts);
+  vector<Eigen::Vector3d> matrixToVectors(const Eigen::MatrixXd& ctrl_pts);
 
 private:
-  std::shared_ptr<EDTEnvironment> edt_environment_;
+  EDTEnvironment::Ptr edt_environment_;
 
   // main input
   Eigen::MatrixXd control_points_;     // B-spline control points, N x dim
@@ -58,9 +85,9 @@ private:
   Eigen::Vector3d end_pt_;             // end of the trajectory
   int             dim_;                // dimension of the B-spline
                                        //
-  std::vector<Eigen::Vector3d> guide_pts_;  // geometric guiding path points, N-6
-  std::vector<Eigen::Vector3d> waypoints_;  // waypts constraints
-  std::vector<int>             waypt_idx_;  // waypts constraints index
+  vector<Eigen::Vector3d> guide_pts_;  // geometric guiding path points, N-6
+  vector<Eigen::Vector3d> waypoints_;  // waypts constraints
+  vector<int>             waypt_idx_;  // waypts constraints index
                                        //
   int    max_num_id_, max_time_id_;    // stopping criteria
   int    cost_function_;               // used to determine objective function
@@ -92,58 +119,58 @@ private:
   /* intermediate variables */
   /* buffer for gradient of cost function, to avoid repeated allocation and
    * release of memory */
-  std::vector<Eigen::Vector3d> g_q_;
-  std::vector<Eigen::Vector3d> g_smoothness_;
-  std::vector<Eigen::Vector3d> g_distance_;
-  std::vector<Eigen::Vector3d> g_feasibility_;
-  std::vector<Eigen::Vector3d> g_endpoint_;
-  std::vector<Eigen::Vector3d> g_guide_;
-  std::vector<Eigen::Vector3d> g_waypoints_;
+  vector<Eigen::Vector3d> g_q_;
+  vector<Eigen::Vector3d> g_smoothness_;
+  vector<Eigen::Vector3d> g_distance_;
+  vector<Eigen::Vector3d> g_feasibility_;
+  vector<Eigen::Vector3d> g_endpoint_;
+  vector<Eigen::Vector3d> g_guide_;
+  vector<Eigen::Vector3d> g_waypoints_;
 
   int                 variable_num_;   // optimization variables
   int                 iter_num_;       // iteration of the solver
   std::vector<double> best_variable_;  //
   double              min_cost_;       //
 
-  std::vector<Eigen::Vector3d> block_pts_;  // blocking points to compute visibility
+  vector<Eigen::Vector3d> block_pts_;  // blocking points to compute visibility
 
   /* cost function */
   /* calculate each part of cost function with control points q as input */
 
   static double costFunction(const std::vector<double>& x, std::vector<double>& grad, void* func_data);
-  void          combineCost(const std::vector<double>& x, std::vector<double>& grad, double& cost);
+  void          combineCost(const std::vector<double>& x, vector<double>& grad, double& cost);
 
   // q contains all control points
-  void calcSmoothnessCost(const std::vector<Eigen::Vector3d>& q, double& cost,
-                          std::vector<Eigen::Vector3d>& gradient);
-  void calcDistanceCost(const std::vector<Eigen::Vector3d>& q, double& cost,
-                        std::vector<Eigen::Vector3d>& gradient);
-  void calcFeasibilityCost(const std::vector<Eigen::Vector3d>& q, double& cost,
-                           std::vector<Eigen::Vector3d>& gradient);
-  void calcEndpointCost(const std::vector<Eigen::Vector3d>& q, double& cost,
-                        std::vector<Eigen::Vector3d>& gradient);
-  void calcGuideCost(const std::vector<Eigen::Vector3d>& q, double& cost, std::vector<Eigen::Vector3d>& gradient);
-  void calcVisibilityCost(const std::vector<Eigen::Vector3d>& q, double& cost,
-                          std::vector<Eigen::Vector3d>& gradient);
-  void calcWaypointsCost(const std::vector<Eigen::Vector3d>& q, double& cost,
-                         std::vector<Eigen::Vector3d>& gradient);
-  void calcViewCost(const std::vector<Eigen::Vector3d>& q, double& cost, std::vector<Eigen::Vector3d>& gradient);
+  void calcSmoothnessCost(const vector<Eigen::Vector3d>& q, double& cost,
+                          vector<Eigen::Vector3d>& gradient);
+  void calcDistanceCost(const vector<Eigen::Vector3d>& q, double& cost,
+                        vector<Eigen::Vector3d>& gradient);
+  void calcFeasibilityCost(const vector<Eigen::Vector3d>& q, double& cost,
+                           vector<Eigen::Vector3d>& gradient);
+  void calcEndpointCost(const vector<Eigen::Vector3d>& q, double& cost,
+                        vector<Eigen::Vector3d>& gradient);
+  void calcGuideCost(const vector<Eigen::Vector3d>& q, double& cost, vector<Eigen::Vector3d>& gradient);
+  void calcVisibilityCost(const vector<Eigen::Vector3d>& q, double& cost,
+                          vector<Eigen::Vector3d>& gradient);
+  void calcWaypointsCost(const vector<Eigen::Vector3d>& q, double& cost,
+                         vector<Eigen::Vector3d>& gradient);
+  void calcViewCost(const vector<Eigen::Vector3d>& q, double& cost, vector<Eigen::Vector3d>& gradient);
   bool isQuadratic();
 
   /* for benckmark evaluation only */
 public:
-  std::vector<double> vec_cost_;
-  std::vector<double> vec_time_;
-  rclcpp::Time        time_start_;
+  vector<double> vec_cost_;
+  vector<double> vec_time_;
+  ros::Time      time_start_;
 
-  void getCostCurve(std::vector<double>& cost, std::vector<double>& time) {
+  void getCostCurve(vector<double>& cost, vector<double>& time) {
     cost = vec_cost_;
     time = vec_time_;
   }
 
-  typedef std::unique_ptr<BsplineOptimizer> Ptr;
+  typedef unique_ptr<BsplineOptimizer> Ptr;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 }  // namespace fast_planner
-#endif  // BSPLINE_OPTIMIZER_HPP_
+#endif

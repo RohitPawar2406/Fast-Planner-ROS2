@@ -1,13 +1,40 @@
-#ifndef PLAN_CONTAINER_HPP_
-#define PLAN_CONTAINER_HPP_
+/**
+* This file is part of Fast-Planner.
+*
+* Copyright 2019 Boyu Zhou, Aerial Robotics Group, Hong Kong University of Science and Technology, <uav.ust.hk>
+* Developed by Boyu Zhou <bzhouai at connect dot ust dot hk>, <uv dot boyuzhou at gmail dot com>
+* for more information see <https://github.com/HKUST-Aerial-Robotics/Fast-Planner>.
+* If you use this code, please cite the respective publications as
+* listed on the above website.
+*
+* Fast-Planner is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Fast-Planner is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with Fast-Planner. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+
+#ifndef _PLAN_CONTAINER_H_
+#define _PLAN_CONTAINER_H_
 
 #include <Eigen/Eigen>
 #include <vector>
-
 #include "rclcpp/rclcpp.hpp"
-#include "bspline/non_uniform_bspline.h"
-#include "poly_traj/polynomial_traj.h"
-#include "path_searching/topo_prm.hpp"
+
+#include <bspline/non_uniform_bspline.h>
+#include <poly_traj/polynomial_traj.h>
+#include <path_searching/topo_prm.h>
+
+using std::vector;
 
 namespace fast_planner {
 
@@ -15,21 +42,21 @@ class GlobalTrajData {
 private:
 public:
   PolynomialTraj global_traj_;
-  std::vector<NonUniformBspline> local_traj_;
+  vector<NonUniformBspline> local_traj_;
 
   double global_duration_;
-  rclcpp::Time global_start_time_;
+  ros::Time global_start_time_;
   double local_start_time_, local_end_time_;
   double time_increase_;
   double last_time_inc_;
 
-  GlobalTrajData() {}
+  GlobalTrajData(/* args */) {}
 
   ~GlobalTrajData() {}
 
-  bool localTrajReachTarget() { return std::fabs(local_end_time_ - global_duration_) < 0.1; }
+  bool localTrajReachTarget() { return fabs(local_end_time_ - global_duration_) < 0.1; }
 
-  void setGlobalTraj(const PolynomialTraj& traj, const rclcpp::Time& time) {
+  void setGlobalTraj(const PolynomialTraj& traj, const ros::Time& time) {
     global_traj_ = traj;
     global_traj_.init();
     global_duration_ = global_traj_.getTimeSum();
@@ -95,7 +122,7 @@ public:
   // start_t: start time of the trajectory
   // dist_pt: distance between the discretized points
   void getTrajByRadius(const double& start_t, const double& des_radius, const double& dist_pt,
-                       std::vector<Eigen::Vector3d>& point_set, std::vector<Eigen::Vector3d>& start_end_derivative,
+                       vector<Eigen::Vector3d>& point_set, vector<Eigen::Vector3d>& start_end_derivative,
                        double& dt, double& seg_duration) {
     double seg_length = 0.0;  // length of the truncated segment
     double seg_time = 0.0;    // duration of the truncated segment
@@ -110,7 +137,7 @@ public:
 
     while (radius < des_radius && seg_time < global_duration_ - start_t - 1e-3) {
       seg_time += delt;
-      seg_time = std::min(seg_time, global_duration_ - start_t);
+      seg_time = min(seg_time, global_duration_ - start_t);
 
       cur_pt = getPosition(start_t + seg_time);
       seg_length += (cur_pt - prev_pt).norm();
@@ -119,7 +146,7 @@ public:
     }
 
     // get parameterization dt by desired density of points
-    int seg_num = std::floor(seg_length / dist_pt);
+    int seg_num = floor(seg_length / dist_pt);
 
     // get outputs
 
@@ -142,8 +169,8 @@ public:
   // duration: time length of the segment
   // seg_num: discretized the segment into *seg_num* parts
   void getTrajByDuration(double start_t, double duration, int seg_num,
-                         std::vector<Eigen::Vector3d>& point_set,
-                         std::vector<Eigen::Vector3d>& start_end_derivative, double& dt) {
+                         vector<Eigen::Vector3d>& point_set,
+                         vector<Eigen::Vector3d>& start_end_derivative, double& dt) {
     dt = duration / seg_num;
     Eigen::Vector3d cur_pt;
     for (double tp = 0.0; tp <= duration + 1e-4; tp += dt) {
@@ -177,7 +204,7 @@ struct LocalTrajData {
 
   int traj_id_;
   double duration_;
-  rclcpp::Time start_time_;
+  ros::Time start_time_;
   Eigen::Vector3d start_pos_;
   NonUniformBspline position_traj_, velocity_traj_, acceleration_traj_, yaw_traj_, yawdot_traj_,
       yawdotdot_traj_;
@@ -185,35 +212,35 @@ struct LocalTrajData {
 
 class MidPlanData {
 public:
-  MidPlanData() {}
+  MidPlanData(/* args */) {}
   ~MidPlanData() {}
 
-  std::vector<Eigen::Vector3d> global_waypoints_;
+  vector<Eigen::Vector3d> global_waypoints_;
 
   // initial trajectory segment
   NonUniformBspline initial_local_segment_;
-  std::vector<Eigen::Vector3d> local_start_end_derivative_;
+  vector<Eigen::Vector3d> local_start_end_derivative_;
 
   // kinodynamic path
-  std::vector<Eigen::Vector3d> kino_path_;
+  vector<Eigen::Vector3d> kino_path_;
 
   // topological paths
-  std::list<GraphNode::Ptr> topo_graph_;
-  std::vector<std::vector<Eigen::Vector3d>> topo_paths_;
-  std::vector<std::vector<Eigen::Vector3d>> topo_filtered_paths_;
-  std::vector<std::vector<Eigen::Vector3d>> topo_select_paths_;
+  list<GraphNode::Ptr> topo_graph_;
+  vector<vector<Eigen::Vector3d>> topo_paths_;
+  vector<vector<Eigen::Vector3d>> topo_filtered_paths_;
+  vector<vector<Eigen::Vector3d>> topo_select_paths_;
 
   // multiple topological trajectories
-  std::vector<NonUniformBspline> topo_traj_pos1_;
-  std::vector<NonUniformBspline> topo_traj_pos2_;
-  std::vector<NonUniformBspline> refines_;
+  vector<NonUniformBspline> topo_traj_pos1_;
+  vector<NonUniformBspline> topo_traj_pos2_;
+  vector<NonUniformBspline> refines_;
 
   // visibility constraint
-  std::vector<Eigen::Vector3d> block_pts_;
+  vector<Eigen::Vector3d> block_pts_;
   Eigen::MatrixXd ctrl_pts_;
 
   // heading planning
-  std::vector<double> path_yaw_;
+  vector<double> path_yaw_;
   double dt_yaw_;
   double dt_yaw_path_;
 
@@ -226,9 +253,9 @@ public:
     topo_select_paths_.clear();
   }
 
-  void addTopoPaths(std::list<GraphNode::Ptr>& graph, std::vector<std::vector<Eigen::Vector3d>>& paths,
-                    std::vector<std::vector<Eigen::Vector3d>>& filtered_paths,
-                    std::vector<std::vector<Eigen::Vector3d>>& selected_paths) {
+  void addTopoPaths(list<GraphNode::Ptr>& graph, vector<vector<Eigen::Vector3d>>& paths,
+                    vector<vector<Eigen::Vector3d>>& filtered_paths,
+                    vector<vector<Eigen::Vector3d>>& selected_paths) {
     topo_graph_ = graph;
     topo_paths_ = paths;
     topo_filtered_paths_ = filtered_paths;
@@ -238,4 +265,4 @@ public:
 
 }  // namespace fast_planner
 
-#endif  // PLAN_CONTAINER_HPP_
+#endif
