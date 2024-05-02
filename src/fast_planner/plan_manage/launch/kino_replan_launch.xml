@@ -9,9 +9,9 @@
 
   <!-- Way generator -->
   <node pkg="waypoint_generator" name="waypoint_generator1" exec="waypoint_generator" output="screen">
-    <remap from="odom" to="$(var odom_topic)"/>        
-    <remap from="goal" to="/move_base_simple/goal"/>
-    <remap from="traj_start_trigger" to="/traj_start_trigger" />
+    <!-- <remap from="/odom" to="$(var odom_topic)"/>        
+    <remap from="/goal" to="/move_base_simple/goal"/>
+    <remap from="traj_start_trigger" to="/traj_start_trigger" />  -->
     <param name="waypoint_type" value="manual-lonely-waypoint"/>    
   </node>
 

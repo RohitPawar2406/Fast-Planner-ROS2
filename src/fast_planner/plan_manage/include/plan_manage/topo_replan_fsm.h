@@ -4,26 +4,26 @@
 #include <Eigen/Eigen>
 #include <algorithm>
 #include <iostream>
-#include <nav_msgs/msg/Path.hpp>
+#include <nav_msgs/msg/path.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/Empty.hpp>
+#include <std_msgs/msg/empty.hpp>
 #include <vector>
-#include <visualization_msgs/msg/Marker.hpp>
+#include <visualization_msgs/msg/marker.hpp>
 
 #include <bspline_opt/bspline_optimizer.h>
 #include <path_searching/kinodynamic_astar.h>
-#include <plan_env/edt_environment.h>
-#include <plan_env/obj_predictor.h>
+#include <plan_env/edt_environment.hpp>
+#include <plan_env/obj_predictor.hpp>
 #include <plan_env/sdf_map.h>
-#include <plan_manage/Bspline.h>
+#include "quadrotor_msgs/msg/bspline.hpp"
 #include <plan_manage/planner_manager.h>
-#include <traj_utils/planning_visualization.h>
+#include <traj_utils/planning_visualization.hpp>
 
 using std::vector;
 
 namespace fast_planner {
 
-class TopoReplanFSM : public rclcpp::Node {
+class TopoReplanFSM {
 private:
   /* ---------- flag ---------- */
   enum FSM_EXEC_STATE { INIT, WAIT_TARGET, GEN_NEW_TRAJ, REPLAN_TRAJ, EXEC_TRAJ, REPLAN_NEW };
@@ -56,7 +56,7 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr waypoint_sub_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Publisher<std_msgs::msg::Empty>::SharedPtr replan_pub_, new_pub_;
-  rclcpp::Publisher<plan_manage::msg::Bspline>::SharedPtr bspline_pub_;
+  rclcpp::Publisher<quadrotor_msgs::msg::Bspline>::SharedPtr bspline_pub_;
 
   /* helper functions */
   bool callSearchAndOptimization();    // front-end and back-end method
@@ -68,16 +68,14 @@ private:
   /* ROS2 functions */
   void execFSMCallback();
   void checkCollisionCallback();
-  void waypointCallback(const nav_msgs::msg::Path::SharedPtr msg);
-  void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
+  void waypointCallback(const nav_msgs::msg::Path::SharedPtr& msg);
+  void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr& msg);
 
 public:
-  explicit TopoReplanFSM(const rclcpp::NodeOptions & options) : Node("topo_replan_fsm", options) {
-    init();
-  }
+  TopoReplanFSM() {}
   ~TopoReplanFSM() {}
 
-  void init();
+  void init(rclcpp::Node::SharedPtr &nh);
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

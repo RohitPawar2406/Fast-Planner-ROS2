@@ -67,5 +67,14 @@ target_link_libraries( traj_utils
   ${poly_traj_LIBRARIES}
 )  
 
+install(DIRECTORY include/
+  DESTINATION include/)  
 
+install(TARGETS traj_utils
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+ament_export_libraries(traj_utils)
+ament_export_include_directories(include)
 ament_package()

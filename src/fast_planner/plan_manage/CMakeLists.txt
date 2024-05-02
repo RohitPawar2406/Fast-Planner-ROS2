@@ -30,6 +30,7 @@ find_package(visualization_msgs REQUIRED)
 find_package(bspline REQUIRED)
 find_package(bspline_opt REQUIRED)
 find_package(path_searching REQUIRED)
+find_package(traj_utils REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(poly_traj REQUIRED)
 find_package(plan_env REQUIRED)
@@ -41,15 +42,20 @@ include_directories(include
   include/path_searching
   include/plan_env
   include/poly_traj
+  include/traj_utils
   ${Eigen3_INCLUDE_DIRS} 
   ${PCL_INCLUDE_DIRS}
   ${bspline_INCLUDE_DIRS}
   ${bspline_opt_INCLUDE_DIRS}
+  ${traj_utils_INCLUDE_DIRS}
 )  
 
 
 add_executable(fast_planner_node  
   src/planner_manager.cpp
+  src/kino_replan_fsm.cpp
+  #src/topo_replan_fsm.cpp
+  src/fast_planner_node.cpp
 )
 
 ament_target_dependencies(fast_planner_node 
@@ -63,7 +69,8 @@ ament_target_dependencies(fast_planner_node
   path_searching
   bspline
   bspline_opt
-
+  quadrotor_msgs
+  traj_utils
 )
 
 target_link_libraries(fast_planner_node
@@ -75,7 +82,6 @@ target_link_libraries(fast_planner_node
 install(TARGETS fast_planner_node
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
-
 
 install(DIRECTORY
   launch

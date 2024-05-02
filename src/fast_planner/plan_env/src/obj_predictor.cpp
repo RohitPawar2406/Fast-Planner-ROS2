@@ -159,7 +159,7 @@ void ObjPredictor::predictCallback() {
   predictConstVel();
 }
 
-void ObjPredictor::markerCallback(const visualization_msgs::msg::Marker::SharedPtr msg) {
+void ObjPredictor::markerCallback(const visualization_msgs::msg::Marker::SharedPtr &msg) {
   int idx = msg->id;
   (*obj_scale_)[idx](0) = msg->scale.x;
   (*obj_scale_)[idx](1) = msg->scale.y;

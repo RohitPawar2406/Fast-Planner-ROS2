@@ -668,5 +668,3 @@ void FastPlannerManager::calcNextYaw(const double& last_yaw, double& yaw) {
 
 
 }  // namespace fast_planner
-
-int main() {}

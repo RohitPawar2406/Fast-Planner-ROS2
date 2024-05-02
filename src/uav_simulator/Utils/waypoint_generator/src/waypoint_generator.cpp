@@ -35,7 +35,7 @@ public:
         };
 
         sub1 = this->create_subscription<nav_msgs::msg::Odometry>("odom", 10, odom_callback);
-        sub2 = this->create_subscription<geometry_msgs::msg::PoseStamped>("goal", 10, goal_callback);
+        sub2 = this->create_subscription<geometry_msgs::msg::PoseStamped>("/move_base_simple/goal", 10, goal_callback);
         sub3 = this->create_subscription<geometry_msgs::msg::PoseStamped>("traj_start_trigger", 10, traj_start_trigger_callback);
         pub1 = this->create_publisher<nav_msgs::msg::Path>("waypoints", 10);
         pub2 = this->create_publisher<geometry_msgs::msg::PoseArray>("waypoints_vis", 10);
