@@ -37,17 +37,8 @@ find_package(plan_env REQUIRED)
 find_package(NLopt REQUIRED)
 
 include_directories(include
-  include/bspline
-  include/bspline_opt
-  include/path_searching
-  include/plan_env
-  include/poly_traj
-  include/traj_utils
   ${Eigen3_INCLUDE_DIRS} 
   ${PCL_INCLUDE_DIRS}
-  ${bspline_INCLUDE_DIRS}
-  ${bspline_opt_INCLUDE_DIRS}
-  ${traj_utils_INCLUDE_DIRS}
 )  
 
 
@@ -90,5 +81,7 @@ install(DIRECTORY
 install(DIRECTORY include/
   DESTINATION include)          # this line works
 
+ament_export_include_directories(include)
+ament_export_libraries(plan_manage)
 ament_package()
 

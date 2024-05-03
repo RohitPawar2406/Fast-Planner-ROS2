@@ -17,20 +17,13 @@
   <depend>bspline_opt</depend>
   <depend>path_searching</depend>
   <depend>plan_env</depend>
+  <depend>traj_utils</depend>
   <depend>poly_traj</depend>
   <depend>quadrotor_msgs</depend>
   <exec_depend>ros2launch</exec_depend>
   
-
   <exec_depend>rvizvisualisation</exec_depend>  
-  <buildtool_depend>rosidl_default_generators</buildtool_depend>
 
-  <exec_depend>rosidl_default_runtime</exec_depend>
-
-  <member_of_group>rosidl_interface_packages</member_of_group>
-  
-  <member_of_group>rosidl_generator_packages</member_of_group>
-  <member_of_group>rosidl_runtime_packages</member_of_group>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

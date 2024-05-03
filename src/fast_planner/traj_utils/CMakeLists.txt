@@ -46,12 +46,9 @@ include_directories(
     ${poly_traj_INCLUDE_DIRS}
 )
 
-
-link_directories(${PCL_LIBRARY_DIRS})
-
 add_library( traj_utils
     src/planning_visualization.cpp 
-    )
+  )
 
 ament_target_dependencies(traj_utils
     rclcpp
@@ -61,11 +58,11 @@ ament_target_dependencies(traj_utils
     path_searching
     plan_env
     poly_traj
-    ) 
-target_link_libraries( traj_utils
-  ${bspline_LIBRARIES}
-  ${poly_traj_LIBRARIES}
-)  
+  ) 
+
+target_link_libraries(traj_utils
+  ${PCL_LIBRARIES}
+)
 
 install(DIRECTORY include/
   DESTINATION include/)  
