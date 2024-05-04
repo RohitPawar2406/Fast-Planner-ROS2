@@ -19,18 +19,31 @@ int main(int argc, char** argv) {
     node->declare_parameter<int>("planner_node/planner", -1);
     node->get_parameter("planner_node/planner", planner);
 
-    std::shared_ptr<TopoReplanFSM> topo_replan = std::make_shared<TopoReplanFSM>();
+        // topo_replan->init(node);
+    // std::shared_ptr<TopoReplanFSM> topo_replan = std::make_shared<TopoReplanFSM>();
     std::shared_ptr<KinoReplanFSM> kino_replan = std::make_shared<KinoReplanFSM>();
 
     if (planner == 1) {
         kino_replan->init(node);
     } else if (planner == 2) {
-        topo_replan->init(node);
+        std::cout << ("TOPO Commented for now ");
     }
 
-    rclcpp::sleep_for(std::chrono::seconds(1));
-    rclcpp::spin(node);
+    // rclcpp::executors::SingleThreadedExecutor executor;
+    // executor.add_node(node);
+    // executor.spin();
 
-    rclcpp::shutdown();
-    return 0;
+    rclcpp::executors::SingleThreadedExecutor exec;
+	exec.add_node(node);
+
+	auto spin_exec = [&exec]() {
+    	exec.spin();
+  	};
+
+    // rclcpp::sleep_for(std::chrono::seconds(1));
+    // rclcpp::spin(node);
+
+
+    // rclcpp::shutdown();
+    // return 0;
 }
