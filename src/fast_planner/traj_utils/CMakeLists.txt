@@ -46,7 +46,7 @@ include_directories(
     ${poly_traj_INCLUDE_DIRS}
 )
 
-add_library( traj_utils
+add_library( traj_utils SHARED
     src/planning_visualization.cpp 
   )
 
@@ -64,6 +64,11 @@ target_link_libraries(traj_utils
   ${PCL_LIBRARIES}
 )
 
+target_include_directories(traj_utils PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
+
+
 install(DIRECTORY include/
   DESTINATION include/)  
 
@@ -71,6 +76,7 @@ install(TARGETS traj_utils
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
 ament_export_libraries(traj_utils)
 ament_export_include_directories(include)
