@@ -10,37 +10,61 @@ namespace backward {
 }
 
 using namespace fast_planner;
-class MinimalPublisher : public rclcpp::Node
-{
-  public:
-    MinimalPublisher()
-    : Node("fast_planner_node")
-    {
-        int planner;
-        auto node_ = this;
-        std::shared_ptr<KinoReplanFSM> kino_replan = std::make_shared<KinoReplanFSM>();
-        this->declare_parameter<int>("planner_node/planner", -1);
-        this->get_parameter("planner_node/planner", planner); 
-        if (planner == 1) {
-            // kino_replan->init(node_->node_());
-        } 
-        // else if (planner == 2) {
-        //     std::cout << ("TOPO Commented for now ");
-    }
+// class MinimalPublisher : public rclcpp::Node
+// {
+//   public:
+//     MinimalPublisher()
+//     : Node("fast_planner_node")
+//     {
+//         int planner;
+//         auto node_ = this;
+//         std::shared_ptr<KinoReplanFSM> kino_replan = std::make_shared<KinoReplanFSM>();
+//         this->declare_parameter<int>("planner_node/planner", -1);
+//         this->get_parameter("planner_node/planner", planner); 
+//         if (planner == 1) {
+//             // kino_replan->init(node_->node_());
+//         } 
+//         // else if (planner == 2) {
+//         //     std::cout << ("TOPO Commented for now ");
+//     }
     
 
-  private:
-};
+//   private:
+// };
 
+
+// Example code.
+class ABCD {
+public:
+    ABCD() {}
+
+    void init(std::shared_ptr<rclcpp::Node> node) {
+        std::cout << "init hit " << std::endl;
+        node->get_parameter_or("param_name", param_value_, std::string("default_value"));
+    }
+
+private:
+  float t;
+  std::string param_value_;
+
+};
 int main(int argc, char** argv) {
 
     rclcpp::init(argc,argv);
-    std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_unique("fast_planner_node");
+    std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("fast_planner_node");
+    FastPlannerManager FPM;
+    FPM.initPlanModules(node);
+    ABCD t;
+    t.init(node);
+
+    // FPM.initPlanModules(node);
+    // KinoReplanFSM KRF;
+    // KRF.init(node);
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
 
-    // rclcpp::init(argc, argv);
+    //   void setParam(rclcpp::Node::SharedPtr& nh);
     // //auto node = rclcpp::Node::make_shared("fast_planner_node");
 
 
