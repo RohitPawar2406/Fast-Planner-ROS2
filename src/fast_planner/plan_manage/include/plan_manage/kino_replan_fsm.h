@@ -90,18 +90,16 @@ private:
   void printFSMExecState();
 
   /* ROS functions */
-  void execFSMCallback();
-  void checkCollisionCallback();
-  void waypointCallback(const nav_msgs::msg::Path::SharedPtr msg);
-  void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
+  // void execFSMCallback();
+  // void checkCollisionCallback();
+  // void waypointCallback(const nav_msgs::msg::Path::SharedPtr msg);
+  // void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
 
 public:
-  KinoReplanFSM(/* args */) {
-  }
-  ~KinoReplanFSM() {
-  }
+  KinoReplanFSM(/* args */);
+  ~KinoReplanFSM();
 
-  void init(rclcpp::Node::SharedPtr& nh);
+  void init(std::shared_ptr<rclcpp::Node> nh);
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

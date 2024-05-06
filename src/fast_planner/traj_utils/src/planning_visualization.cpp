@@ -4,7 +4,7 @@ using namespace std;
 
 namespace fast_planner {
 
-PlanningVisualization::PlanningVisualization(rclcpp::Node::SharedPtr& nh) {
+PlanningVisualization::PlanningVisualization(std::shared_ptr<rclcpp::Node> nh) {
   node = nh;
 
   traj_pub_ = node->create_publisher<visualization_msgs::msg::Marker>("/planning_vis/trajectory", 20);
@@ -145,99 +145,99 @@ void PlanningVisualization::displayLineList(const vector<Eigen::Vector3d>& list1
   rclcpp::sleep_for(std::chrono::milliseconds(1));
 }
 
-void PlanningVisualization::drawBsplinesPhase1(vector<NonUniformBspline>& bsplines, double size) {
-  vector<Eigen::Vector3d> empty;
+//  void PlanningVisualization::drawBsplinesPhase1(vector<NonUniformBspline>& bsplines, double size) {
+//   vector<Eigen::Vector3d> empty;
 
-  for (int i = 0; i < last_bspline_phase1_num_; ++i) {
-    displaySphereList(empty, size, Eigen::Vector4d(1, 0, 0, 1), BSPLINE + i % 100);
-    displaySphereList(empty, size, Eigen::Vector4d(1, 0, 0, 1), BSPLINE_CTRL_PT + i % 100);
-  }
-  last_bspline_phase1_num_ = bsplines.size();
+//   for (int i = 0; i < last_bspline_phase1_num_; ++i) {
+//     displaySphereList(empty, size, Eigen::Vector4d(1, 0, 0, 1), BSPLINE + i % 100);
+//     displaySphereList(empty, size, Eigen::Vector4d(1, 0, 0, 1), BSPLINE_CTRL_PT + i % 100);
+//   }
+//   last_bspline_phase1_num_ = bsplines.size();
 
-  for (int i = 0; i < bsplines.size(); ++i) {
-    drawBspline(bsplines[i], size, getColor(double(i) / bsplines.size(), 0.2), false, 2 * size,
-                getColor(double(i) / bsplines.size()), i, i);
-  }
-}
+//   for (int i = 0; i < bsplines.size(); ++i) {
+//     drawBspline(bsplines[i], size, getColor(double(i) / bsplines.size(), 0.2), false, 2 * size,
+//                 getColor(double(i) / bsplines.size()), i, i);
+//   }
+// }
 
-void PlanningVisualization::drawBsplinesPhase2(vector<NonUniformBspline>& bsplines, double size) {
-  vector<Eigen::Vector3d> empty;
+// void PlanningVisualization::drawBsplinesPhase2(vector<NonUniformBspline>& bsplines, double size) {
+//   vector<Eigen::Vector3d> empty;
 
-  for (int i = 0; i < last_bspline_phase2_num_; ++i) {
-    displaySphereList(empty, size, Eigen::Vector4d(1, 0, 0, 1), BSPLINE + (50 + i) % 100);
-    displaySphereList(empty, size, Eigen::Vector4d(1, 0, 0, 1), BSPLINE_CTRL_PT + (50 + i) % 100);
-  }
-  last_bspline_phase2_num_ = bsplines.size();
+//   for (int i = 0; i < last_bspline_phase2_num_; ++i) {
+//     displaySphereList(empty, size, Eigen::Vector4d(1, 0, 0, 1), BSPLINE + (50 + i) % 100);
+//     displaySphereList(empty, size, Eigen::Vector4d(1, 0, 0, 1), BSPLINE_CTRL_PT + (50 + i) % 100);
+//   }
+//   last_bspline_phase2_num_ = bsplines.size();
 
-  for (int i = 0; i < bsplines.size(); ++i) {
-    drawBspline(bsplines[i], size, getColor(double(i) / bsplines.size(), 0.3), false, 1.5 * size,
-                getColor(double(i) / bsplines.size()), 50 + i, 50 + i);
-  }
-}
+//   for (int i = 0; i < bsplines.size(); ++i) {
+//     drawBspline(bsplines[i], size, getColor(double(i) / bsplines.size(), 0.3), false, 1.5 * size,
+//                 getColor(double(i) / bsplines.size()), 50 + i, 50 + i);
+//   }
+// }
 
-void PlanningVisualization::drawBspline(NonUniformBspline& bspline, double size,
-                                        const Eigen::Vector4d& color, bool show_ctrl_pts, double size2,
-                                        const Eigen::Vector4d& color2, int id1, int id2) {
-  if (bspline.getControlPoint().size() == 0) return;
+// void PlanningVisualization::drawBspline(NonUniformBspline& bspline, double size,
+//                                         const Eigen::Vector4d& color, bool show_ctrl_pts, double size2,
+//                                         const Eigen::Vector4d& color2, int id1, int id2) {
+//   if (bspline.getControlPoint().size() == 0) return;
 
-  vector<Eigen::Vector3d> traj_pts;
-  double tm, tmp;
-  bspline.getTimeSpan(tm, tmp);
+//   vector<Eigen::Vector3d> traj_pts;
+//   double tm, tmp;
+//   bspline.getTimeSpan(tm, tmp);
 
-  for (double t = tm; t <= tmp; t += 0.01) {
-    Eigen::Vector3d pt = bspline.evaluateDeBoor(t);
-    traj_pts.push_back(pt);
-  }
-  displaySphereList(traj_pts, size, color, BSPLINE + id1 % 100);
+//   for (double t = tm; t <= tmp; t += 0.01) {
+//     Eigen::Vector3d pt = bspline.evaluateDeBoor(t);
+//     traj_pts.push_back(pt);
+//   }
+//   displaySphereList(traj_pts, size, color, BSPLINE + id1 % 100);
 
-  // draw the control point
-  if (!show_ctrl_pts) return;
+//   // draw the control point
+//   if (!show_ctrl_pts) return;
 
-  Eigen::MatrixXd ctrl_pts = bspline.getControlPoint();
-  vector<Eigen::Vector3d> ctp;
+//   Eigen::MatrixXd ctrl_pts = bspline.getControlPoint();
+//   vector<Eigen::Vector3d> ctp;
 
-  for (int i = 0; i < int(ctrl_pts.rows()); ++i) {
-    Eigen::Vector3d pt = ctrl_pts.row(i).transpose();
-    ctp.push_back(pt);
-  }
+//   for (int i = 0; i < int(ctrl_pts.rows()); ++i) {
+//     Eigen::Vector3d pt = ctrl_pts.row(i).transpose();
+//     ctp.push_back(pt);
+//   }
 
-  displaySphereList(ctp, size2, color2, BSPLINE_CTRL_PT + id2 % 100);
-}
+//   displaySphereList(ctp, size2, color2, BSPLINE_CTRL_PT + id2 % 100);
+// }
 
-void PlanningVisualization::drawTopoGraph(list<GraphNode::Ptr>& graph, double point_size,
-                                          double line_width, const Eigen::Vector4d& color1,
-                                          const Eigen::Vector4d& color2, const Eigen::Vector4d& color3,
-                                          int id) {
+// void PlanningVisualization::drawTopoGraph(list<GraphNode::Ptr>& graph, double point_size,
+//                                           double line_width, const Eigen::Vector4d& color1,
+//                                           const Eigen::Vector4d& color2, const Eigen::Vector4d& color3,
+//                                           int id) {
   // clear exsiting node and edge (drawn last time)
-  vector<Eigen::Vector3d> empty;
-  displaySphereList(empty, point_size, color1, GRAPH_NODE, 1);
-  displaySphereList(empty, point_size, color1, GRAPH_NODE + 50, 1);
-  displayLineList(empty, empty, line_width, color3, GRAPH_EDGE, 1);
+//   vector<Eigen::Vector3d> empty;
+//   displaySphereList(empty, point_size, color1, GRAPH_NODE, 1);
+//   displaySphereList(empty, point_size, color1, GRAPH_NODE + 50, 1);
+//   displayLineList(empty, empty, line_width, color3, GRAPH_EDGE, 1);
 
-  /* draw graph node */
-  vector<Eigen::Vector3d> guards, connectors;
-  for (list<GraphNode::Ptr>::iterator iter = graph.begin(); iter != graph.end(); ++iter) {
+//   /* draw graph node */
+//   vector<Eigen::Vector3d> guards, connectors;
+//   for (list<GraphNode::Ptr>::iterator iter = graph.begin(); iter != graph.end(); ++iter) {
 
-    if ((*iter)->type_ == GraphNode::Guard) {
-      guards.push_back((*iter)->pos_);
-    } else if ((*iter)->type_ == GraphNode::Connector) {
-      connectors.push_back((*iter)->pos_);
-    }
-  }
-  displaySphereList(guards, point_size, color1, GRAPH_NODE, 1);
-  displaySphereList(connectors, point_size, color2, GRAPH_NODE + 50, 1);
+//     if ((*iter)->type_ == GraphNode::Guard) {
+//       guards.push_back((*iter)->pos_);
+//     } else if ((*iter)->type_ == GraphNode::Connector) {
+//       connectors.push_back((*iter)->pos_);
+//     }
+//   }
+//   displaySphereList(guards, point_size, color1, GRAPH_NODE, 1);
+//   displaySphereList(connectors, point_size, color2, GRAPH_NODE + 50, 1);
 
-  /* draw graph edge */
-  vector<Eigen::Vector3d> edge_pt1, edge_pt2;
-  for (list<GraphNode::Ptr>::iterator iter = graph.begin(); iter != graph.end(); ++iter) {
-    for (int k = 0; k < (*iter)->neighbors_.size(); ++k) {
+//   /* draw graph edge */
+//   vector<Eigen::Vector3d> edge_pt1, edge_pt2;
+//   for (list<GraphNode::Ptr>::iterator iter = graph.begin(); iter != graph.end(); ++iter) {
+//     for (int k = 0; k < (*iter)->neighbors_.size(); ++k) {
 
-      edge_pt1.push_back((*iter)->pos_);
-      edge_pt2.push_back((*iter)->neighbors_[k]->pos_);
-    }
-  }
-  displayLineList(edge_pt1, edge_pt2, line_width, color3, GRAPH_EDGE, 1);
-}
+//       edge_pt1.push_back((*iter)->pos_);
+//       edge_pt2.push_back((*iter)->neighbors_[k]->pos_);
+//     }
+//   }
+//   displayLineList(edge_pt1, edge_pt2, line_width, color3, GRAPH_EDGE, 1);
+// }
 
 void PlanningVisualization::drawTopoPathsPhase2(vector<vector<Eigen::Vector3d>>& paths,
                                                 double                           line_width) {
@@ -300,71 +300,71 @@ void PlanningVisualization::drawGeometricPath(const vector<Eigen::Vector3d>& pat
   displaySphereList(path, resolution, color, PATH + id % 100);
 }
 
-void PlanningVisualization::drawPolynomialTraj(PolynomialTraj poly_traj, double resolution,
-                                               const Eigen::Vector4d& color, int id) {
-  poly_traj.init();
-  vector<Eigen::Vector3d> poly_pts = poly_traj.getTraj();
-  displaySphereList(poly_pts, resolution, color, POLY_TRAJ + id % 100);
-}
-
-void PlanningVisualization::drawPrediction(ObjPrediction pred, double resolution,
-                                           const Eigen::Vector4d& color, int id) {
-  auto time_now = node->now();
-  double start_time = (time_now - ObjHistory::global_start_time_).seconds();
-  const double range = 5.6;
-
-  vector<Eigen::Vector3d> traj;
-  for (int i = 0; i < pred->size(); i++) {
-
-    PolynomialPrediction poly = pred->at(i);
-    if (!poly.valid()) continue;
-
-    for (double t = start_time; t <= start_time + range; t += 0.8) {
-      Eigen::Vector3d pt = poly.evaluateConstVel(t);
-      traj.push_back(pt);
-    }
-  }
-  displaySphereList(traj, resolution, color, id % 100, 2);
-}
-
-void PlanningVisualization::drawYawTraj(NonUniformBspline& pos, NonUniformBspline& yaw,
-                                        const double& dt) {
-  double duration = pos.getTimeSum();
-  vector<Eigen::Vector3d> pts1, pts2;
-
-  for (double tc = 0.0; tc <= duration + 1e-3; tc += dt) {
-    Eigen::Vector3d pc = pos.evaluateDeBoorT(tc);
-    pc[2] += 0.15;
-    double yc = yaw.evaluateDeBoorT(tc)[0];
-    Eigen::Vector3d dir(cos(yc), sin(yc), 0);
-    Eigen::Vector3d pdir = pc + 1.0 * dir;
-    pts1.push_back(pc);
-    pts2.push_back(pdir);
-  }
-  displayLineList(pts1, pts2, 0.04, Eigen::Vector4d(1, 0.5, 0, 1), 0, 5);
-}
-
-void PlanningVisualization::drawYawPath(NonUniformBspline& pos, const vector<double>& yaw,
-                                        const double& dt) {
-  vector<Eigen::Vector3d> pts1, pts2;
-
-  for (int i = 0; i < yaw.size(); ++i) {
-    Eigen::Vector3d pc = pos.evaluateDeBoorT(i * dt);
-    pc[2] += 0.3;
-    Eigen::Vector3d dir(cos(yaw[i]), sin(yaw[i]), 0);
-    Eigen::Vector3d pdir = pc + 1.0 * dir;
-    pts1.push_back(pc);
-    pts2.push_back(pdir);
-  }
-  displayLineList(pts1, pts2, 0.04, Eigen::Vector4d(1, 0.5, 0, 1), 0, 5);
-}
-
-// void PlanningVisualization::displayBSplineTrajectory(const vector<NonUniformBspline>& bsplines,
-//                                                      const double& size) {
-//   for (size_t i = 0; i < bsplines.size(); ++i) {
-//     drawBspline(bsplines[i], size, Eigen::Vector4d(1, 1, 0, 1), true, 1.5 * size, Eigen::Vector4d(1, 1, 0, 1), i, i);
-//   }
+// void PlanningVisualization::drawPolynomialTraj(PolynomialTraj poly_traj, double resolution,
+//                                                const Eigen::Vector4d& color, int id) {
+//   poly_traj.init();
+//   vector<Eigen::Vector3d> poly_pts = poly_traj.getTraj();
+//   displaySphereList(poly_pts, resolution, color, POLY_TRAJ + id % 100);
 // }
+
+// void PlanningVisualization::drawPrediction(ObjPrediction pred, double resolution,
+//                                            const Eigen::Vector4d& color, int id) {
+//   auto time_now = node->now();
+//   double start_time = (time_now - ObjHistory::global_start_time_).seconds();
+//   const double range = 5.6;
+
+//   vector<Eigen::Vector3d> traj;
+//   for (int i = 0; i < pred->size(); i++) {
+
+//     PolynomialPrediction poly = pred->at(i);
+//     if (!poly.valid()) continue;
+
+//     for (double t = start_time; t <= start_time + range; t += 0.8) {
+//       Eigen::Vector3d pt = poly.evaluateConstVel(t);
+//       traj.push_back(pt);
+//     }
+//   }
+//   displaySphereList(traj, resolution, color, id % 100, 2);
+// }
+
+// void PlanningVisualization::drawYawTraj(NonUniformBspline& pos, NonUniformBspline& yaw,
+//                                         const double& dt) {
+//   double duration = pos.getTimeSum();
+//   vector<Eigen::Vector3d> pts1, pts2;
+
+//   for (double tc = 0.0; tc <= duration + 1e-3; tc += dt) {
+//     Eigen::Vector3d pc = pos.evaluateDeBoorT(tc);
+//     pc[2] += 0.15;
+//     double yc = yaw.evaluateDeBoorT(tc)[0];
+//     Eigen::Vector3d dir(cos(yc), sin(yc), 0);
+//     Eigen::Vector3d pdir = pc + 1.0 * dir;
+//     pts1.push_back(pc);
+//     pts2.push_back(pdir);
+//   }
+//   displayLineList(pts1, pts2, 0.04, Eigen::Vector4d(1, 0.5, 0, 1), 0, 5);
+// }
+
+// void PlanningVisualization::drawYawPath(NonUniformBspline& pos, const vector<double>& yaw,
+//                                         const double& dt) {
+//   vector<Eigen::Vector3d> pts1, pts2;
+
+//   for (int i = 0; i < yaw.size(); ++i) {
+//     Eigen::Vector3d pc = pos.evaluateDeBoorT(i * dt);
+//     pc[2] += 0.3;
+//     Eigen::Vector3d dir(cos(yaw[i]), sin(yaw[i]), 0);
+//     Eigen::Vector3d pdir = pc + 1.0 * dir;
+//     pts1.push_back(pc);
+//     pts2.push_back(pdir);
+//   }
+//   displayLineList(pts1, pts2, 0.04, Eigen::Vector4d(1, 0.5, 0, 1), 0, 5);
+// }
+
+// // void PlanningVisualization::displayBSplineTrajectory(const vector<NonUniformBspline>& bsplines,
+// //                                                      const double& size) {
+// //   for (size_t i = 0; i < bsplines.size(); ++i) {
+// //     drawBspline(bsplines[i], size, Eigen::Vector4d(1, 1, 0, 1), true, 1.5 * size, Eigen::Vector4d(1, 1, 0, 1), i, i);
+// //   }
+// // }
 
 Eigen::Vector4d PlanningVisualization::getColor(double value, double alpha) {
   // Jet color map

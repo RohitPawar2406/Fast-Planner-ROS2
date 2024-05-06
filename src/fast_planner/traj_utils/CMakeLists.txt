@@ -54,6 +54,7 @@ ament_target_dependencies(traj_utils
     rclcpp
     rclpy
     std_msgs
+    visualization_msgs
     bspline
     path_searching
     plan_env
