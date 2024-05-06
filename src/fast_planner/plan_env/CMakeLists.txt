@@ -38,8 +38,8 @@ include_directories(
 
 add_library( plan_env SHARED
     src/sdf_map.cpp 
-    src/obj_predictor.cpp 
-    src/edt_environment.cpp 
+    # src/obj_predictor.cpp 
+    # src/edt_environment.cpp 
     src/raycast.cpp
   )
 target_include_directories(plan_env PUBLIC
@@ -50,6 +50,17 @@ add_executable(obj_generator
     src/obj_generator.cpp 
 )
 
+add_executable(test_plan_env 
+  src/test_plan_env.cpp
+)
+
+target_link_libraries(test_plan_env
+  plan_env
+)
+
+install(TARGETS test_plan_env
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 
 ament_target_dependencies(plan_env 

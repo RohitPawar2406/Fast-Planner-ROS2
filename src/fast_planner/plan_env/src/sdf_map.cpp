@@ -29,7 +29,9 @@
 // #define last_img_ md_.depth_image_[!(image_cnt_ & 1)]
 
 void SDFMap::initMap(rclcpp::Node::SharedPtr node) {
-    node_ = node;
+  RCLCPP_INFO(node->get_logger(), "Entered sdf entry point ! ");
+
+  node_ = node;
 
   /* get parameter */
   double x_size, y_size, z_size;
@@ -76,91 +78,91 @@ void SDFMap::initMap(rclcpp::Node::SharedPtr node) {
   node_->get_parameter_or("sdf_map/local_map_margin", mp_.local_map_margin_, 1);
   node_->get_parameter_or("sdf_map/ground_height", mp_.ground_height_, 1.0);
 
-  // Initialize other parameters
-    mp_.local_bound_inflate_ = std::max(mp_.resolution_, mp_.local_bound_inflate_);
-    mp_.resolution_inv_ = 1 / mp_.resolution_;
-    mp_.map_origin_ = Eigen::Vector3d(-x_size / 2.0, -y_size / 2.0, mp_.ground_height_);
-    mp_.map_size_ = Eigen::Vector3d(x_size, y_size, z_size);
+  // // Initialize other parameters
+  //   mp_.local_bound_inflate_ = std::max(mp_.resolution_, mp_.local_bound_inflate_);
+  //   mp_.resolution_inv_ = 1 / mp_.resolution_;
+  //   mp_.map_origin_ = Eigen::Vector3d(-x_size / 2.0, -y_size / 2.0, mp_.ground_height_);
+  //   mp_.map_size_ = Eigen::Vector3d(x_size, y_size, z_size);
 
-    // Initialize buffers
-    int buffer_size = mp_.map_voxel_num_(0) * mp_.map_voxel_num_(1) * mp_.map_voxel_num_(2);
-    md_.occupancy_buffer_ = std::vector<double>(buffer_size, mp_.clamp_min_log_ - mp_.unknown_flag_);
-    // Initialize other buffers...
+  //   // Initialize buffers
+  //   int buffer_size = mp_.map_voxel_num_(0) * mp_.map_voxel_num_(1) * mp_.map_voxel_num_(2);
+  //   md_.occupancy_buffer_ = std::vector<double>(buffer_size, mp_.clamp_min_log_ - mp_.unknown_flag_);
+  //   // Initialize other buffers...
 
-    // Initialize subscribers and publishers
-    depth_sub_ = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>();
-    depth_sub_->subscribe(node_.get(), "/sdf_map/depth");
-    //depth_sub_.subscribe(node_.get(), "/sdf_map/depth");
-    //
-    // depth_sub_ = <node_->create_subscription<sensor_msgs::msg::Image>(
-    // "/sdf_map/depth", 50, std::bind(&SDFMap::depthCallback, this, std::placeholders::_1));
+  //   // Initialize subscribers and publishers
+  //   depth_sub_ = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>();
+  //   depth_sub_->subscribe(node_.get(), "/sdf_map/depth");
+  //   //depth_sub_.subscribe(node_.get(), "/sdf_map/depth");
+  //   //
+  //   // depth_sub_ = <node_->create_subscription<sensor_msgs::msg::Image>(
+  //   // "/sdf_map/depth", 50, std::bind(&SDFMap::depthCallback, this, std::placeholders::_1));
 
-    if (mp_.pose_type_ == POSE_STAMPED) {
-        // pose_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
-        //     "/sdf_map/pose", 25, std::bind(&SDFMap::poseCallback, this, std::placeholders::_1));
-      //pose_sub_ = std::make_shared<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>>(node_.get(), "/sdf_map/pose", 25);
-      pose_sub_ = std::make_shared<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>>();
-      pose_sub_->subscribe(node_.get(), "/sdf_map/pose");
-      sync_image_pose_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImagePose>>(std::move(SyncPolicyImagePose(3)),*depth_sub_, *pose_sub_);
-      sync_image_pose_->registerCallback(std::bind(&SDFMap::depthPoseCallback, this, std::placeholders::_1,std::placeholders::_2 ));
+  //   if (mp_.pose_type_ == POSE_STAMPED) {
+  //       // pose_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
+  //       //     "/sdf_map/pose", 25, std::bind(&SDFMap::poseCallback, this, std::placeholders::_1));
+  //     //pose_sub_ = std::make_shared<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>>(node_.get(), "/sdf_map/pose", 25);
+  //     pose_sub_ = std::make_shared<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>>();
+  //     pose_sub_->subscribe(node_.get(), "/sdf_map/pose");
+  //     sync_image_pose_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImagePose>>(std::move(SyncPolicyImagePose(3)),*depth_sub_, *pose_sub_);
+  //     sync_image_pose_->registerCallback(std::bind(&SDFMap::depthPoseCallback, this, std::placeholders::_1,std::placeholders::_2 ));
 
-    } else if (mp_.pose_type_ == ODOMETRY) {
-        // odom_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
-        //     "/sdf_map/odom", 100, std::bind(&SDFMap::odomCallback, this, std::placeholders::_1));
-        //odom_sub_ = std::make_shared<message_filters::Subscriber<nav_msgs::msg::Odometry>>(node_.get(), "/sdf_map/odom", 100);
+  //   } else if (mp_.pose_type_ == ODOMETRY) {
+  //       // odom_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
+  //       //     "/sdf_map/odom", 100, std::bind(&SDFMap::odomCallback, this, std::placeholders::_1));
+  //       //odom_sub_ = std::make_shared<message_filters::Subscriber<nav_msgs::msg::Odometry>>(node_.get(), "/sdf_map/odom", 100);
 
-        odom_sub_ = std::make_shared<message_filters::Subscriber<nav_msgs::msg::Odometry>>();
-        odom_sub_->subscribe(node_.get(), "/sdf_map/odom");
+  //       odom_sub_ = std::make_shared<message_filters::Subscriber<nav_msgs::msg::Odometry>>();
+  //       odom_sub_->subscribe(node_.get(), "/sdf_map/odom");
 
-        sync_image_odom_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImageOdom>>(std::move(SyncPolicyImageOdom(3)),*depth_sub_, *odom_sub_);
-        sync_image_odom_->registerCallback(std::bind(&SDFMap::depthOdomCallback, this, std::placeholders::_1,std::placeholders::_2));
-    }
+  //       sync_image_odom_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImageOdom>>(std::move(SyncPolicyImageOdom(3)),*depth_sub_, *odom_sub_);
+  //       sync_image_odom_->registerCallback(std::bind(&SDFMap::depthOdomCallback, this, std::placeholders::_1,std::placeholders::_2));
+  //   }
 
-    indep_cloud_sub_ = node_->create_subscription<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/cloud", 10, std::bind(&SDFMap::cloudCallback, this, std::placeholders::_1));
-    indep_odom_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
-        "/sdf_map/odom", 10, std::bind(&SDFMap::odomCallback, this, std::placeholders::_1));
+  //   indep_cloud_sub_ = node_->create_subscription<sensor_msgs::msg::PointCloud2>(
+  //       "/sdf_map/cloud", 10, std::bind(&SDFMap::cloudCallback, this, std::placeholders::_1));
+  //   indep_odom_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
+  //       "/sdf_map/odom", 10, std::bind(&SDFMap::odomCallback, this, std::placeholders::_1));
 
-    map_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/occupancy", 10);
-    map_inf_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/occupancy_inflate", 10);
-    esdf_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/esdf", 10);
-    update_range_pub_ = node_->create_publisher<visualization_msgs::msg::Marker>(
-        "/sdf_map/update_range", 10);
-    unknown_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/unknown", 10);
-    depth_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/depth_cloud", 10);
+  //   map_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
+  //       "/sdf_map/occupancy", 10);
+  //   map_inf_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
+  //       "/sdf_map/occupancy_inflate", 10);
+  //   esdf_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
+  //       "/sdf_map/esdf", 10);
+  //   update_range_pub_ = node_->create_publisher<visualization_msgs::msg::Marker>(
+  //       "/sdf_map/update_range", 10);
+  //   unknown_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
+  //       "/sdf_map/unknown", 10);
+  //   depth_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
+  //       "/sdf_map/depth_cloud", 10);
 
-    // Initialize timers
-    occ_timer_ = node_->create_wall_timer(
-        50ms, std::bind(&SDFMap::updateOccupancyCallback, this));
-    esdf_timer_ = node_->create_wall_timer(
-        50ms, std::bind(&SDFMap::updateESDFCallback, this));
-    vis_timer_ = node_->create_wall_timer(
-        50ms, std::bind(&SDFMap::visCallback, this));
+  //   // Initialize timers
+  //   occ_timer_ = node_->create_wall_timer(
+  //       50ms, std::bind(&SDFMap::updateOccupancyCallback, this));
+  //   esdf_timer_ = node_->create_wall_timer(
+  //       50ms, std::bind(&SDFMap::updateESDFCallback, this));
+  //   vis_timer_ = node_->create_wall_timer(
+  //       50ms, std::bind(&SDFMap::visCallback, this));
 
-    // Initialize variables
-    md_.occ_need_update_ = false;
-    md_.local_updated_ = false;
-    md_.esdf_need_update_ = false;
-    md_.has_first_depth_ = false;
-    md_.has_odom_ = false;
-    md_.has_cloud_ = false;
-    md_.image_cnt_ = 0;
+  //   // Initialize variables
+  //   md_.occ_need_update_ = false;
+  //   md_.local_updated_ = false;
+  //   md_.esdf_need_update_ = false;
+  //   md_.has_first_depth_ = false;
+  //   md_.has_odom_ = false;
+  //   md_.has_cloud_ = false;
+  //   md_.image_cnt_ = 0;
 
-    md_.esdf_time_ = 0.0;
-    md_.fuse_time_ = 0.0;
-    md_.update_num_ = 0;
-    md_.max_esdf_time_ = 0.0;
-    md_.max_fuse_time_ = 0.0;
+  //   md_.esdf_time_ = 0.0;
+  //   md_.fuse_time_ = 0.0;
+  //   md_.update_num_ = 0;
+  //   md_.max_esdf_time_ = 0.0;
+  //   md_.max_fuse_time_ = 0.0;
 
-    rand_noise_ = std::uniform_real_distribution<double>(-0.2, 0.2);
-    rand_noise2_ = std::normal_distribution<double>(0, 0.2);
-    std::random_device rd;
-    eng_ = std::default_random_engine(rd());
+  //   rand_noise_ = std::uniform_real_distribution<double>(-0.2, 0.2);
+  //   rand_noise2_ = std::normal_distribution<double>(0, 0.2);
+  //   std::random_device rd;
+  //   eng_ = std::default_random_engine(rd());
 }
 
 void SDFMap::resetBuffer() {

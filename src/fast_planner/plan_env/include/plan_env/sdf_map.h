@@ -164,9 +164,9 @@ struct MappingData {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-class SDFMap : public rclcpp::Node {
+class SDFMap {
 public:
-  SDFMap() : Node("sdf_map") {
+  SDFMap() {
     //initSubscribersAndPublishers();
   }
   ~SDFMap() {}
