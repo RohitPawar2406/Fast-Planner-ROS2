@@ -7,7 +7,7 @@
 #include <vector>
 #include <rclcpp/rclcpp.hpp>
 #include <visualization_msgs/msg/marker.hpp>
-// #include <bspline/non_uniform_bspline.h>
+#include <bspline/non_uniform_bspline.h>
 // #include <poly_traj/polynomial_traj.h>
 #include <iostream>
 // #include <path_searching/topo_prm.hpp> NOT TO DO
@@ -71,14 +71,11 @@ public:
     //                         int id = 0);
 
     // draw a bspline trajectory
-    // void drawBspline(NonUniformBspline& bspline, double size, const Eigen::Vector4d& color,
-    //                  bool show_ctrl_pts = false, double size2 = 0.1,
-    //                  const Eigen::Vector4d& color2 = Eigen::Vector4d(1, 1, 0, 1), int id1 = 0,
-    //                  int id2 = 0);
+    void drawBspline(NonUniformBspline& bspline, double size,const Eigen::Vector4d& color, bool show_ctrl_pts, double size2, const Eigen::Vector4d& color2, int id1, int id2);
 
     // draw a set of bspline trajectories generated in different phases
-    // void drawBsplinesPhase1(std::vector<NonUniformBspline>& bsplines, double size);
-    // void drawBsplinesPhase2(std::vector<NonUniformBspline>& bsplines, double size);
+    void drawBsplinesPhase1(std::vector<NonUniformBspline>& bsplines, double size);
+    void drawBsplinesPhase2(std::vector<NonUniformBspline>& bsplines, double size);
 
     // draw topological graph and paths
     // void drawTopoGraph(std::list<GraphNode::Ptr>& graph, double point_size, double line_width,
@@ -95,9 +92,10 @@ public:
 
     typedef std::shared_ptr<PlanningVisualization> Ptr;
 
+    void displayBSplineTrajectory(vector<NonUniformBspline>& bsplines, const double& size);
     // SECTION developing
-    // void drawYawTraj(NonUniformBspline& pos, NonUniformBspline& yaw, const double& dt);
-    // void drawYawPath(NonUniformBspline& pos, const std::vector<double>& yaw, const double& dt);
+    void drawYawTraj(NonUniformBspline& pos, NonUniformBspline& yaw, const double& dt);
+    void drawYawPath(NonUniformBspline& pos, const std::vector<double>& yaw, const double& dt);
 };
 
 }  // namespace fast_planner
