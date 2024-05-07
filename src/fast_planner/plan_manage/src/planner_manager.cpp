@@ -22,6 +22,19 @@ FastPlannerManager::~FastPlannerManager() {
 void FastPlannerManager::initPlanModules(std::shared_ptr<rclcpp::Node> &nh) {
   /* read algorithm parameters */
 
+  nh->declare_parameter<float>("manager/max_vel", 0.0);
+  nh->declare_parameter<float>("manager/max_acc", 0.0);
+  nh->declare_parameter<float>("manager/max_jerk", 0.0);
+  nh->declare_parameter<int>("manager/dynamic_environment", 0);
+  nh->declare_parameter<float>("manager/local_segment_length", 0.0);
+  nh->declare_parameter<float>("manager/clearance_threshold", 0.0);
+  nh->declare_parameter<float>("manager/control_points_distance", 0.0);
+  nh->declare_parameter<bool>("manager/use_geometric_path", "false");
+  nh->declare_parameter<bool>("manager/use_kinodynamic_path", "false");
+  nh->declare_parameter<bool>("manager/use_topo_path", "false");
+  nh->declare_parameter<bool>("manager/use_optimization", "false");
+
+
   nh->get_parameter_or("manager/max_vel", pp_.max_vel_, -1.0);
   nh->get_parameter_or("manager/max_acc", pp_.max_acc_, -1.0);
   nh->get_parameter_or("manager/max_jerk", pp_.max_jerk_, -1.0);

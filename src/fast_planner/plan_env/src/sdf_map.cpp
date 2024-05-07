@@ -33,6 +33,43 @@ void SDFMap::initMap(std::shared_ptr<rclcpp::Node> &node) {
   node_ = node;
   RCLCPP_INFO(node_->get_logger(), "Entered sdf entry point ! ");
 
+  node->declare_parameter<float>("sdf_map/resolution", 0.5);
+  node->declare_parameter<float>("sdf_map/map_size_x", 0.5);
+  node->declare_parameter<float>("sdf_map/map_size_y", 0.5);
+  node->declare_parameter<float>("sdf_map/map_size_z", 0.5);
+  node->declare_parameter<float>("sdf_map/local_update_range_x", 0.5);
+  node->declare_parameter<float>("sdf_map/local_update_range_y", 0.5);
+  node->declare_parameter<float>("sdf_map/local_update_range_z", 0.5);
+  node->declare_parameter<float>("sdf_map/obstacles_inflation", 0.5);
+  node->declare_parameter<float>("sdf_map/local_bound_inflate", 0.5);
+  node->declare_parameter<int>("sdf_map/local_map_margin", 5);
+  node->declare_parameter<float>("sdf_map/ground_height", 0.5);
+  node->declare_parameter<float>("sdf_map/cx", 0.5);
+  node->declare_parameter<float>("sdf_map/cy", 0.5);
+  node->declare_parameter<float>("sdf_map/fx", 0.5);
+  node->declare_parameter<float>("sdf_map/fy", 0.5);
+  node->declare_parameter<bool>("sdf_map/use_depth_filter", "true");
+  node->declare_parameter<float>("sdf_map/depth_filter_tolerance", 0.5);
+  node->declare_parameter<float>("sdf_map/depth_filter_maxdist", 0.5);
+  node->declare_parameter<float>("sdf_map/depth_filter_mindist", 0.5);
+  node->declare_parameter<int>("sdf_map/depth_filter_margin", 1);
+  node->declare_parameter<float>("sdf_map/k_depth_scaling_factor", 0.5);
+  node->declare_parameter<int>("sdf_map/skip_pixel", 0.5);
+  node->declare_parameter<float>("sdf_map/p_hit", 0.5);
+  node->declare_parameter<float>("sdf_map/p_miss", 0.5);
+  node->declare_parameter<float>("sdf_map/p_min", 0.5);
+  node->declare_parameter<float>("sdf_map/p_max", 0.5);
+  node->declare_parameter<float>("sdf_map/p_occ", 0.5);
+  node->declare_parameter<float>("sdf_map/min_ray_length", 0.5);
+  node->declare_parameter<float>("sdf_map/max_ray_length", 0.5);
+  node->declare_parameter<float>("sdf_map/esdf_slice_height", 0.5);
+  node->declare_parameter<float>("sdf_map/visualization_truncate_height", 0.5);
+  node->declare_parameter<float>("sdf_map/virtual_ceil_height", 0.5);
+  node->declare_parameter<bool>("sdf_map/show_occ_time", 0.5);
+  node->declare_parameter<bool>("sdf_map/show_esdf_time", 0.5);
+  node->declare_parameter<int>("sdf_map/pose_type", 0);
+  node->declare_parameter<string>("sdf_map/frame_id", "map");
+
   /* get parameter */
   double x_size, y_size, z_size;
   node_->get_parameter_or("sdf_map/resolution", mp_.resolution_, -1.0);
@@ -182,6 +219,8 @@ void SDFMap::initMap(std::shared_ptr<rclcpp::Node> &node) {
         "/sdf_map/cloud", 10, std::bind(&SDFMap::cloudCallback, this, std::placeholders::_1));
     indep_odom_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
         "/sdf_map/odom", 10, std::bind(&SDFMap::odomCallback, this, std::placeholders::_1));
+
+    RCLCPP_INFO(node_->get_logger(), "Entered sdf entry point  subscriber check .....! ");
 
     map_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
         "/sdf_map/occupancy", 10);
@@ -858,7 +897,7 @@ void SDFMap::odomCallback(nav_msgs::msg::Odometry::ConstSharedPtr odom) {
     md_.has_odom_ = true;
 }
 
-void SDFMap::cloudCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr img) {
+void SDFMap::cloudCallback(const sensor_msgs::msg::PointCloud2::SharedPtr img) {
     pcl::PointCloud<pcl::PointXYZ> latest_cloud;
     pcl::fromROSMsg(*img, latest_cloud);
 

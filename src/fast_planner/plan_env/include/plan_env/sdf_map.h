@@ -240,7 +240,7 @@ private:
     void depthPoseCallback(const sensor_msgs::msg::Image::ConstSharedPtr img,const geometry_msgs::msg::PoseStamped::ConstSharedPtr pose);
     void depthOdomCallback(const sensor_msgs::msg::Image::ConstSharedPtr img, const nav_msgs::msg::Odometry::ConstSharedPtr odom);
     void depthCallback(const sensor_msgs::msg::Image::SharedPtr img);
-    void cloudCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr img);
+    void cloudCallback(const sensor_msgs::msg::PointCloud2::SharedPtr img);
     void poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr pose);
     void odomCallback(nav_msgs::msg::Odometry::ConstSharedPtr odom);
 

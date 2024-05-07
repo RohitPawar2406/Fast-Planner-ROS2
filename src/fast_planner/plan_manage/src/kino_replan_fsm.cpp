@@ -29,15 +29,16 @@ void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> &nh) {
   nh->get_parameter("fsm/waypoint_num", waypoint_num_);
 
   //waypoints_.resize(waypoint_num_);
-  for (int i = 0; i < waypoint_num_; i++) {
-      nh->declare_parameter("fsm/waypoint" + std::to_string(i) + "_x", -1.0);
-      nh->declare_parameter("fsm/waypoint" + std::to_string(i) + "_y", -1.0);
-      nh->declare_parameter("fsm/waypoint" + std::to_string(i) + "_z", -1.0);
+  nh->declare_parameter("fsm/waypoint0_x", -1.0);
+  nh->declare_parameter("fsm/waypoint0_y", -1.0);
+  nh->declare_parameter("fsm/waypoint0_z", -1.0);
+  nh->declare_parameter("fsm/waypoint1_x", -1.0);
+  nh->declare_parameter("fsm/waypoint1_y", -1.0);
+  nh->declare_parameter("fsm/waypoint1_z", -1.0);
+  nh->declare_parameter("fsm/waypoint2_x", -1.0);
+  nh->declare_parameter("fsm/waypoint2_y", -1.0);
+  nh->declare_parameter("fsm/waypoint2_z", -1.0);
 
-      nh->get_parameter("fsm/waypoint" + std::to_string(i) + "_x", waypoints_[i][0]);
-      nh->get_parameter("fsm/waypoint" + std::to_string(i) + "_y", waypoints_[i][1]);
-      nh->get_parameter("fsm/waypoint" + std::to_string(i) + "_z", waypoints_[i][2]);
-  }
 
   //////////////////////// DOUBTS - NEXT 3 lines
   std::shared_ptr<FastPlannerManager> planner_manager_ = std::make_shared<FastPlannerManager>();

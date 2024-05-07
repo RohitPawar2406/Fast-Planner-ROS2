@@ -62,6 +62,11 @@ install(TARGETS test_plan_env
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 
 ament_target_dependencies(plan_env 
   rclcpp
@@ -106,7 +111,7 @@ ament_export_dependencies(
     # std_msgs
     # visualization_msgs
     # cv_bridge
-    # message_filters
+    message_filters
     Eigen3
     PCL
     OpenCV

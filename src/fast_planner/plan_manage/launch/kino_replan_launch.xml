@@ -90,7 +90,7 @@
     <param name="fsm/waypoint2_y" value="$(var point2_y)" type="float"/>
     <param name="fsm/waypoint2_z" value="$(var point2_z)" type="float"/>
 
-    <param name="sdf_map/resolution"   value="0.1" /> 
+    <param name="sdf_map/resolution"   value="0.45" /> 
     <param name="sdf_map/map_size_x"   value="$(var map_size_x_)" /> 
     <param name="sdf_map/map_size_y"   value="$(var map_size_y_)" /> 
     <param name="sdf_map/map_size_z"   value="$(var map_size_z_)" /> 
@@ -188,9 +188,6 @@
     <param name="bspline/limit_acc" value="$(var max_acc)" type="float"/>
     <param name="bspline/limit_ratio" value="1.1" type="float"/>
 
-    <param name="bspline/limit_vel" value="$(var max_vel)" type="float"/>
-    <param name="bspline/limit_acc" value="$(var max_acc)" type="float"/>
-    <param name="bspline/limit_ratio" value="1.1" type="float"/>
 
   </node>
     
