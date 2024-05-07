@@ -8,10 +8,10 @@
 #include <rclcpp/rclcpp.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include <bspline/non_uniform_bspline.h>
-// #include <poly_traj/polynomial_traj.h>
+#include <poly_traj/polynomial_traj.h>
 #include <iostream>
 // #include <path_searching/topo_prm.hpp> NOT TO DO
-// #include <plan_env/obj_predictor.hpp>
+#include <plan_env/obj_predictor.hpp>
 
 
 namespace fast_planner {
@@ -67,8 +67,8 @@ public:
                            const Eigen::Vector4d& color, int id = 0);
 
     // draw a polynomial trajectory
-    // void drawPolynomialTraj(PolynomialTraj poly_traj, double resolution, const Eigen::Vector4d& color,
-    //                         int id = 0);
+    void drawPolynomialTraj(PolynomialTraj poly_traj, double resolution, const Eigen::Vector4d& color,
+                            int id = 0);
 
     // draw a bspline trajectory
     void drawBspline(NonUniformBspline& bspline, double size,const Eigen::Vector4d& color, bool show_ctrl_pts, double size2, const Eigen::Vector4d& color2, int id1, int id2);
@@ -86,7 +86,7 @@ public:
     void drawTopoPathsPhase2(std::vector<std::vector<Eigen::Vector3d>>& paths, double line_width);
 
     void drawGoal(Eigen::Vector3d goal, double resolution, const Eigen::Vector4d& color, int id = 0);
-    //void drawPrediction(ObjPrediction pred, double resolution, const Eigen::Vector4d& color, int id = 0);
+    // void drawPrediction(ObjPrediction pred, double resolution, const Eigen::Vector4d& color, int id = 0);
 
     Eigen::Vector4d getColor(double h, double alpha = 1.0);
 

@@ -8,7 +8,7 @@
 // #include <path_searching/kinodynamic_astar.h>
 // #include <path_searching/topo_prm.hpp>
 
-// #include <plan_env/edt_environment.hpp>
+#include <plan_env/edt_environment.hpp>
 
 #include <plan_manage/plan_container.hpp>
 
@@ -34,20 +34,20 @@ public:
 
   // void planYaw(const Eigen::Vector3d& start_yaw);
 
-  void initPlanModules(std::shared_ptr<rclcpp::Node> node);
+  void initPlanModules(std::shared_ptr<rclcpp::Node> &node);
   // void setGlobalWaypoints(std::vector<Eigen::Vector3d>& waypoints);
 
   // bool checkTrajCollision(double& distance);
 
   PlanParameters pp_;
-  // LocalTrajData local_data_;
-  // GlobalTrajData global_data_;
-  // MidPlanData plan_data_;
-  // EDTEnvironment::Ptr edt_environment_;
+  LocalTrajData local_data_;
+  GlobalTrajData global_data_;
+  MidPlanData plan_data_;
+  EDTEnvironment::Ptr edt_environment_;
 
 private:
   /* main planning algorithms & modules */
-  // SDFMap::Ptr sdf_map_;
+  SDFMap::Ptr sdf_map_;
 
   // unique_ptr<Astar> geo_path_finder_;
   // unique_ptr<KinodynamicAstar> kino_path_finder_;

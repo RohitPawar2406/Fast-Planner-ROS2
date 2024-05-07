@@ -39,7 +39,7 @@ include_directories(
 add_library( plan_env SHARED
     src/sdf_map.cpp 
     # src/obj_predictor.cpp 
-    # src/edt_environment.cpp 
+    src/edt_environment.cpp 
     src/raycast.cpp
   )
 target_include_directories(plan_env PUBLIC

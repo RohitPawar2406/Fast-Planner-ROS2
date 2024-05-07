@@ -94,8 +94,7 @@ struct MappingParameters {
 
   /* raycasting */
   double p_hit_, p_miss_, p_min_, p_max_, p_occ_;  // occupancy probability
-  double prob_hit_log_, prob_miss_log_, clamp_min_log_, clamp_max_log_,
-      min_occupancy_log_;                   // logit of occupancy probability
+  double prob_hit_log_, prob_miss_log_, clamp_min_log_, clamp_max_log_, min_occupancy_log_;                   // logit of occupancy probability
   double min_ray_length_, max_ray_length_;  // range of doing raycasting
 
   /* local map update and clear */
@@ -208,7 +207,7 @@ public:
   void getSliceESDF(const double height, const double res, const Eigen::Vector4d& range,
                     vector<Eigen::Vector3d>& slice, vector<Eigen::Vector3d>& grad,
                     int sign = 1);  // 1 pos, 2 neg, 3 combined
-  void initMap(rclcpp::Node::SharedPtr node) ;
+  void initMap(std::shared_ptr<rclcpp::Node> &node) ;
   void initSubscribersAndPublishers();
 
   void publishMap();
@@ -234,7 +233,6 @@ public:
 private:
   MappingParameters mp_;
   MappingData md_;
-
   template <typename F_get_val, typename F_set_val>
   void fillESDF(F_get_val f_get_val, F_set_val f_set_val, int start, int end, int dim);
 
@@ -244,7 +242,7 @@ private:
     void depthCallback(const sensor_msgs::msg::Image::SharedPtr img);
     void cloudCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr img);
     void poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr pose);
-    void odomCallback(const nav_msgs::msg::Odometry::ConstSharedPtr odom);
+    void odomCallback(nav_msgs::msg::Odometry::ConstSharedPtr odom);
 
   // update occupancy by raycasting, and update ESDF
     void updateOccupancyCallback();
@@ -271,8 +269,7 @@ typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::msg::Image,
 typedef std::shared_ptr<message_filters::Synchronizer<SyncPolicyImagePose>> SynchronizerImagePose;
 typedef std::shared_ptr<message_filters::Synchronizer<SyncPolicyImageOdom>> SynchronizerImageOdom;
 
-rclcpp::Node::SharedPtr node_;
-std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image>> depth_sub_;
+std::shared_ptr<rclcpp::Node> node_;std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image>> depth_sub_;
 std::shared_ptr<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>> pose_sub_;
 std::shared_ptr<message_filters::Subscriber<nav_msgs::msg::Odometry>> odom_sub_;
 SynchronizerImagePose sync_image_pose_;

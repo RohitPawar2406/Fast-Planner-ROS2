@@ -300,12 +300,12 @@ void PlanningVisualization::drawGeometricPath(const vector<Eigen::Vector3d>& pat
   displaySphereList(path, resolution, color, PATH + id % 100);
 }
 
-// void PlanningVisualization::drawPolynomialTraj(PolynomialTraj poly_traj, double resolution,
-//                                                const Eigen::Vector4d& color, int id) {
-//   poly_traj.init();
-//   vector<Eigen::Vector3d> poly_pts = poly_traj.getTraj();
-//   displaySphereList(poly_pts, resolution, color, POLY_TRAJ + id % 100);
-// }
+void PlanningVisualization::drawPolynomialTraj(PolynomialTraj poly_traj, double resolution,
+                                               const Eigen::Vector4d& color, int id) {
+  poly_traj.init();
+  vector<Eigen::Vector3d> poly_pts = poly_traj.getTraj();
+  displaySphereList(poly_pts, resolution, color, POLY_TRAJ + id % 100);
+}
 
 // void PlanningVisualization::drawPrediction(ObjPrediction pred, double resolution,
 //                                            const Eigen::Vector4d& color, int id) {

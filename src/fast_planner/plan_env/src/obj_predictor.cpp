@@ -42,7 +42,8 @@ void ObjHistory::poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr m
 ObjPredictor::ObjPredictor(/* args */) {
 }
 
-ObjPredictor::ObjPredictor(rclcpp::Node::SharedPtr node) : node_handle_(node) {
+ObjPredictor::ObjPredictor(rclcpp::Node::SharedPtr node) {
+  node_handle_ = node;
 }
 
 ObjPredictor::~ObjPredictor() {

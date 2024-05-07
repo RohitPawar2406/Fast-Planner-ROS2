@@ -19,7 +19,7 @@ FastPlannerManager::~FastPlannerManager() {
   std::cout << "des manager" << std::endl;
 }
 
-void FastPlannerManager::initPlanModules(std::shared_ptr<rclcpp::Node> nh) {
+void FastPlannerManager::initPlanModules(std::shared_ptr<rclcpp::Node> &nh) {
   /* read algorithm parameters */
 
   nh->get_parameter_or("manager/max_vel", pp_.max_vel_, -1.0);
@@ -36,11 +36,11 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<rclcpp::Node> nh) {
   nh->get_parameter_or("manager/use_topo_path", use_topo_path, false);
   nh->get_parameter_or("manager/use_optimization", use_optimization, false);
 
-  // local_data_.traj_id_ = 0;
-  // sdf_map_.reset(new SDFMap);
-  // sdf_map_->initMap(nh);
-  // edt_environment_.reset(new EDTEnvironment);
-  // edt_environment_->setMap(sdf_map_);
+  local_data_.traj_id_ = 0;
+  sdf_map_.reset(new SDFMap);
+  sdf_map_->initMap(nh);
+  edt_environment_.reset(new EDTEnvironment);
+  edt_environment_->setMap(sdf_map_);
 
   // if (use_geometric_path) {
   //   geo_path_finder_.reset(new Astar);

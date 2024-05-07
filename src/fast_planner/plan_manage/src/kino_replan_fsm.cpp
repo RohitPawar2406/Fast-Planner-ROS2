@@ -12,7 +12,7 @@ KinoReplanFSM::~KinoReplanFSM() {
   std::cout << "KinoReplanFSM ended ! " << std::endl;
 }
 
-void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> nh) {
+void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> &nh) {
   current_wp_  = 0;
   exec_state_  = FSM_EXEC_STATE::INIT;
   have_target_ = false;
@@ -40,8 +40,8 @@ void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> nh) {
   }
 
   //////////////////////// DOUBTS - NEXT 3 lines
-  // std::shared_ptr<FastPlannerManager> planner_manager_ = std::make_shared<FastPlannerManager>();
-  // planner_manager_->initPlanModules(nh);
+  std::shared_ptr<FastPlannerManager> planner_manager_ = std::make_shared<FastPlannerManager>();
+  planner_manager_->initPlanModules(nh);
   std::shared_ptr<PlanningVisualization> visualization_ = std::make_shared<PlanningVisualization>(nh);
 
   // exec_timer_ = nh->create_wall_timer(std::chrono::milliseconds(10), std::bind(&KinoReplanFSM::execFSMCallback, this));
