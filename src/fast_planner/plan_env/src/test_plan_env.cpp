@@ -38,13 +38,6 @@ NodeClass::NodeClass()
     publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
     timer_ = this->create_wall_timer(
         500ms, std::bind(&NodeClass::timer_callback, this));
-
-    // Create a shared pointer to NodeClass_Client
-    auto node_class_client_ptr = std::make_shared<NodeClass_Client>();
-
-    // Call the init function of NodeClass_Client
-    node_class_client_ptr->init();
-
 }
 
 void NodeClass::timer_callback()
@@ -59,7 +52,12 @@ void NodeClass::timer_callback()
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<NodeClass>());
+  auto node_class = std::make_shared<NodeClass>();
+  auto node_class_client = std::make_shared<NodeClass_Client>();
+  node_class_client->init(node_class);
+
+  rclcpp::spin(node_class);
+
   rclcpp::shutdown();
   return 0;
 }

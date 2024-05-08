@@ -3,7 +3,8 @@
 NodeClass_Client::NodeClass_Client()
 {}
 
-void NodeClass_Client::init() {
+void NodeClass_Client::init(std::shared_ptr<NodeClass> node_class) {
+    node_class_ = node_class;
     subscription_ = node_class_->create_subscription<std_msgs::msg::String>(
         "topic_subs", 10, std::bind(&NodeClass_Client::topic_callback, this, std::placeholders::_1));
 }
