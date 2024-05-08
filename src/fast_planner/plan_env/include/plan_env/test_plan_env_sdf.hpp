@@ -5,13 +5,16 @@
 #include "std_msgs/msg/string.hpp"
 #include "plan_env/test_plan_env.hpp"
 
-class Node2
+class NodeClass_Client
 {
     public:
-        Node2();
-        void messageCallback(const std_msgs::msg::String::SharedPtr msg); 
-        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subs;
+        NodeClass_Client();
+        void init();
+        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
         std::shared_ptr<NodeClass> node_class_ = std::make_shared<NodeClass>();
+    private:
+        void topic_callback(const std_msgs::msg::String::SharedPtr msg) const; 
+        
         
 };
 

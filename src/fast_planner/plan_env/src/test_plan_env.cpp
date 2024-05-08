@@ -22,17 +22,44 @@
 #include"plan_env/test_plan_env.hpp"
 #include"plan_env/test_plan_env_sdf.hpp"
 
-NodeClass::NodeClass(): Node("my_node_class")
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <string>
+
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
+
+using namespace std::chrono_literals;
+
+NodeClass::NodeClass()
+: Node("my_node_class"), count_(0)
 {
-    Node2 g1;
-    g1.init();
+    publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
+    timer_ = this->create_wall_timer(
+        500ms, std::bind(&NodeClass::timer_callback, this));
+
+    // Create a shared pointer to NodeClass_Client
+    auto node_class_client_ptr = std::make_shared<NodeClass_Client>();
+
+    // Call the init function of NodeClass_Client
+    node_class_client_ptr->init();
+
 }
 
-int main(int argc, char** argv)
+void NodeClass::timer_callback()
 {
-    rclcpp::init(argc, argv);
+    auto message = std_msgs::msg::String();
+    message.data = "Hello, world! " + std::to_string(count_++);
+    RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
+    publisher_->publish(message);
+}
 
-    rclcpp::spin(std::shared_ptr<NodeClass>());
 
-    rclcpp::shutdown();
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<NodeClass>());
+  rclcpp::shutdown();
+  return 0;
 }
