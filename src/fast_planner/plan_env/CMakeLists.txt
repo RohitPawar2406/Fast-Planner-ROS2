@@ -41,6 +41,7 @@ add_library( plan_env SHARED
     # src/obj_predictor.cpp 
     src/edt_environment.cpp 
     src/raycast.cpp
+    src/test_plan_env_sdf.cpp
   )
 target_include_directories(plan_env PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

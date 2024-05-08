@@ -12,7 +12,7 @@ KinoReplanFSM::~KinoReplanFSM() {
   std::cout << "KinoReplanFSM ended ! " << std::endl;
 }
 
-void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> &nh) {
+void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> nh) {
   current_wp_  = 0;
   exec_state_  = FSM_EXEC_STATE::INIT;
   have_target_ = false;

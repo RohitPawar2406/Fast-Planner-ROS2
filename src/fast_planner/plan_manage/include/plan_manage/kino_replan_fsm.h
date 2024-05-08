@@ -99,7 +99,7 @@ public:
   KinoReplanFSM(/* args */);
   ~KinoReplanFSM();
 
-  void init(std::shared_ptr<rclcpp::Node> &nh);
+  void init(std::shared_ptr<rclcpp::Node> nh);
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

@@ -19,10 +19,31 @@ void call_back(const std_msgs::msg::String::SharedPtr msg){
 
 using namespace fast_planner;
 
+class FastPlannerNode: public rclcpp::Node
+{
+    public:
+        FastPlannerNode():Node("fast_planner_node1")
+        {
+            this->declare_parameter<int>("planner_node/planner", -1);
+            rclcpp::Parameter planner_param = this->get_parameter("planner_node/planner"); 
+            int planner = planner_param.as_int();
+
+            // # Initialize the kino Class
+            std::shared_ptr<KinoReplanFSM> kino_replan = std::make_shared<KinoReplanFSM>();
+            if (planner == 1) {
+                kino_replan->init(this->shared_from_this());
+            } 
+            // else if (planner == 2) {
+            //     std::cout << ("TOPO Commented for now ");
+            // }
+        }
+};
+
+
 int main(int argc, char** argv) {
 
     rclcpp::init(argc,argv);
-    std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("fast_planner_node");
+    //std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("fast_planner_node");
 
     // std::shared_ptr<rclcpp::Publisher<std_msgs::msg::String>> publisher_;
     // publisher_ =node->create_publisher<std_msgs::msg::String>("asd", 1);
@@ -31,29 +52,29 @@ int main(int argc, char** argv) {
 
     // size_t count_ = 0;
 
-    node->declare_parameter<float>("bspline/limit_vel", 0);
-    node->declare_parameter<float>("bspline/limit_acc", 0);
-    node->declare_parameter<float>("bspline/limit_ratio", 0);
+    // node->declare_parameter<float>("bspline/limit_vel", 0);
+    // node->declare_parameter<float>("bspline/limit_acc", 0);
+    // node->declare_parameter<float>("bspline/limit_ratio", 0);
 
-    node->declare_parameter<int>("planner_node/planner", -1);
-    rclcpp::Parameter planner_param = node->get_parameter("planner_node/planner"); 
+    // node->declare_parameter<int>("planner_node/planner", -1);
+    // rclcpp::Parameter planner_param = node->get_parameter("planner_node/planner"); 
 
     
-    int planner = planner_param.as_int();
-    RCLCPP_INFO(node->get_logger(), "The planner value is (int) : %s",
-                planner_param.value_to_string().c_str());
+    // int planner = planner_param.as_int();
+    // RCLCPP_INFO(node->get_logger(), "The planner value is (int) : %s",
+    //             planner_param.value_to_string().c_str());
 
     // # Initialize the kino Class
-    std::shared_ptr<KinoReplanFSM> kino_replan = std::make_shared<KinoReplanFSM>();
+    // std::shared_ptr<KinoReplanFSM> kino_replan = std::make_shared<KinoReplanFSM>();
 
-    if (planner == 1) {
-        kino_replan->init(node);
-    } else if (planner == 2) {
-        std::cout << ("TOPO Commented for now ");
-    }
+    // if (planner == 1) {
+    //     kino_replan->init(node);
+    // } else if (planner == 2) {
+    //     std::cout << ("TOPO Commented for now ");
+    // }
 
-    std::shared_ptr<rclcpp::Subscription<std_msgs::msg::String>> publisher_;
-    publisher_ = node->create_subscription<std_msgs::msg::String>("/asdddd", 10, call_back);
+    // std::shared_ptr<rclcpp::Subscription<std_msgs::msg::String>> publisher_;
+    // publisher_ = node->create_subscription<std_msgs::msg::String>("/asdddd", 10, call_back);
 
     // while(rclcpp::ok()){
     //     str.data = "Hello! " + std::to_string(count_++);
@@ -62,7 +83,8 @@ int main(int argc, char** argv) {
     //     loop_rate.sleep();
     //     rclcpp::spin_some(node);
     // }
-    rclcpp::spin(node);
+    //rclcpp::spin(node);
+    rclcpp::spin(std::make_shared<FastPlannerNode>());
     rclcpp::shutdown();
     return 0;
 }
