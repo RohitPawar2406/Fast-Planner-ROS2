@@ -13,7 +13,7 @@
 #include <plan_manage/plan_container.hpp>
 
 #include "rclcpp/rclcpp.hpp"
-#include <plan_manage/fast_planner.h>
+#include <fast_planner/fast_planner.h>
 // #include <bspline_opt/bspline_optimizer.h>
 
 class FastPlanner;

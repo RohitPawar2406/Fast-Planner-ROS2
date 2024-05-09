@@ -19,7 +19,7 @@
 #include <plan_manage/planner_manager.h>
 #include <traj_utils/planning_visualization.hpp>
 
-#include <plan_manage/fast_planner.h>
+#include <fast_planner/fast_planner.h>
 
 using std::vector;
 

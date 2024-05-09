@@ -1,9 +1,4 @@
-#include <plan_manage/fast_planner.h>
-
-namespace backward {
-    backward::SignalHandling sh;
-}
-
+#include <fast_planner/fast_planner.h>
 
 FastPlanner::FastPlanner()
     : Node("fast_planner_node"), count_(0)

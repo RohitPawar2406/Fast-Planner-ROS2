@@ -1,5 +1,5 @@
 
-#include <plan_manage/fast_planner.h>
+#include <fast_planner/fast_planner.h>
 #include <plan_manage/kino_replan_fsm.h>
 
 using namespace fast_planner;

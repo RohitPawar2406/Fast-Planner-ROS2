@@ -1,29 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>plan_manage</name>
+  <name>fast_planner</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="bbt1203@gmail.com">drone</maintainer>
+  <maintainer email="charvi077@gmail.com">charvi</maintainer>
   <license>TODO: License declaration</license>
+
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
-  <depend>nav_msgs</depend>
-  <depend>visualization_msgs</depend>
-  <depend>geometry_msgs</depend>
-  <depend>bspline</depend>
-  <depend>bspline_opt</depend>
-  <depend>path_searching</depend>
-  <depend>plan_env</depend>
-  <depend>traj_utils</depend>
-  <depend>poly_traj</depend>
-  <depend>fast_planner</depend>
-  <depend>quadrotor_msgs</depend>
-  <exec_depend>ros2launch</exec_depend>
-  
-  <exec_depend>rvizvisualisation</exec_depend>  
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

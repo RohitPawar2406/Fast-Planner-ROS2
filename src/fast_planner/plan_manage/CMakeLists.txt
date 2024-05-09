@@ -29,6 +29,7 @@ find_package(nav_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(bspline REQUIRED)
 find_package(bspline_opt REQUIRED)
+find_package(fast_planner REQUIRED)
 find_package(path_searching REQUIRED)
 find_package(traj_utils REQUIRED)
 find_package(cv_bridge REQUIRED)
@@ -45,7 +46,6 @@ include_directories(include
 add_executable(fast_planner_node  
   src/planner_manager.cpp
   src/kino_replan_fsm.cpp
-  src/fast_planner.cpp
   #src/topo_replan_fsm.cpp
   src/fast_planner_node.cpp
 )
@@ -63,6 +63,7 @@ ament_target_dependencies(fast_planner_node
   bspline_opt
   quadrotor_msgs
   traj_utils
+  fast_planner
 )
 
 target_link_libraries(fast_planner_node
