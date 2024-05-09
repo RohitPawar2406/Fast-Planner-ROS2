@@ -19,9 +19,12 @@
 #include <plan_manage/planner_manager.h>
 #include <traj_utils/planning_visualization.hpp>
 
-#include <plan_manage/fast_planner_node.h>
+#include <plan_manage/fast_planner.h>
 
 using std::vector;
+
+class FastPlanner;
+class FastPlannerManager;
 
 namespace fast_planner {
 
@@ -54,7 +57,7 @@ private:
   enum TARGET_TYPE { MANUAL_TARGET = 1, PRESET_TARGET = 2, REFENCE_PATH = 3 };
 
   /* planning utils */
-  FastPlannerManager::Ptr planner_manager_;
+  std::shared_ptr<FastPlannerManager> planner_manager_;
   PlanningVisualization::Ptr visualization_;
 
   /* parameters */

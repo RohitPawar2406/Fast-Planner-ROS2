@@ -13,7 +13,10 @@
 #include <plan_manage/plan_container.hpp>
 
 #include "rclcpp/rclcpp.hpp"
+#include <plan_manage/fast_planner.h>
 // #include <bspline_opt/bspline_optimizer.h>
+
+class FastPlanner;
 
 namespace fast_planner {
 
@@ -34,7 +37,7 @@ public:
 
   // void planYaw(const Eigen::Vector3d& start_yaw);
 
-  void initPlanModules(std::shared_ptr<rclcpp::Node> &node);
+  void initPlanModules(std::shared_ptr<FastPlanner> nh);
   // void setGlobalWaypoints(std::vector<Eigen::Vector3d>& waypoints);
 
   // bool checkTrajCollision(double& distance);

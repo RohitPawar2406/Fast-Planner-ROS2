@@ -1,39 +1,8 @@
-#include "rclcpp/rclcpp.hpp"
-#include <visualization_msgs/msg/marker.hpp>
 
-#include "plan_manage/kino_replan_fsm.h"
-#include "plan_manage/topo_replan_fsm.h"
-#include "plan_manage/fast_planner_node.h"
-
-#include "plan_manage/backward.hpp"
-
-#include <string>
-#include "std_msgs/msg/string.hpp"
-
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
+#include <plan_manage/fast_planner.h>
+#include <plan_manage/kino_replan_fsm.h>
 
 using namespace fast_planner;
-
-namespace backward {
-    backward::SignalHandling sh;
-}
-
-FastPlanner::FastPlanner()
-    : Node("fast_planner_node"), count_(0)
-{
-    publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
-    timer_ = this->create_wall_timer(
-        500ms, std::bind(&FastPlanner::timer_callback, this));
-}
-
-void FastPlanner::timer_callback()
-{
-    auto message = std_msgs::msg::String();
-    message.data = "Hello, world! " + std::to_string(count_++);
-    RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
-    publisher_->publish(message);
-}
 
 int main(int argc, char * argv[])
 {
