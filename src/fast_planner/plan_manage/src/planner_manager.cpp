@@ -50,8 +50,8 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
   nh->get_parameter_or("manager/use_optimization", use_optimization, false);
 
   local_data_.traj_id_ = 0;
-  // sdf_map_.reset(new SDFMap);
-  // sdf_map_->initMap(nh);
+  sdf_map_.reset(new SDFMap);
+  sdf_map_->initMap(nh);
   // edt_environment_.reset(new EDTEnvironment);
   // edt_environment_->setMap(sdf_map_);
 

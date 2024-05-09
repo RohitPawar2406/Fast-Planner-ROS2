@@ -65,11 +65,11 @@
 
   <!-- main node -->
   <node pkg="plan_manage" name="fast_planner_node" exec="fast_planner_node" output="screen">
-    <remap from="/odom_world" to="$(var odometry_topic)"/>
+    <!-- <remap from="/odom_world" to="$(var odometry_topic)"/>
     <remap from="/sdf_map/odom" to="$(var odometry_topic)"/>
     <remap from="/sdf_map/cloud" to="$(var cloud_topic)"/>
     <remap from = "/sdf_map/pose"   to = "$(var camera_pose_topic)"/> 
-    <remap from = "/sdf_map/depth" to = "$(var depth_topic)"/>
+    <remap from = "/sdf_map/depth" to = "$(var depth_topic)"/> -->
 
     <!-- replanning method -->
     <param name="planner_node/planner" value="1" type="int"/>

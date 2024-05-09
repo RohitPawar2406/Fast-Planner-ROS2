@@ -24,6 +24,7 @@ find_package(std_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(message_filters REQUIRED)
+find_package(fast_planner REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -36,7 +37,7 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS}
 )
 
-add_library( plan_env SHARED
+add_library(plan_env SHARED
     src/sdf_map.cpp 
     # src/obj_predictor.cpp 
     src/edt_environment.cpp 
@@ -87,6 +88,7 @@ ament_target_dependencies(plan_env
   geometry_msgs
   cv_bridge
   message_filters
+  fast_planner
 )
 
 ament_target_dependencies(test_plan_env_sdf
@@ -138,7 +140,7 @@ ament_export_dependencies(
     # rclcpp
     # std_msgs
     # visualization_msgs
-    # cv_bridge
+    fast_planner
     message_filters
     Eigen3
     PCL

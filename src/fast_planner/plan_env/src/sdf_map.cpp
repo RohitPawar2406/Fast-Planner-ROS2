@@ -29,9 +29,9 @@
 #define current_img_ md_.depth_image_[image_cnt_ & 1]
 #define last_img_ md_.depth_image_[!(image_cnt_ & 1)]
 
-void SDFMap::initMap(std::shared_ptr<rclcpp::Node> &node) {
+void SDFMap::initMap(std::shared_ptr<FastPlanner> node) {
   node_ = node;
-  RCLCPP_INFO(node_->get_logger(), "Entered sdf entry point ! ");
+  RCLCPP_INFO(node->get_logger(), "Entered sdf entry point ! ");
 
   node->declare_parameter<float>("sdf_map/resolution", 0.5);
   node->declare_parameter<float>("sdf_map/map_size_x", 0.5);
@@ -72,196 +72,198 @@ void SDFMap::initMap(std::shared_ptr<rclcpp::Node> &node) {
 
   /* get parameter */
   double x_size, y_size, z_size;
-  node_->get_parameter_or("sdf_map/resolution", mp_.resolution_, -1.0);
-  RCLCPP_INFO(node_->get_logger(), "Resolution value: %f", mp_.resolution_);
-  node_->get_parameter_or("sdf_map/map_size_x", x_size, -1.0);
-  node_->get_parameter_or("sdf_map/map_size_y", y_size, -1.0);
-  node_->get_parameter_or("sdf_map/map_size_z", z_size, -1.0);
-  node_->get_parameter_or("sdf_map/local_update_range_x", mp_.local_update_range_(0), -1.0);
-  node_->get_parameter_or("sdf_map/local_update_range_y", mp_.local_update_range_(1), -1.0);
-  node_->get_parameter_or("sdf_map/local_update_range_z", mp_.local_update_range_(2), -1.0);
-  node_->get_parameter_or("sdf_map/obstacles_inflation", mp_.obstacles_inflation_, -1.0);
+  node->get_parameter_or("sdf_map/resolution", mp_.resolution_, -1.0);
+  RCLCPP_INFO(node->get_logger(), "Resolution value: %f", mp_.resolution_);
+  node->get_parameter_or("sdf_map/map_size_x", x_size, -1.0);
+  node->get_parameter_or("sdf_map/map_size_y", y_size, -1.0);
+  node->get_parameter_or("sdf_map/map_size_z", z_size, -1.0);
+  node->get_parameter_or("sdf_map/local_update_range_x", mp_.local_update_range_(0), -1.0);
+  node->get_parameter_or("sdf_map/local_update_range_y", mp_.local_update_range_(1), -1.0);
+  node->get_parameter_or("sdf_map/local_update_range_z", mp_.local_update_range_(2), -1.0);
+  node->get_parameter_or("sdf_map/obstacles_inflation", mp_.obstacles_inflation_, -1.0);
 
-  node_->get_parameter_or("sdf_map/fx", mp_.fx_, -1.0);
-  node_->get_parameter_or("sdf_map/fy", mp_.fy_, -1.0);
-  node_->get_parameter_or("sdf_map/cx", mp_.cx_, -1.0);
-  node_->get_parameter_or("sdf_map/cy", mp_.cy_, -1.0);
+  node->get_parameter_or("sdf_map/fx", mp_.fx_, -1.0);
+  node->get_parameter_or("sdf_map/fy", mp_.fy_, -1.0);
+  node->get_parameter_or("sdf_map/cx", mp_.cx_, -1.0);
+  node->get_parameter_or("sdf_map/cy", mp_.cy_, -1.0);
 
-  node_->get_parameter_or("sdf_map/use_depth_filter", mp_.use_depth_filter_, true);
-  node_->get_parameter_or("sdf_map/depth_filter_tolerance", mp_.depth_filter_tolerance_, -1.0);
-  node_->get_parameter_or("sdf_map/depth_filter_maxdist", mp_.depth_filter_maxdist_, -1.0);
-  node_->get_parameter_or("sdf_map/depth_filter_mindist", mp_.depth_filter_mindist_, -1.0);
-  node_->get_parameter_or("sdf_map/depth_filter_margin", mp_.depth_filter_margin_, -1);
-  node_->get_parameter_or("sdf_map/k_depth_scaling_factor", mp_.k_depth_scaling_factor_, -1.0);
-  node_->get_parameter_or("sdf_map/skip_pixel", mp_.skip_pixel_, -1);
+  node->get_parameter_or("sdf_map/use_depth_filter", mp_.use_depth_filter_, true);
+  node->get_parameter_or("sdf_map/depth_filter_tolerance", mp_.depth_filter_tolerance_, -1.0);
+  node->get_parameter_or("sdf_map/depth_filter_maxdist", mp_.depth_filter_maxdist_, -1.0);
+  node->get_parameter_or("sdf_map/depth_filter_mindist", mp_.depth_filter_mindist_, -1.0);
+  node->get_parameter_or("sdf_map/depth_filter_margin", mp_.depth_filter_margin_, -1);
+  node->get_parameter_or("sdf_map/k_depth_scaling_factor", mp_.k_depth_scaling_factor_, -1.0);
+  node->get_parameter_or("sdf_map/skip_pixel", mp_.skip_pixel_, -1);
 
-  node_->get_parameter_or("sdf_map/p_hit", mp_.p_hit_, 0.70);
-  node_->get_parameter_or("sdf_map/p_miss", mp_.p_miss_, 0.35);
-  node_->get_parameter_or("sdf_map/p_min", mp_.p_min_, 0.12);
-  node_->get_parameter_or("sdf_map/p_max", mp_.p_max_, 0.97);
-  node_->get_parameter_or("sdf_map/p_occ", mp_.p_occ_, 0.80);
-  node_->get_parameter_or("sdf_map/min_ray_length", mp_.min_ray_length_, -0.1);
-  node_->get_parameter_or("sdf_map/max_ray_length", mp_.max_ray_length_, -0.1);
+  node->get_parameter_or("sdf_map/p_hit", mp_.p_hit_, 0.70);
+  node->get_parameter_or("sdf_map/p_miss", mp_.p_miss_, 0.35);
+  node->get_parameter_or("sdf_map/p_min", mp_.p_min_, 0.12);
+  node->get_parameter_or("sdf_map/p_max", mp_.p_max_, 0.97);
+  node->get_parameter_or("sdf_map/p_occ", mp_.p_occ_, 0.80);
+  node->get_parameter_or("sdf_map/min_ray_length", mp_.min_ray_length_, -0.1);
+  node->get_parameter_or("sdf_map/max_ray_length", mp_.max_ray_length_, -0.1);
 
-  node_->get_parameter_or("sdf_map/esdf_slice_height", mp_.esdf_slice_height_, -0.1);
-  node_->get_parameter_or("sdf_map/visualization_truncate_height", mp_.visualization_truncate_height_, -0.1);
-  node_->get_parameter_or("sdf_map/virtual_ceil_height", mp_.virtual_ceil_height_, -0.1);
+  node->get_parameter_or("sdf_map/esdf_slice_height", mp_.esdf_slice_height_, -0.1);
+  node->get_parameter_or("sdf_map/visualization_truncate_height", mp_.visualization_truncate_height_, -0.1);
+  node->get_parameter_or("sdf_map/virtual_ceil_height", mp_.virtual_ceil_height_, -0.1);
 
-  node_->get_parameter_or("sdf_map/show_occ_time", mp_.show_occ_time_, false);
-  node_->get_parameter_or("sdf_map/show_esdf_time", mp_.show_esdf_time_, false);
-  node_->get_parameter_or("sdf_map/pose_type", mp_.pose_type_, 1);
+  node->get_parameter_or("sdf_map/show_occ_time", mp_.show_occ_time_, false);
+  node->get_parameter_or("sdf_map/show_esdf_time", mp_.show_esdf_time_, false);
+  node->get_parameter_or("sdf_map/pose_type", mp_.pose_type_, 1);
 
-  node_->get_parameter_or("sdf_map/frame_id", mp_.frame_id_, string("world"));
-  node_->get_parameter_or("sdf_map/local_bound_inflate", mp_.local_bound_inflate_, 1.0);
-  node_->get_parameter_or("sdf_map/local_map_margin", mp_.local_map_margin_, 1);
-  node_->get_parameter_or("sdf_map/ground_height", mp_.ground_height_, 1.0);
+  node->get_parameter_or("sdf_map/frame_id", mp_.frame_id_, string("world"));
+  node->get_parameter_or("sdf_map/local_bound_inflate", mp_.local_bound_inflate_, 1.0);
+  node->get_parameter_or("sdf_map/local_map_margin", mp_.local_map_margin_, 1);
+  node->get_parameter_or("sdf_map/ground_height", mp_.ground_height_, 1.0);
 
   // Initialize other parameters
-    mp_.local_bound_inflate_ = std::max(mp_.resolution_, mp_.local_bound_inflate_);
-    mp_.resolution_inv_ = 1 / mp_.resolution_;
-    mp_.map_origin_ = Eigen::Vector3d(-x_size / 2.0, -y_size / 2.0, mp_.ground_height_);
-    mp_.map_size_ = Eigen::Vector3d(x_size, y_size, z_size);
+    // mp_.local_bound_inflate_ = std::max(mp_.resolution_, mp_.local_bound_inflate_);
+    // mp_.resolution_inv_ = 1 / mp_.resolution_;
+    // mp_.map_origin_ = Eigen::Vector3d(-x_size / 2.0, -y_size / 2.0, mp_.ground_height_);
+    // mp_.map_size_ = Eigen::Vector3d(x_size, y_size, z_size);
 
-    mp_.prob_hit_log_ = logit(mp_.p_hit_);
-    mp_.prob_miss_log_ = logit(mp_.p_miss_);
-    mp_.clamp_min_log_ = logit(mp_.p_min_);
-    mp_.clamp_max_log_ = logit(mp_.p_max_);
-    mp_.min_occupancy_log_ = logit(mp_.p_occ_);
-    mp_.unknown_flag_ = 0.01;
+    // mp_.prob_hit_log_ = logit(mp_.p_hit_);
+    // mp_.prob_miss_log_ = logit(mp_.p_miss_);
+    // mp_.clamp_min_log_ = logit(mp_.p_min_);
+    // mp_.clamp_max_log_ = logit(mp_.p_max_);
+    // mp_.min_occupancy_log_ = logit(mp_.p_occ_);
+    // mp_.unknown_flag_ = 0.01;
 
-    cout << "hit: " << mp_.prob_hit_log_ << endl;
-    cout << "miss: " << mp_.prob_miss_log_ << endl;
-    cout << "min log: " << mp_.clamp_min_log_ << endl;
-    cout << "max: " << mp_.clamp_max_log_ << endl;
-    cout << "thresh log: " << mp_.min_occupancy_log_ << endl;
+    // cout << "hit: " << mp_.prob_hit_log_ << endl;
+    // cout << "miss: " << mp_.prob_miss_log_ << endl;
+    // cout << "min log: " << mp_.clamp_min_log_ << endl;
+    // cout << "max: " << mp_.clamp_max_log_ << endl;
+    // cout << "thresh log: " << mp_.min_occupancy_log_ << endl;
 
-    for (int i = 0; i < 3; ++i) mp_.map_voxel_num_(i) = ceil(mp_.map_size_(i) / mp_.resolution_);
+    // for (int i = 0; i < 3; ++i) mp_.map_voxel_num_(i) = ceil(mp_.map_size_(i) / mp_.resolution_);
 
-    mp_.map_min_boundary_ = mp_.map_origin_;
-    mp_.map_max_boundary_ = mp_.map_origin_ + mp_.map_size_;
+    // mp_.map_min_boundary_ = mp_.map_origin_;
+    // mp_.map_max_boundary_ = mp_.map_origin_ + mp_.map_size_;
 
-    mp_.map_min_idx_ = Eigen::Vector3i::Zero();
-    mp_.map_max_idx_ = mp_.map_voxel_num_ - Eigen::Vector3i::Ones();
+    // mp_.map_min_idx_ = Eigen::Vector3i::Zero();
+    // mp_.map_max_idx_ = mp_.map_voxel_num_ - Eigen::Vector3i::Ones();
 
 
 
-    // Initialize buffers
-    mp_.local_bound_inflate_ = max(mp_.resolution_, mp_.local_bound_inflate_);
-    mp_.resolution_inv_ = 1 / mp_.resolution_;
-    mp_.map_origin_ = Eigen::Vector3d(-x_size / 2.0, -y_size / 2.0, mp_.ground_height_);
-    mp_.map_size_ = Eigen::Vector3d(x_size, y_size, z_size);
+    // // Initialize buffers
+    // mp_.local_bound_inflate_ = max(mp_.resolution_, mp_.local_bound_inflate_);
+    // mp_.resolution_inv_ = 1 / mp_.resolution_;
+    // mp_.map_origin_ = Eigen::Vector3d(-x_size / 2.0, -y_size / 2.0, mp_.ground_height_);
+    // mp_.map_size_ = Eigen::Vector3d(x_size, y_size, z_size);
 
-    mp_.prob_hit_log_ = logit(mp_.p_hit_);
-    mp_.prob_miss_log_ = logit(mp_.p_miss_);
-    mp_.clamp_min_log_ = logit(mp_.p_min_);
-    mp_.clamp_max_log_ = logit(mp_.p_max_);
-    mp_.min_occupancy_log_ = logit(mp_.p_occ_);
-    mp_.unknown_flag_ = 0.01;
+    // mp_.prob_hit_log_ = logit(mp_.p_hit_);
+    // mp_.prob_miss_log_ = logit(mp_.p_miss_);
+    // mp_.clamp_min_log_ = logit(mp_.p_min_);
+    // mp_.clamp_max_log_ = logit(mp_.p_max_);
+    // mp_.min_occupancy_log_ = logit(mp_.p_occ_);
+    // mp_.unknown_flag_ = 0.01;
 
-    cout << "hit: " << mp_.prob_hit_log_ << endl;
-    cout << "miss: " << mp_.prob_miss_log_ << endl;
-    cout << "min log: " << mp_.clamp_min_log_ << endl;
-    cout << "max: " << mp_.clamp_max_log_ << endl;
-    cout << "thresh log: " << mp_.min_occupancy_log_ << endl;
+    // cout << "hit: " << mp_.prob_hit_log_ << endl;
+    // cout << "miss: " << mp_.prob_miss_log_ << endl;
+    // cout << "min log: " << mp_.clamp_min_log_ << endl;
+    // cout << "max: " << mp_.clamp_max_log_ << endl;
+    // cout << "thresh log: " << mp_.min_occupancy_log_ << endl;
 
-    for (int i = 0; i < 3; ++i) mp_.map_voxel_num_(i) = ceil(mp_.map_size_(i) / mp_.resolution_);
+    // for (int i = 0; i < 3; ++i) mp_.map_voxel_num_(i) = ceil(mp_.map_size_(i) / mp_.resolution_);
 
-    mp_.map_min_boundary_ = mp_.map_origin_;
-    mp_.map_max_boundary_ = mp_.map_origin_ + mp_.map_size_;
+    // mp_.map_min_boundary_ = mp_.map_origin_;
+    // mp_.map_max_boundary_ = mp_.map_origin_ + mp_.map_size_;
 
-    mp_.map_min_idx_ = Eigen::Vector3i::Zero();
-    mp_.map_max_idx_ = mp_.map_voxel_num_ - Eigen::Vector3i::Ones();
+    // mp_.map_min_idx_ = Eigen::Vector3i::Zero();
+    // mp_.map_max_idx_ = mp_.map_voxel_num_ - Eigen::Vector3i::Ones();
 
-    // initialize data buffers
+    // // initialize data buffers
 
-    int buffer_size = mp_.map_voxel_num_(0) * mp_.map_voxel_num_(1) * mp_.map_voxel_num_(2);
+    // int buffer_size = mp_.map_voxel_num_(0) * mp_.map_voxel_num_(1) * mp_.map_voxel_num_(2);
 
-    md_.occupancy_buffer_ = vector<double>(buffer_size, mp_.clamp_min_log_ - mp_.unknown_flag_);
-    md_.occupancy_buffer_neg = vector<char>(buffer_size, 0);
-    md_.occupancy_buffer_inflate_ = vector<char>(buffer_size, 0);
+    // md_.occupancy_buffer_ = vector<double>(buffer_size, mp_.clamp_min_log_ - mp_.unknown_flag_);
+    // md_.occupancy_buffer_neg = vector<char>(buffer_size, 0);
+    // md_.occupancy_buffer_inflate_ = vector<char>(buffer_size, 0);
 
-    md_.distance_buffer_ = vector<double>(buffer_size, 10000);
-    md_.distance_buffer_neg_ = vector<double>(buffer_size, 10000);
-    md_.distance_buffer_all_ = vector<double>(buffer_size, 10000);
+    // md_.distance_buffer_ = vector<double>(buffer_size, 10000);
+    // md_.distance_buffer_neg_ = vector<double>(buffer_size, 10000);
+    // md_.distance_buffer_all_ = vector<double>(buffer_size, 10000);
 
-    md_.count_hit_and_miss_ = vector<short>(buffer_size, 0);
-    md_.count_hit_ = vector<short>(buffer_size, 0);
-    md_.flag_rayend_ = vector<char>(buffer_size, -1);
-    md_.flag_traverse_ = vector<char>(buffer_size, -1);
+    // md_.count_hit_and_miss_ = vector<short>(buffer_size, 0);
+    // md_.count_hit_ = vector<short>(buffer_size, 0);
+    // md_.flag_rayend_ = vector<char>(buffer_size, -1);
+    // md_.flag_traverse_ = vector<char>(buffer_size, -1);
 
-    md_.tmp_buffer1_ = vector<double>(buffer_size, 0);
-    md_.tmp_buffer2_ = vector<double>(buffer_size, 0);
-    md_.raycast_num_ = 0;
+    // md_.tmp_buffer1_ = vector<double>(buffer_size, 0);
+    // md_.tmp_buffer2_ = vector<double>(buffer_size, 0);
+    // md_.raycast_num_ = 0;
 
-    md_.proj_points_.resize(640 * 480 / mp_.skip_pixel_ / mp_.skip_pixel_);
-    md_.proj_points_cnt = 0;
+    // md_.proj_points_.resize(640 * 480 / mp_.skip_pixel_ / mp_.skip_pixel_);
+    // md_.proj_points_cnt = 0;
 
 
     // Initialize subscribers and publishers
-    depth_sub_ = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>();
-    depth_sub_->subscribe(node_.get(), "/sdf_map/depth");
+    // depth_sub_ = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>();
+    // depth_sub_->subscribe(node.get(), "/sdf_map/depth");
 
-    if (mp_.pose_type_ == POSE_STAMPED) {
-      pose_sub_ = std::make_shared<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>>();
-      pose_sub_->subscribe(node_.get(), "/sdf_map/pose");
-      sync_image_pose_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImagePose>>(std::move(SyncPolicyImagePose(3)),*depth_sub_, *pose_sub_);
-      sync_image_pose_->registerCallback(std::bind(&SDFMap::depthPoseCallback, this, std::placeholders::_1,std::placeholders::_2 ));
+    // if (mp_.pose_type_ == POSE_STAMPED) {
+    //   pose_sub_ = std::make_shared<message_filters::Subscriber<geometry_msgs::msg::PoseStamped>>();
+    //   pose_sub_->subscribe(node.get(), "/sdf_map/pose");
+    //   sync_image_pose_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImagePose>>(std::move(SyncPolicyImagePose(3)),*depth_sub_, *pose_sub_);
+    //   sync_image_pose_->registerCallback(std::bind(&SDFMap::depthPoseCallback, this, std::placeholders::_1,std::placeholders::_2 ));
 
-    } else if (mp_.pose_type_ == ODOMETRY) {
-        odom_sub_ = std::make_shared<message_filters::Subscriber<nav_msgs::msg::Odometry>>();
-        odom_sub_->subscribe(node_.get(), "/sdf_map/odom");
+    // } else if (mp_.pose_type_ == ODOMETRY) {
+    //     odom_sub_ = std::make_shared<message_filters::Subscriber<nav_msgs::msg::Odometry>>();
+    //     odom_sub_->subscribe(node.get(), "/sdf_map/odom");
 
-        sync_image_odom_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImageOdom>>(std::move(SyncPolicyImageOdom(3)),*depth_sub_, *odom_sub_);
-        sync_image_odom_->registerCallback(std::bind(&SDFMap::depthOdomCallback, this, std::placeholders::_1,std::placeholders::_2));
-    }
+    //     sync_image_odom_ = std::make_shared<message_filters::Synchronizer<SyncPolicyImageOdom>>(std::move(SyncPolicyImageOdom(3)),*depth_sub_, *odom_sub_);
+    //     sync_image_odom_->registerCallback(std::bind(&SDFMap::depthOdomCallback, this, std::placeholders::_1,std::placeholders::_2));
+    // }
 
-    indep_cloud_sub_ = node_->create_subscription<sensor_msgs::msg::PointCloud2>(
+    indep_cloud_sub_ = node->create_subscription<sensor_msgs::msg::PointCloud2>(
         "/sdf_map/cloud", 10, std::bind(&SDFMap::cloudCallback, this, std::placeholders::_1));
-    indep_odom_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
+    indep_odom_sub_ = node->create_subscription<nav_msgs::msg::Odometry>(
         "/sdf_map/odom", 10, std::bind(&SDFMap::odomCallback, this, std::placeholders::_1));
+    subscription_ = node->create_subscription<std_msgs::msg::String>(
+        "/sdf/topic_subs", 10, std::bind(&SDFMap::topic_callback, this, std::placeholders::_1));
 
-    RCLCPP_INFO(node_->get_logger(), "Entered sdf entry point  subscriber check .....! ");
+    // RCLCPP_INFO(node->get_logger(), "Entered sdf entry point  subscriber check .....! ");
 
-    map_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/occupancy", 10);
-    map_inf_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/occupancy_inflate", 10);
-    esdf_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/esdf", 10);
-    update_range_pub_ = node_->create_publisher<visualization_msgs::msg::Marker>(
-        "/sdf_map/update_range", 10);
-    unknown_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/unknown", 10);
-    depth_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
-        "/sdf_map/depth_cloud", 10);
+    // map_pub_ = node->create_publisher<sensor_msgs::msg::PointCloud2>(
+    //     "/sdf_map/occupancy", 10);
+    // map_inf_pub_ = node->create_publisher<sensor_msgs::msg::PointCloud2>(
+    //     "/sdf_map/occupancy_inflate", 10);
+    // esdf_pub_ = node->create_publisher<sensor_msgs::msg::PointCloud2>(
+    //     "/sdf_map/esdf", 10);
+    // update_range_pub_ = node->create_publisher<visualization_msgs::msg::Marker>(
+    //     "/sdf_map/update_range", 10);
+    // unknown_pub_ = node->create_publisher<sensor_msgs::msg::PointCloud2>(
+    //     "/sdf_map/unknown", 10);
+    // depth_pub_ = node->create_publisher<sensor_msgs::msg::PointCloud2>(
+    //     "/sdf_map/depth_cloud", 10);
 
-    // Initialize timers
-    occ_timer_ = node_->create_wall_timer(
-        50ms, std::bind(&SDFMap::updateOccupancyCallback, this));
-    esdf_timer_ = node_->create_wall_timer(
-        50ms, std::bind(&SDFMap::updateESDFCallback, this));
-    vis_timer_ = node_->create_wall_timer(
-        50ms, std::bind(&SDFMap::visCallback, this));
+    // // Initialize timers
+    // occ_timer_ = node->create_wall_timer(
+    //     50ms, std::bind(&SDFMap::updateOccupancyCallback, this));
+    // esdf_timer_ = node->create_wall_timer(
+    //     50ms, std::bind(&SDFMap::updateESDFCallback, this));
+    // vis_timer_ = node->create_wall_timer(
+    //     50ms, std::bind(&SDFMap::visCallback, this));
 
-    // Initialize variables
-    md_.occ_need_update_ = false;
-    md_.local_updated_ = false;
-    md_.esdf_need_update_ = false;
-    md_.has_first_depth_ = false;
-    md_.has_odom_ = false;
-    md_.has_cloud_ = false;
-    md_.image_cnt_ = 0;
+    // // Initialize variables
+    // md_.occ_need_update_ = false;
+    // md_.local_updated_ = false;
+    // md_.esdf_need_update_ = false;
+    // md_.has_first_depth_ = false;
+    // md_.has_odom_ = false;
+    // md_.has_cloud_ = false;
+    // md_.image_cnt_ = 0;
 
-    md_.esdf_time_ = 0.0;
-    md_.fuse_time_ = 0.0;
-    md_.update_num_ = 0;
-    md_.max_esdf_time_ = 0.0;
-    md_.max_fuse_time_ = 0.0;
+    // md_.esdf_time_ = 0.0;
+    // md_.fuse_time_ = 0.0;
+    // md_.update_num_ = 0;
+    // md_.max_esdf_time_ = 0.0;
+    // md_.max_fuse_time_ = 0.0;
 
-    rand_noise_ = std::uniform_real_distribution<double>(-0.2, 0.2);
-    rand_noise2_ = std::normal_distribution<double>(0, 0.2);
-    std::random_device rd;
-    eng_ = std::default_random_engine(rd());
+    // rand_noise_ = std::uniform_real_distribution<double>(-0.2, 0.2);
+    // rand_noise2_ = std::normal_distribution<double>(0, 0.2);
+    // std::random_device rd;
+    // eng_ = std::default_random_engine(rd());
 }
 
 void SDFMap::resetBuffer() {
@@ -887,7 +889,7 @@ void SDFMap::depthPoseCallback(const sensor_msgs::msg::Image::ConstSharedPtr img
     }
 }
 
-void SDFMap::odomCallback(nav_msgs::msg::Odometry::ConstSharedPtr odom) {
+void SDFMap::odomCallback(const nav_msgs::msg::Odometry::ConstSharedPtr odom) {
     if (md_.has_first_depth_) return;
 
     md_.camera_pos_(0) = odom->pose.pose.position.x;
@@ -895,6 +897,11 @@ void SDFMap::odomCallback(nav_msgs::msg::Odometry::ConstSharedPtr odom) {
     md_.camera_pos_(2) = odom->pose.pose.position.z;
 
     md_.has_odom_ = true;
+}
+
+void SDFMap::topic_callback(const std_msgs::msg::String::SharedPtr msg) 
+{
+    // RCLCPP_INFO(node_class_->get_logger(), "I heard: '%s'", msg->data.c_str());
 }
 
 void SDFMap::cloudCallback(const sensor_msgs::msg::PointCloud2::SharedPtr img) {

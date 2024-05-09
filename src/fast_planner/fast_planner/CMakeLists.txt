@@ -27,6 +27,10 @@ include_directories(
 add_library(fast_planner SHARED
 src/fast_planner.cpp )
 
+target_include_directories(fast_planner PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
+
 ament_target_dependencies(fast_planner
   rclcpp
   std_msgs
@@ -42,6 +46,7 @@ install(TARGETS fast_planner
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
 
 ament_export_include_directories(include)
