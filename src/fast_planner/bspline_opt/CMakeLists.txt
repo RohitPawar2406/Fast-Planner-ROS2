@@ -26,6 +26,7 @@ find_package(cv_bridge REQUIRED)
 find_package(plan_env REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(NLopt REQUIRED)
+find_package(fast_planner REQUIRED)
 
 include_directories( 
     include 
@@ -47,6 +48,7 @@ ament_target_dependencies(bspline_opt
     visualization_msgs
     cv_bridge
     plan_env
+    fast_planner
 )
 
 target_link_libraries(bspline_opt

@@ -4,7 +4,8 @@ using namespace std;
 
 namespace fast_planner {
 
-PlanningVisualization::PlanningVisualization(std::shared_ptr<rclcpp::Node> nh) {
+PlanningVisualization::PlanningVisualization(std::shared_ptr<FastPlanner> nh) {
+  RCUTILS_LOG_INFO("INSIDE PLANNING VISUALISATION!!!");
   node = nh;
 
   traj_pub_ = node->create_publisher<visualization_msgs::msg::Marker>("/planning_vis/trajectory", 20);

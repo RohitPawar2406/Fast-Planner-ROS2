@@ -31,6 +31,7 @@ find_package(cv_bridge REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 find_package(plan_env REQUIRED)
+find_package(fast_planner REQUIRED)
 
 include_directories( 
     include 
@@ -59,6 +60,7 @@ ament_target_dependencies(traj_utils
     path_searching
     plan_env
     poly_traj
+    fast_planner
   ) 
 
 target_link_libraries(traj_utils

@@ -12,6 +12,7 @@
 #include <iostream>
 // #include <path_searching/topo_prm.hpp> NOT TO DO
 #include <plan_env/obj_predictor.hpp>
+#include <fast_planner/fast_planner.h>
 
 
 namespace fast_planner {
@@ -34,7 +35,7 @@ private:
         SELECT_PATH = 400
     };
 
-    std::shared_ptr<rclcpp::Node> node;
+    std::shared_ptr<FastPlanner>  node;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr traj_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr topo_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr predict_pub_;
@@ -52,7 +53,7 @@ private:
 public:
     PlanningVisualization() {}
     ~PlanningVisualization() {}
-    PlanningVisualization(std::shared_ptr<rclcpp::Node> nh);
+    PlanningVisualization(std::shared_ptr<FastPlanner> nh);
 
     // draw basic shapes
     void displaySphereList(const std::vector<Eigen::Vector3d>& list, double resolution,

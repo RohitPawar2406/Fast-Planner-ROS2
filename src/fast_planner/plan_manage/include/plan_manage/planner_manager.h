@@ -2,10 +2,10 @@
 #define _PLANNER_MANAGER_H_
 
 
-// #include <bspline/non_uniform_bspline.h>
+#include <bspline/non_uniform_bspline.h>
 
 #include <path_searching/astar.h>
-// #include <path_searching/kinodynamic_astar.h>
+#include <path_searching/kinodynamic_astar.h>
 // #include <path_searching/topo_prm.hpp>
 
 #include <plan_env/edt_environment.hpp>
@@ -14,7 +14,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include <fast_planner/fast_planner.h>
-// #include <bspline_opt/bspline_optimizer.h>
+#include <bspline_opt/bspline_optimizer.h>
 
 class FastPlanner;
 
@@ -53,9 +53,9 @@ private:
   SDFMap::Ptr sdf_map_;
 
   unique_ptr<Astar> geo_path_finder_;
-  // unique_ptr<KinodynamicAstar> kino_path_finder_;
+  unique_ptr<KinodynamicAstar> kino_path_finder_;
   // unique_ptr<TopologyPRM> topo_prm_;
-  // vector<BsplineOptimizer::Ptr> bspline_optimizers_;
+  vector<BsplineOptimizer::Ptr> bspline_optimizers_;
 
   // void updateTrajInfo();
 

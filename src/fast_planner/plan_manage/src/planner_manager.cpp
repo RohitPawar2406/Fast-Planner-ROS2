@@ -34,6 +34,27 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
   nh->declare_parameter<bool>("manager/use_topo_path", "false");
   nh->declare_parameter<bool>("manager/use_optimization", "false");
 
+ // Decalred paramters from Bspilne optimser to avoid again decalration of same paramters
+  nh->declare_parameter<float>("optimization/lambda1", 0);
+  nh->declare_parameter<float>("optimization/lambda2", 0);
+  nh->declare_parameter<float>("optimization/lambda3", 0);
+  nh->declare_parameter<float>("optimization/lambda4", 0);
+  nh->declare_parameter<float>("optimization/lambda7", 0);
+  nh->declare_parameter<float>("optimization/dist0", 0);
+  nh->declare_parameter<float>("optimization/max_vel", 0);
+  nh->declare_parameter<float>("optimization/max_acc", 0);
+  nh->declare_parameter<int>("optimization/algorithm1", 0);
+  nh->declare_parameter<int>("optimization/algorithm2", 0);
+  nh->declare_parameter<int>("optimization/max_iteration_num1", 0);
+  nh->declare_parameter<int>("optimization/max_iteration_num2", 0);
+  nh->declare_parameter<int>("optimization/max_iteration_num3", 0);
+  nh->declare_parameter<int>("optimization/max_iteration_num4", 0);
+  nh->declare_parameter<float>("optimization/max_iteration_time1", 0);
+  nh->declare_parameter<float>("optimization/max_iteration_time2", 0);
+  nh->declare_parameter<float>("optimization/max_iteration_time3", 0);
+  nh->declare_parameter<float>("optimization/max_iteration_time4", 0);
+  nh->declare_parameter<int>("optimization/order", 0);
+
 
   nh->get_parameter_or("manager/max_vel", pp_.max_vel_, -1.0);
   nh->get_parameter_or("manager/max_acc", pp_.max_acc_, -1.0);
@@ -62,21 +83,21 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
     geo_path_finder_->init();
   }
 
-  // if (use_kinodynamic_path) {
-  //   kino_path_finder_.reset(new KinodynamicAstar);
-  //   kino_path_finder_->setParam(nh);
-  //   kino_path_finder_->setEnvironment(edt_environment_);
-  //   kino_path_finder_->init();
-  // }
+  if (use_kinodynamic_path) {
+    kino_path_finder_.reset(new KinodynamicAstar);
+    kino_path_finder_->setParam(nh);
+    kino_path_finder_->setEnvironment(edt_environment_);
+    kino_path_finder_->init();
+  }
 
-  // if (use_optimization) {
-  //   bspline_optimizers_.resize(10);
-  //   for (int i = 0; i < 10; ++i) {
-  //     bspline_optimizers_[i].reset(new BsplineOptimizer);
-  //     bspline_optimizers_[i]->setParam(nh);
-  //     bspline_optimizers_[i]->setEnvironment(edt_environment_);
-  //   }
-  // }
+  if (use_optimization) {
+    bspline_optimizers_.resize(10);
+    for (int i = 0; i < 10; ++i) {
+      bspline_optimizers_[i].reset(new BsplineOptimizer);
+      bspline_optimizers_[i]->setParam(nh);
+      bspline_optimizers_[i]->setEnvironment(edt_environment_);
+    }
+  }
 
   // if (use_topo_path) {
   //   topo_prm_.reset(new TopologyPRM);

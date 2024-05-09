@@ -300,7 +300,7 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
   cout << "iter num: " << iter_num_ << endl;
   return NO_PATH;
 }
-void KinodynamicAstar::setParam(rclcpp::Node::SharedPtr &nh)
+void KinodynamicAstar::setParam(std::shared_ptr<FastPlanner> nh)
 {
   nh->declare_parameter<float>("search/max_tau", 0);
   nh->declare_parameter<float>("search/init_max_tau", 0);

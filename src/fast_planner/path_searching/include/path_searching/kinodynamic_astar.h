@@ -134,7 +134,7 @@ public:
 
     enum { REACH_HORIZON = 1, REACH_END = 2, NO_PATH = 3, NEAR_END = 4 };
 
-    void setParam(rclcpp::Node::SharedPtr& nh);
+    void setParam(std::shared_ptr<FastPlanner> nh);
     void init();
     void reset();
     int search(Eigen::Vector3d start_pt, Eigen::Vector3d start_vel, Eigen::Vector3d start_acc,

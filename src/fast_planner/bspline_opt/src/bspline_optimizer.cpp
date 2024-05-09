@@ -17,26 +17,7 @@ const int BsplineOptimizer::GUIDE_PHASE = BsplineOptimizer::SMOOTHNESS | Bspline
 const int BsplineOptimizer::NORMAL_PHASE =
     BsplineOptimizer::SMOOTHNESS | BsplineOptimizer::DISTANCE | BsplineOptimizer::FEASIBILITY;
 
-void BsplineOptimizer::setParam(rclcpp::Node::SharedPtr& nh) {
-  nh->declare_parameter<float>("optimization/lambda1", 0);
-  nh->declare_parameter<float>("optimization/lambda2", 0);
-  nh->declare_parameter<float>("optimization/lambda3", 0);
-  nh->declare_parameter<float>("optimization/lambda4", 0);
-  nh->declare_parameter<float>("optimization/lambda7", 0);
-  nh->declare_parameter<float>("optimization/dist0", 0);
-  nh->declare_parameter<float>("optimization/max_vel", 0);
-  nh->declare_parameter<float>("optimization/max_acc", 0);
-  nh->declare_parameter<int>("optimization/algorithm1", 0);
-  nh->declare_parameter<int>("optimization/algorithm2", 0);
-  nh->declare_parameter<int>("optimization/max_iteration_num1", 0);
-  nh->declare_parameter<int>("optimization/max_iteration_num2", 0);
-  nh->declare_parameter<int>("optimization/max_iteration_num3", 0);
-  nh->declare_parameter<int>("optimization/max_iteration_num4", 0);
-  nh->declare_parameter<float>("optimization/max_iteration_time1", 0);
-  nh->declare_parameter<float>("optimization/max_iteration_time2", 0);
-  nh->declare_parameter<float>("optimization/max_iteration_time3", 0);
-  nh->declare_parameter<float>("optimization/max_iteration_time4", 0);
-  nh->declare_parameter<int>("optimization/order", 0);
+void BsplineOptimizer::setParam(std::shared_ptr<FastPlanner> nh) {
 
   nh->get_parameter("optimization/lambda1", lambda1_);
   nh->get_parameter("optimization/lambda2", lambda2_);
