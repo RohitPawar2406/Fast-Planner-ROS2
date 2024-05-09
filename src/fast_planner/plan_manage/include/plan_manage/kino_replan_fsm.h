@@ -19,6 +19,8 @@
 #include <plan_manage/planner_manager.h>
 #include <traj_utils/planning_visualization.hpp>
 
+#include <plan_manage/fast_planner_node.h>
+
 using std::vector;
 
 namespace fast_planner {
@@ -82,6 +84,8 @@ private:
   rclcpp::Publisher<std_msgs::msg::Empty>::SharedPtr new_pub_ ;
   rclcpp::Publisher<quadrotor_msgs::msg::Bspline>::SharedPtr  bspline_pub_;
 
+  //std::shared_ptr<FastPlanner> nh1;
+
   /* helper functions */
   bool callKinodynamicReplan();        // front-end and back-end method
   bool callTopologicalTraj(int step);  // topo path guided gradient-based
@@ -92,14 +96,14 @@ private:
   /* ROS functions */
   // void execFSMCallback();
   // void checkCollisionCallback();
-  // void waypointCallback(const nav_msgs::msg::Path::SharedPtr msg);
+  void waypointCallback(const nav_msgs::msg::Path::SharedPtr msg);
   // void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
 
 public:
   KinoReplanFSM(/* args */);
   ~KinoReplanFSM();
 
-  void init(std::shared_ptr<rclcpp::Node> nh);
+  void init(std::shared_ptr<FastPlanner> nh);
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

@@ -12,7 +12,7 @@ KinoReplanFSM::~KinoReplanFSM() {
   std::cout << "KinoReplanFSM ended ! " << std::endl;
 }
 
-void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> nh) {
+void KinoReplanFSM::init(std::shared_ptr<FastPlanner> nh) {
   current_wp_  = 0;
   exec_state_  = FSM_EXEC_STATE::INIT;
   have_target_ = false;
@@ -41,15 +41,15 @@ void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> nh) {
 
 
   //////////////////////// DOUBTS - NEXT 3 lines
-  std::shared_ptr<FastPlannerManager> planner_manager_ = std::make_shared<FastPlannerManager>();
-  planner_manager_->initPlanModules(nh);
-  std::shared_ptr<PlanningVisualization> visualization_ = std::make_shared<PlanningVisualization>(nh);
+  // std::shared_ptr<FastPlannerManager> planner_manager_ = std::make_shared<FastPlannerManager>();
+  // planner_manager_->initPlanModules(nh);
+  // std::shared_ptr<PlanningVisualization> visualization_ = std::make_shared<PlanningVisualization>(nh);
 
   // exec_timer_ = nh->create_wall_timer(std::chrono::milliseconds(10), std::bind(&KinoReplanFSM::execFSMCallback, this));
   // safety_timer_ = nh->create_wall_timer(std::chrono::milliseconds(50), std::bind(&KinoReplanFSM::checkCollisionCallback, this));
 
-  // waypoint_sub_ = nh->create_subscription<nav_msgs::msg::Path>(
-  //     "/waypoint_generator/waypoints", 1, std::bind(&KinoReplanFSM::waypointCallback, this, std::placeholders::_1));
+  waypoint_sub_ = nh->create_subscription<nav_msgs::msg::Path>(
+      "/waypoint_generator/waypoints", 1, std::bind(&KinoReplanFSM::waypointCallback, this, std::placeholders::_1));
   // odom_sub_ = nh->create_subscription<nav_msgs::msg::Odometry>(
   //     "/odom_world", 1, std::bind(&KinoReplanFSM::odometryCallback, this, std::placeholders::_1));
 
@@ -58,33 +58,33 @@ void KinoReplanFSM::init(std::shared_ptr<rclcpp::Node> nh) {
   // bspline_pub_ = nh->create_publisher<quadrotor_msgs::msg::Bspline>("/planning/bspline", 10);
 }
 
-// void KinoReplanFSM::waypointCallback(const nav_msgs::msg::Path::SharedPtr msg) {
-//   if (msg->poses[0].pose.position.z < -0.1) {
-//     return;
-//   }
+void KinoReplanFSM::waypointCallback(const nav_msgs::msg::Path::SharedPtr msg) {
+  if (msg->poses[0].pose.position.z < -0.1) {
+    return;
+  }
 
-//   RCUTILS_LOG_INFO("Triggered!");
-//   trigger_ = true;
+  RCUTILS_LOG_INFO("Triggered!");
+  trigger_ = true;
 
-//   if (target_type_ == TARGET_TYPE::MANUAL_TARGET) {
-//     end_pt_ << msg->poses[0].pose.position.x, msg->poses[0].pose.position.y, 1.0;
+  // if (target_type_ == TARGET_TYPE::MANUAL_TARGET) {
+  //   end_pt_ << msg->poses[0].pose.position.x, msg->poses[0].pose.position.y, 1.0;
 
-//   } else if (target_type_ == TARGET_TYPE::PRESET_TARGET) {
-//     end_pt_(0) = waypoints_[current_wp_][0];
-//     end_pt_(1) = waypoints_[current_wp_][1];
-//     end_pt_(2) = waypoints_[current_wp_][2];
-//     current_wp_ = (current_wp_ + 1) % waypoint_num_;
-//   }
+  // } else if (target_type_ == TARGET_TYPE::PRESET_TARGET) {
+  //   end_pt_(0) = waypoints_[current_wp_][0];
+  //   end_pt_(1) = waypoints_[current_wp_][1];
+  //   end_pt_(2) = waypoints_[current_wp_][2];
+  //   current_wp_ = (current_wp_ + 1) % waypoint_num_;
+  // }
 
-//   visualization_->drawGoal(end_pt_, 0.3, Eigen::Vector4d(1, 0, 0, 1.0));
-//   end_vel_.setZero();
-//   have_target_ = true;
+  // visualization_->drawGoal(end_pt_, 0.3, Eigen::Vector4d(1, 0, 0, 1.0));
+  // end_vel_.setZero();
+  // have_target_ = true;
 
-//   if (exec_state_ == WAIT_TARGET)
-//     changeFSMExecState(GEN_NEW_TRAJ, "TRIG");
-//   else if (exec_state_ == EXEC_TRAJ)
-//     changeFSMExecState(REPLAN_TRAJ, "TRIG");
-// }
+  // if (exec_state_ == WAIT_TARGET)
+  //   changeFSMExecState(GEN_NEW_TRAJ, "TRIG");
+  // else if (exec_state_ == EXEC_TRAJ)
+  //   changeFSMExecState(REPLAN_TRAJ, "TRIG");
+}
 
 // void KinoReplanFSM::odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg) {
 //   odom_pos_(0) = msg->pose.pose.position.x;
