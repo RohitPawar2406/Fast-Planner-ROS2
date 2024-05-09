@@ -45,7 +45,7 @@ void KinoReplanFSM::init(std::shared_ptr<FastPlanner> nh) {
   planner_manager_->initPlanModules(nh);
   std::shared_ptr<PlanningVisualization> visualization_ = std::make_shared<PlanningVisualization>(nh);
 
-  // exec_timer_ = nh->create_wall_timer(std::chrono::milliseconds(10), std::bind(&KinoReplanFSM::execFSMCallback, this));
+  exec_timer_ = nh->create_wall_timer(std::chrono::milliseconds(10), std::bind(&KinoReplanFSM::execFSMCallback, this));
   // safety_timer_ = nh->create_wall_timer(std::chrono::milliseconds(50), std::bind(&KinoReplanFSM::checkCollisionCallback, this));
 
   waypoint_sub_ = nh->create_subscription<nav_msgs::msg::Path>(
@@ -103,107 +103,107 @@ void KinoReplanFSM::waypointCallback(const nav_msgs::msg::Path::SharedPtr msg) {
 //   have_odom_ = true;
 // }
 
-// void KinoReplanFSM::changeFSMExecState(FSM_EXEC_STATE new_state, std::string pos_call) {
-//   std::vector<std::string> state_str = {"INIT", "WAIT_TARGET", "GEN_NEW_TRAJ", "REPLAN_TRAJ", "EXEC_TRAJ"};
-//   int pre_s = static_cast<int>(exec_state_);
-//   exec_state_ = new_state;
-//   // RCLCPP_INFO(this->get_logger(), "[%s]: from %s to %s", pos_call.c_str(), state_str[pre_s].c_str(), state_str[static_cast<int>(new_state)].c_str());
-//   RCUTILS_LOG_INFO("[%s]: from %s to %s", pos_call.c_str(), state_str[pre_s].c_str(), state_str[static_cast<int>(new_state)].c_str());
-// }
+void KinoReplanFSM::changeFSMExecState(FSM_EXEC_STATE new_state, std::string pos_call) {
+  std::vector<std::string> state_str = {"INIT", "WAIT_TARGET", "GEN_NEW_TRAJ", "REPLAN_TRAJ", "EXEC_TRAJ"};
+  int pre_s = static_cast<int>(exec_state_);
+  exec_state_ = new_state;
+  // RCLCPP_INFO(this->get_logger(), "[%s]: from %s to %s", pos_call.c_str(), state_str[pre_s].c_str(), state_str[static_cast<int>(new_state)].c_str());
+  RCUTILS_LOG_INFO("[%s]: from %s to %s", pos_call.c_str(), state_str[pre_s].c_str(), state_str[static_cast<int>(new_state)].c_str());
+}
 
-// void KinoReplanFSM::printFSMExecState() {
-//   std::vector<std::string> state_str = {"INIT", "WAIT_TARGET", "GEN_NEW_TRAJ", "REPLAN_TRAJ", "EXEC_TRAJ"};
-//   //RCLCPP_INFO(this->get_logger(), "[FSM]: state: %s", state_str[static_cast<int>(exec_state_)].c_str());
-//   RCUTILS_LOG_INFO("[FSM]: state: %s", state_str[static_cast<int>(exec_state_)].c_str());
-// }
+void KinoReplanFSM::printFSMExecState() {
+  std::vector<std::string> state_str = {"INIT", "WAIT_TARGET", "GEN_NEW_TRAJ", "REPLAN_TRAJ", "EXEC_TRAJ"};
+  //RCLCPP_INFO(this->get_logger(), "[FSM]: state: %s", state_str[static_cast<int>(exec_state_)].c_str());
+  RCUTILS_LOG_INFO("[FSM]: state: %s", state_str[static_cast<int>(exec_state_)].c_str());
+}
 
-// void KinoReplanFSM::execFSMCallback() {
-//   static int fsm_num = 0;
-//   fsm_num++;
-//   if (fsm_num == 100) {
-//     printFSMExecState();
-//     if (!have_odom_) RCUTILS_LOG_INFO("no odom");
-//     if (!trigger_) RCUTILS_LOG_INFO("wait for goal");
-//     fsm_num = 0;
-//   }
+void KinoReplanFSM::execFSMCallback() {
+  static int fsm_num = 0;
+  fsm_num++;
+  if (fsm_num == 100) {
+    printFSMExecState();
+    if (!have_odom_) RCUTILS_LOG_INFO("no odom");
+    if (!trigger_) RCUTILS_LOG_INFO("wait for goal");
+    fsm_num = 0;
+  }
 
-//   switch (exec_state_) {
-//     case INIT:{
-//       if (!have_odom_ || !trigger_) return;
-//       changeFSMExecState(WAIT_TARGET, "FSM");
-//       break;}
+  switch (exec_state_) {
+    case INIT:{
+      if (!have_odom_ || !trigger_) return;
+      changeFSMExecState(WAIT_TARGET, "FSM");
+      break;}
 
-//     case WAIT_TARGET:{
-//       if (!have_target_) return;
-//       changeFSMExecState(GEN_NEW_TRAJ, "FSM");
-//       break;}
+    case WAIT_TARGET:{
+      if (!have_target_) return;
+      changeFSMExecState(GEN_NEW_TRAJ, "FSM");
+      break;}
 
-//     case GEN_NEW_TRAJ:{
-//       start_pt_ = odom_pos_;
-//       start_vel_ = odom_vel_;
-//       start_acc_.setZero();
-//       start_yaw_(0) = atan2(odom_orient_.toRotationMatrix()(1, 0), odom_orient_.toRotationMatrix()(0, 0));
-//       start_yaw_(1) = start_yaw_(2) = 0.0;
-//       if (callKinodynamicReplan()) {
-//         changeFSMExecState(EXEC_TRAJ, "FSM");
-//       } else {
-//         changeFSMExecState(GEN_NEW_TRAJ, "FSM");
-//       }
-//       break;}
-//       case EXEC_TRAJ: {
-//             /* determine if need to replan */
-//             LocalTrajData* info     = &planner_manager_->local_data_;
-//             rclcpp::Time time_now = rclcpp::Clock().now();
-//             double         t_cur    = (time_now - info->start_time_).seconds();
-//             t_cur                   = min(info->duration_, t_cur);
+    case GEN_NEW_TRAJ:{
+      start_pt_ = odom_pos_;
+      start_vel_ = odom_vel_;
+      start_acc_.setZero();
+      start_yaw_(0) = atan2(odom_orient_.toRotationMatrix()(1, 0), odom_orient_.toRotationMatrix()(0, 0));
+      start_yaw_(1) = start_yaw_(2) = 0.0;
+      if (callKinodynamicReplan()) {
+        changeFSMExecState(EXEC_TRAJ, "FSM");
+      } else {
+        changeFSMExecState(GEN_NEW_TRAJ, "FSM");
+      }
+      break;}
+      case EXEC_TRAJ: {
+            /* determine if need to replan */
+            LocalTrajData* info     = &planner_manager_->local_data_;
+            rclcpp::Time time_now = rclcpp::Clock().now();
+            double         t_cur    = (time_now - info->start_time_).seconds();
+            t_cur                   = min(info->duration_, t_cur);
 
-//             Eigen::Vector3d pos = info->position_traj_.evaluateDeBoorT(t_cur);
+            Eigen::Vector3d pos = info->position_traj_.evaluateDeBoorT(t_cur);
 
-//             /* && (end_pt_ - pos).norm() < 0.5 */
-//             if (t_cur > info->duration_ - 1e-2) {
-//               have_target_ = false;
-//               changeFSMExecState(WAIT_TARGET, "FSM");
-//               return;
+            /* && (end_pt_ - pos).norm() < 0.5 */
+            if (t_cur > info->duration_ - 1e-2) {
+              have_target_ = false;
+              changeFSMExecState(WAIT_TARGET, "FSM");
+              return;
 
-//             } else if ((end_pt_ - pos).norm() < no_replan_thresh_) {
-//               // cout << "near end" << endl;
-//               return;
+            } else if ((end_pt_ - pos).norm() < no_replan_thresh_) {
+              // cout << "near end" << endl;
+              return;
 
-//             } else if ((info->start_pos_ - pos).norm() < replan_thresh_) {
-//               // cout << "near start" << endl;
-//               return;
+            } else if ((info->start_pos_ - pos).norm() < replan_thresh_) {
+              // cout << "near start" << endl;
+              return;
 
-//             } else {
-//               changeFSMExecState(REPLAN_TRAJ, "FSM");
-//             }
-//             break;
-//           }
-//     case REPLAN_TRAJ:{
-//       LocalTrajData* info     = &planner_manager_->local_data_;
-//       rclcpp::Time time_now = rclcpp::Clock().now();
-//       double         t_cur    = (time_now - info->start_time_).seconds();
+            } else {
+              changeFSMExecState(REPLAN_TRAJ, "FSM");
+            }
+            break;
+          }
+    case REPLAN_TRAJ:{
+      LocalTrajData* info     = &planner_manager_->local_data_;
+      rclcpp::Time time_now = rclcpp::Clock().now();
+      double         t_cur    = (time_now - info->start_time_).seconds();
 
-//       start_pt_  = info->position_traj_.evaluateDeBoorT(t_cur);
-//       start_vel_ = info->velocity_traj_.evaluateDeBoorT(t_cur);
-//       start_acc_ = info->acceleration_traj_.evaluateDeBoorT(t_cur);
+      start_pt_  = info->position_traj_.evaluateDeBoorT(t_cur);
+      start_vel_ = info->velocity_traj_.evaluateDeBoorT(t_cur);
+      start_acc_ = info->acceleration_traj_.evaluateDeBoorT(t_cur);
 
-//       start_yaw_(0) = info->yaw_traj_.evaluateDeBoorT(t_cur)[0];
-//       start_yaw_(1) = info->yawdot_traj_.evaluateDeBoorT(t_cur)[0];
-//       start_yaw_(2) = info->yawdotdot_traj_.evaluateDeBoorT(t_cur)[0];
+      start_yaw_(0) = info->yaw_traj_.evaluateDeBoorT(t_cur)[0];
+      start_yaw_(1) = info->yawdot_traj_.evaluateDeBoorT(t_cur)[0];
+      start_yaw_(2) = info->yawdotdot_traj_.evaluateDeBoorT(t_cur)[0];
 
-//       std_msgs::msg::Empty replan_msg;
-//       replan_pub_->publish(replan_msg);
+      std_msgs::msg::Empty replan_msg;
+      replan_pub_->publish(replan_msg);
 
-//       bool success = callKinodynamicReplan();
-//       if (success) {
-//         changeFSMExecState(EXEC_TRAJ, "FSM");
-//       } else {
-//         changeFSMExecState(GEN_NEW_TRAJ, "FSM");
-//       }
-//       break;
-//     }
-//   }
-// }
+      bool success = callKinodynamicReplan();
+      if (success) {
+        changeFSMExecState(EXEC_TRAJ, "FSM");
+      } else {
+        changeFSMExecState(GEN_NEW_TRAJ, "FSM");
+      }
+      break;
+    }
+  }
+}
 
 // void KinoReplanFSM::checkCollisionCallback() {
 //   LocalTrajData* info = &planner_manager_->local_data_;
@@ -283,56 +283,55 @@ void KinoReplanFSM::waypointCallback(const nav_msgs::msg::Path::SharedPtr msg) {
 //   }
 // }
 
-// bool KinoReplanFSM::callKinodynamicReplan() {
-//   auto plan_success = planner_manager_->kinodynamicReplan(start_pt_, start_vel_, start_acc_, end_pt_, end_vel_);
-//   if (plan_success) {
+bool KinoReplanFSM::callKinodynamicReplan() {
+  auto plan_success = planner_manager_->kinodynamicReplan(start_pt_, start_vel_, start_acc_, end_pt_, end_vel_);
+  if (plan_success) {
 
-//     planner_manager_->planYaw(start_yaw_);
+    planner_manager_->planYaw(start_yaw_);
 
-//     auto info = &planner_manager_->local_data_;
+    auto info = &planner_manager_->local_data_;
 
-//     /* publish traj */
-//     quadrotor_msgs::msg::Bspline bspline;
-//     bspline.order      = 3;
-//     bspline.start_time = info->start_time_;
-//     bspline.traj_id    = info->traj_id_;
+    /* publish traj */
+    quadrotor_msgs::msg::Bspline bspline;
+    bspline.order      = 3;
+    bspline.start_time = info->start_time_;
+    bspline.traj_id    = info->traj_id_;
 
-//     Eigen::MatrixXd pos_pts = info->position_traj_.getControlPoint();
+    Eigen::MatrixXd pos_pts = info->position_traj_.getControlPoint();
 
-//     for (int i = 0; i < pos_pts.rows(); ++i) {
-//       geometry_msgs::msg::Point pt;
-//       pt.x = pos_pts(i, 0);
-//       pt.y = pos_pts(i, 1);
-//       pt.z = pos_pts(i, 2);
-//       bspline.pos_pts.push_back(pt);
-//     }
+    for (int i = 0; i < pos_pts.rows(); ++i) {
+      geometry_msgs::msg::Point pt;
+      pt.x = pos_pts(i, 0);
+      pt.y = pos_pts(i, 1);
+      pt.z = pos_pts(i, 2);
+      bspline.pos_pts.push_back(pt);
+    }
 
-//     Eigen::VectorXd knots = info->position_traj_.getKnot();
-//     for (int i = 0; i < knots.rows(); ++i) {
-//       bspline.knots.push_back(knots(i));
-//     }
+    Eigen::VectorXd knots = info->position_traj_.getKnot();
+    for (int i = 0; i < knots.rows(); ++i) {
+      bspline.knots.push_back(knots(i));
+    }
 
-//     Eigen::MatrixXd yaw_pts = info->yaw_traj_.getControlPoint();
-//     for (int i = 0; i < yaw_pts.rows(); ++i) {
-//       double yaw = yaw_pts(i, 0);
-//       bspline.yaw_pts.push_back(yaw);
-//     }
-//     bspline.yaw_dt = info->yaw_traj_.getInterval();
+    Eigen::MatrixXd yaw_pts = info->yaw_traj_.getControlPoint();
+    for (int i = 0; i < yaw_pts.rows(); ++i) {
+      double yaw = yaw_pts(i, 0);
+      bspline.yaw_pts.push_back(yaw);
+    }
+    bspline.yaw_dt = info->yaw_traj_.getInterval();
 
-//     bspline_pub_->publish(bspline);
+    bspline_pub_->publish(bspline);
 
-//     /* visulization */
-//     auto plan_data = &planner_manager_->plan_data_;
-//     visualization_->drawGeometricPath(plan_data->kino_path_, 0.075, Eigen::Vector4d(1, 1, 0, 0.4));
-//     visualization_->drawBspline(info->position_traj_, 0.1, Eigen::Vector4d(1.0, 0, 0.0, 1), true, 0.2,
-//                                 Eigen::Vector4d(1, 0, 0, 1));
+    /* visulization */
+    auto plan_data = &planner_manager_->plan_data_;
+    visualization_->drawGeometricPath(plan_data->kino_path_, 0.075, Eigen::Vector4d(1, 1, 0, 0.4));
+    visualization_->drawBspline(info->position_traj_, 0.1, Eigen::Vector4d(1.0,0, 0.0, 1), true, 0.2, Eigen::Vector4d(1, 0, 0, 1));
 
-//     return true;
+    return true;
 
-//   } else {
-//     cout << "generate new traj fail." << endl;
-//     return false;
-//   }
-// }
+  } else {
+    cout << "generate new traj fail." << endl;
+    return false;
+  }
+}
 
 }  // namespace fast_planner

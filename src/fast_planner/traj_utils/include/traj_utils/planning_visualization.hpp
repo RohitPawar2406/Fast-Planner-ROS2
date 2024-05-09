@@ -72,7 +72,10 @@ public:
                             int id = 0);
 
     // draw a bspline trajectory
-    void drawBspline(NonUniformBspline& bspline, double size,const Eigen::Vector4d& color, bool show_ctrl_pts, double size2, const Eigen::Vector4d& color2, int id1, int id2);
+    void drawBspline(NonUniformBspline& bspline, double size, const Eigen::Vector4d& color,
+                   bool show_ctrl_pts = false, double size2 = 0.1,
+                   const Eigen::Vector4d& color2 = Eigen::Vector4d(1, 1, 0, 1), int id1 = 0,
+                   int id2 = 0);
 
     // draw a set of bspline trajectories generated in different phases
     void drawBsplinesPhase1(std::vector<NonUniformBspline>& bsplines, double size);

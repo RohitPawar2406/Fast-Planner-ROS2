@@ -137,121 +137,121 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
 //   return true;
 // }
 
-// bool FastPlannerManager::kinodynamicReplan( Eigen::Vector3d start_pt, Eigen::Vector3d start_vel, Eigen::Vector3d start_acc, Eigen::Vector3d end_pt, Eigen::Vector3d end_vel) {
+bool FastPlannerManager::kinodynamicReplan( Eigen::Vector3d start_pt, Eigen::Vector3d start_vel, Eigen::Vector3d start_acc, Eigen::Vector3d end_pt, Eigen::Vector3d end_vel) {
 
-//   std::cout << "[kino replan]: -----------------------" << std::endl;
-//   std::cout << "start: " << start_pt.transpose() << ", " << start_vel.transpose() << ", "
-//             << start_acc.transpose() << "\ngoal:" << end_pt.transpose() << ", " << end_vel.transpose()
-//             << std::endl;
+  std::cout << "[kino replan]: -----------------------" << std::endl;
+  std::cout << "start: " << start_pt.transpose() << ", " << start_vel.transpose() << ", "
+            << start_acc.transpose() << "\ngoal:" << end_pt.transpose() << ", " << end_vel.transpose()
+            << std::endl;
 
-//   if ((start_pt - end_pt).norm() < 0.2) {
-//     std::cout << "Close goal" << std::endl;
-//     return false;
-//   }
+  if ((start_pt - end_pt).norm() < 0.2) {
+    std::cout << "Close goal" << std::endl;
+    return false;
+  }
 
-//   auto t1 = rclcpp::Clock().now();
-//   double t_search = 0.0, t_opt = 0.0, t_adjust = 0.0;
+  auto t1 = rclcpp::Clock().now();
+  double t_search = 0.0, t_opt = 0.0, t_adjust = 0.0;
 
-//   Eigen::Vector3d init_pos = start_pt;
-//   Eigen::Vector3d init_vel = start_vel;
-//   Eigen::Vector3d init_acc = start_acc;
+  Eigen::Vector3d init_pos = start_pt;
+  Eigen::Vector3d init_vel = start_vel;
+  Eigen::Vector3d init_acc = start_acc;
 
-//   // kinodynamic path searching
+  // kinodynamic path searching
 
-//   t1 = rclcpp::Clock().now();
+  t1 = rclcpp::Clock().now();
 
-//   kino_path_finder_->reset();
+  kino_path_finder_->reset();
 
-//   int status = kino_path_finder_->search(start_pt, start_vel, start_acc, end_pt, end_vel, true);
+  int status = kino_path_finder_->search(start_pt, start_vel, start_acc, end_pt, end_vel, true);
 
-//   if (status == KinodynamicAstar::NO_PATH) {
-//     std::cout << "[kino replan]: kinodynamic search fail!" << std::endl;
+  if (status == KinodynamicAstar::NO_PATH) {
+    std::cout << "[kino replan]: kinodynamic search fail!" << std::endl;
 
-//     // retry searching with discontinuous initial state
-//     kino_path_finder_->reset();
-//     status = kino_path_finder_->search(start_pt, start_vel, start_acc, end_pt, end_vel, false);
+    // retry searching with discontinuous initial state
+    kino_path_finder_->reset();
+    status = kino_path_finder_->search(start_pt, start_vel, start_acc, end_pt, end_vel, false);
 
-//     if (status == KinodynamicAstar::NO_PATH) {
-//       std::cout << "[kino replan]: Can't find path." << std::endl;
-//       return false;
-//     } else {
-//       std::cout << "[kino replan]: retry search success." << std::endl;
-//     }
+    if (status == KinodynamicAstar::NO_PATH) {
+      std::cout << "[kino replan]: Can't find path." << std::endl;
+      return false;
+    } else {
+      std::cout << "[kino replan]: retry search success." << std::endl;
+    }
 
-//   } else {
-//     std::cout << "[kino replan]: kinodynamic search success." << std::endl;
-//   }
+  } else {
+    std::cout << "[kino replan]: kinodynamic search success." << std::endl;
+  }
 
-//   plan_data_.kino_path_ = kino_path_finder_->getKinoTraj(0.01);
+  plan_data_.kino_path_ = kino_path_finder_->getKinoTraj(0.01);
 
-//   t_search = (rclcpp::Clock().now() - t1).seconds();
+  t_search = (rclcpp::Clock().now() - t1).seconds();
 
-//   // parameterize the path to bspline
+  // parameterize the path to bspline
 
-//   double ts = pp_.ctrl_pt_dist / pp_.max_vel_;
-//   std::vector<Eigen::Vector3d> point_set, start_end_derivatives;
-//   kino_path_finder_->getSamples(ts, point_set, start_end_derivatives);
+  double ts = pp_.ctrl_pt_dist / pp_.max_vel_;
+  std::vector<Eigen::Vector3d> point_set, start_end_derivatives;
+  kino_path_finder_->getSamples(ts, point_set, start_end_derivatives);
 
-//   Eigen::MatrixXd ctrl_pts;
-//   NonUniformBspline::parameterizeToBspline(ts, point_set, start_end_derivatives, ctrl_pts);
-//   NonUniformBspline init(ctrl_pts, 3, ts);
+  Eigen::MatrixXd ctrl_pts;
+  NonUniformBspline::parameterizeToBspline(ts, point_set, start_end_derivatives, ctrl_pts);
+  NonUniformBspline init(ctrl_pts, 3, ts);
 
-//   // bspline trajectory optimization
+  // bspline trajectory optimization
 
-//   t1 = rclcpp::Clock().now();
+  t1 = rclcpp::Clock().now();
 
-//   int cost_function = BsplineOptimizer::NORMAL_PHASE;
+  int cost_function = BsplineOptimizer::NORMAL_PHASE;
 
-//   if (status != KinodynamicAstar::REACH_END) {
-//     cost_function |= BsplineOptimizer::ENDPOINT;
-//   }
+  if (status != KinodynamicAstar::REACH_END) {
+    cost_function |= BsplineOptimizer::ENDPOINT;
+  }
 
-//   ctrl_pts = bspline_optimizers_[0]->BsplineOptimizeTraj(ctrl_pts, ts, cost_function, 1, 1);
+  ctrl_pts = bspline_optimizers_[0]->BsplineOptimizeTraj(ctrl_pts, ts, cost_function, 1, 1);
 
-//   t_opt = (rclcpp::Clock().now() - t1).seconds();
+  t_opt = (rclcpp::Clock().now() - t1).seconds();
 
-//   // iterative time adjustment
+  // iterative time adjustment
 
-//   t1 = rclcpp::Clock().now();
-//   NonUniformBspline pos = NonUniformBspline(ctrl_pts, 3, ts);
+  t1 = rclcpp::Clock().now();
+  NonUniformBspline pos = NonUniformBspline(ctrl_pts, 3, ts);
 
-//   double to = pos.getTimeSum();
-//   pos.setPhysicalLimits(pp_.max_vel_, pp_.max_acc_);
-//   bool feasible = pos.checkFeasibility(false);
+  double to = pos.getTimeSum();
+  pos.setPhysicalLimits(pp_.max_vel_, pp_.max_acc_);
+  bool feasible = pos.checkFeasibility(false);
 
-//   int iter_num = 0;
-//   while (!feasible && rclcpp::ok()) {
+  int iter_num = 0;
+  while (!feasible && rclcpp::ok()) {
 
-//     feasible = pos.reallocateTime();
+    feasible = pos.reallocateTime();
 
-//     if (++iter_num >= 3) break;
-//   }
+    if (++iter_num >= 3) break;
+  }
 
-//   double tn = pos.getTimeSum();
+  double tn = pos.getTimeSum();
 
-//   std::cout << "[kino replan]: Reallocate ratio: " << tn / to << std::endl;
-//   if (tn / to > 3.0) {
-//     std::cout << "reallocate error." << std::endl;
-//   }
+  std::cout << "[kino replan]: Reallocate ratio: " << tn / to << std::endl;
+  if (tn / to > 3.0) {
+    std::cout << "reallocate error." << std::endl;
+  }
 
-//   t_adjust = (rclcpp::Clock().now() - t1).seconds();
+  t_adjust = (rclcpp::Clock().now() - t1).seconds();
 
-//   // save planned results
+  // save planned results
 
-//   local_data_.position_traj_ = pos;
+  local_data_.position_traj_ = pos;
 
-//   double t_total = t_search + t_opt + t_adjust;
-//   std::cout << "[kino replan]: time: " << t_total << ", search: " << t_search << ", optimize: " << t_opt
-//             << ", adjust time:" << t_adjust << std::endl;
+  double t_total = t_search + t_opt + t_adjust;
+  std::cout << "[kino replan]: time: " << t_total << ", search: " << t_search << ", optimize: " << t_opt
+            << ", adjust time:" << t_adjust << std::endl;
 
-//   pp_.time_search_   = t_search;
-//   pp_.time_optimize_ = t_opt;
-//   pp_.time_adjust_   = t_adjust;
+  pp_.time_search_   = t_search;
+  pp_.time_optimize_ = t_opt;
+  pp_.time_adjust_   = t_adjust;
 
-//   updateTrajInfo();
+  updateTrajInfo();
 
-//   return true;
-// }
+  return true;
+}
 
 // ////////////////////////////////////
 
@@ -433,14 +433,14 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
 //                                     << " seconds, time change is: " << time_inc);
 // }
 
-// void FastPlannerManager::updateTrajInfo() {
+void FastPlannerManager::updateTrajInfo() {
 
-//   local_data_.velocity_traj_     = local_data_.position_traj_.getDerivative();
-//   local_data_.acceleration_traj_ = local_data_.velocity_traj_.getDerivative();
-//   local_data_.start_pos_         = local_data_.position_traj_.evaluateDeBoorT(0.0);
-//   local_data_.duration_          = local_data_.position_traj_.getTimeSum();
-//   local_data_.traj_id_ += 1;
-// }
+  local_data_.velocity_traj_     = local_data_.position_traj_.getDerivative();
+  local_data_.acceleration_traj_ = local_data_.velocity_traj_.getDerivative();
+  local_data_.start_pos_         = local_data_.position_traj_.evaluateDeBoorT(0.0);
+  local_data_.duration_          = local_data_.position_traj_.getTimeSum();
+  local_data_.traj_id_ += 1;
+}
 
 // void FastPlannerManager::reparamBspline(NonUniformBspline& bspline, double ratio,
 //                                         Eigen::MatrixXd& ctrl_pts, double& dt, double& time_inc) {
@@ -606,101 +606,101 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
 //   }
 // }
 
-// void FastPlannerManager::planYaw(const Eigen::Vector3d& start_yaw) {
-//   RCLCPP_INFO(rclcpp::get_logger("INFO:planner_manager"), "plan yaw");
-//   auto t1 = rclcpp::Clock().now();
-//   // calculate waypoints of heading
+void FastPlannerManager::planYaw(const Eigen::Vector3d& start_yaw) {
+  RCLCPP_INFO(rclcpp::get_logger("INFO:planner_manager"), "plan yaw");
+  auto t1 = rclcpp::Clock().now();
+  // calculate waypoints of heading
 
-//   auto&  pos      = local_data_.position_traj_;
-//   double duration = pos.getTimeSum();
+  auto&  pos      = local_data_.position_traj_;
+  double duration = pos.getTimeSum();
 
-//   double dt_yaw  = 0.3;
-//   int    seg_num = std::ceil(duration / dt_yaw);
-//   dt_yaw         = duration / seg_num;
+  double dt_yaw  = 0.3;
+  int    seg_num = std::ceil(duration / dt_yaw);
+  dt_yaw         = duration / seg_num;
 
-//   const double            forward_t = 2.0;
-//   double                  last_yaw  = start_yaw(0);
-//   std::vector<Eigen::Vector3d> waypts;
-//   std::vector<int>             waypt_idx;
+  const double            forward_t = 2.0;
+  double                  last_yaw  = start_yaw(0);
+  std::vector<Eigen::Vector3d> waypts;
+  std::vector<int>             waypt_idx;
 
-//   // seg_num -> seg_num - 1 points for constraint excluding the boundary states
+  // seg_num -> seg_num - 1 points for constraint excluding the boundary states
 
-//   for (int i = 0; i < seg_num; ++i) {
-//     double          tc = i * dt_yaw;
-//     Eigen::Vector3d pc = pos.evaluateDeBoorT(tc);
-//     double          tf = std::min(duration, tc + forward_t);
-//     Eigen::Vector3d pf = pos.evaluateDeBoorT(tf);
-//     Eigen::Vector3d pd = pf - pc;
+  for (int i = 0; i < seg_num; ++i) {
+    double          tc = i * dt_yaw;
+    Eigen::Vector3d pc = pos.evaluateDeBoorT(tc);
+    double          tf = std::min(duration, tc + forward_t);
+    Eigen::Vector3d pf = pos.evaluateDeBoorT(tf);
+    Eigen::Vector3d pd = pf - pc;
 
-//     Eigen::Vector3d waypt;
-//     if (pd.norm() > 1e-6) {
-//       waypt(0) = atan2(pd(1), pd(0));
-//       waypt(1) = waypt(2) = 0.0;
-//       calcNextYaw(last_yaw, waypt(0));
-//     } else {
-//       waypt = waypts.back();
-//     }
-//     waypts.push_back(waypt);
-//     waypt_idx.push_back(i);
-//   }
+    Eigen::Vector3d waypt;
+    if (pd.norm() > 1e-6) {
+      waypt(0) = atan2(pd(1), pd(0));
+      waypt(1) = waypt(2) = 0.0;
+      calcNextYaw(last_yaw, waypt(0));
+    } else {
+      waypt = waypts.back();
+    }
+    waypts.push_back(waypt);
+    waypt_idx.push_back(i);
+  }
 
-//   // calculate initial control points with boundary state constraints
+  // calculate initial control points with boundary state constraints
 
-//   Eigen::MatrixXd yaw(seg_num + 3, 1);
-//   yaw.setZero();
+  Eigen::MatrixXd yaw(seg_num + 3, 1);
+  yaw.setZero();
 
-//   Eigen::Matrix3d states2pts;
-//   states2pts << 1.0, -dt_yaw, (1 / 3.0) * dt_yaw * dt_yaw, 1.0, 0.0, -(1 / 6.0) * dt_yaw * dt_yaw, 1.0,
-//       dt_yaw, (1 / 3.0) * dt_yaw * dt_yaw;
-//   yaw.block(0, 0, 3, 1) = states2pts * start_yaw;
+  Eigen::Matrix3d states2pts;
+  states2pts << 1.0, -dt_yaw, (1 / 3.0) * dt_yaw * dt_yaw, 1.0, 0.0, -(1 / 6.0) * dt_yaw * dt_yaw, 1.0,
+      dt_yaw, (1 / 3.0) * dt_yaw * dt_yaw;
+  yaw.block(0, 0, 3, 1) = states2pts * start_yaw;
 
-//   Eigen::Vector3d end_v = local_data_.velocity_traj_.evaluateDeBoorT(duration - 0.1);
-//   Eigen::Vector3d end_yaw(atan2(end_v(1), end_v(0)), 0, 0);
-//   calcNextYaw(last_yaw, end_yaw(0));
-//   yaw.block(seg_num, 0, 3, 1) = states2pts * end_yaw;
+  Eigen::Vector3d end_v = local_data_.velocity_traj_.evaluateDeBoorT(duration - 0.1);
+  Eigen::Vector3d end_yaw(atan2(end_v(1), end_v(0)), 0, 0);
+  calcNextYaw(last_yaw, end_yaw(0));
+  yaw.block(seg_num, 0, 3, 1) = states2pts * end_yaw;
 
-//   // solve
-//   bspline_optimizers_[1]->setWaypoints(waypts, waypt_idx);
-//   int cost_func = BsplineOptimizer::SMOOTHNESS | BsplineOptimizer::WAYPOINTS;
-//   yaw           = bspline_optimizers_[1]->BsplineOptimizeTraj(yaw, dt_yaw, cost_func, 1, 1);
+  // solve
+  bspline_optimizers_[1]->setWaypoints(waypts, waypt_idx);
+  int cost_func = BsplineOptimizer::SMOOTHNESS | BsplineOptimizer::WAYPOINTS;
+  yaw           = bspline_optimizers_[1]->BsplineOptimizeTraj(yaw, dt_yaw, cost_func, 1, 1);
 
-//   // update traj info
-//   local_data_.yaw_traj_.setUniformBspline(yaw, 3, dt_yaw);
-//   local_data_.yawdot_traj_    = local_data_.yaw_traj_.getDerivative();
-//   local_data_.yawdotdot_traj_ = local_data_.yawdot_traj_.getDerivative();
+  // update traj info
+  local_data_.yaw_traj_.setUniformBspline(yaw, 3, dt_yaw);
+  local_data_.yawdot_traj_    = local_data_.yaw_traj_.getDerivative();
+  local_data_.yawdotdot_traj_ = local_data_.yawdot_traj_.getDerivative();
 
-//   std::vector<double> path_yaw;
-//   for (int i = 0; i < waypts.size(); ++i) path_yaw.push_back(waypts[i][0]);
-//   plan_data_.path_yaw_    = path_yaw;
-//   plan_data_.dt_yaw_      = dt_yaw;
-//   plan_data_.dt_yaw_path_ = dt_yaw;
+  std::vector<double> path_yaw;
+  for (int i = 0; i < waypts.size(); ++i) path_yaw.push_back(waypts[i][0]);
+  plan_data_.path_yaw_    = path_yaw;
+  plan_data_.dt_yaw_      = dt_yaw;
+  plan_data_.dt_yaw_path_ = dt_yaw;
 
-//   std::cout << "plan heading: " << (rclcpp::Clock().now() - t1).seconds() << std::endl;
-// }
+  std::cout << "plan heading: " << (rclcpp::Clock().now() - t1).seconds() << std::endl;
+}
 
 
-// void FastPlannerManager::calcNextYaw(const double& last_yaw, double& yaw) {
-//   // round yaw to [-PI, PI]
+void FastPlannerManager::calcNextYaw(const double& last_yaw, double& yaw) {
+  // round yaw to [-PI, PI]
 
-//   double round_last = last_yaw;
+  double round_last = last_yaw;
 
-//   while (round_last < -M_PI) {
-//     round_last += 2 * M_PI;
-//   }
-//   while (round_last > M_PI) {
-//     round_last -= 2 * M_PI;
-//   }
+  while (round_last < -M_PI) {
+    round_last += 2 * M_PI;
+  }
+  while (round_last > M_PI) {
+    round_last -= 2 * M_PI;
+  }
 
-//   double diff = yaw - round_last;
+  double diff = yaw - round_last;
 
-//   if (std::fabs(diff) <= M_PI) {
-//     yaw = last_yaw + diff;
-//   } else if (diff > M_PI) {
-//     yaw = last_yaw + diff - 2 * M_PI;
-//   } else if (diff < -M_PI) {
-//     yaw = last_yaw + diff + 2 * M_PI;
-//   }
-// }
+  if (std::fabs(diff) <= M_PI) {
+    yaw = last_yaw + diff;
+  } else if (diff > M_PI) {
+    yaw = last_yaw + diff - 2 * M_PI;
+  } else if (diff < -M_PI) {
+    yaw = last_yaw + diff + 2 * M_PI;
+  }
+}
 
 
 }  // namespace fast_planner

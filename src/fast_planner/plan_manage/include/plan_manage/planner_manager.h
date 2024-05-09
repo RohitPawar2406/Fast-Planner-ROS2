@@ -30,12 +30,12 @@ public:
   ~FastPlannerManager();
 
   /* main planning interface */
-  // bool kinodynamicReplan(Eigen::Vector3d start_pt, Eigen::Vector3d start_vel, Eigen::Vector3d start_acc,
-                        //  Eigen::Vector3d end_pt, Eigen::Vector3d end_vel);
+  bool kinodynamicReplan(Eigen::Vector3d start_pt, Eigen::Vector3d start_vel, Eigen::Vector3d start_acc,
+                         Eigen::Vector3d end_pt, Eigen::Vector3d end_vel);
   // bool planGlobalTraj(const Eigen::Vector3d& start_pos);
   // bool topoReplan(bool collide);
 
-  // void planYaw(const Eigen::Vector3d& start_yaw);
+  void planYaw(const Eigen::Vector3d& start_yaw);
 
   void initPlanModules(std::shared_ptr<FastPlanner> nh);
   // void setGlobalWaypoints(std::vector<Eigen::Vector3d>& waypoints);
@@ -57,7 +57,7 @@ private:
   // unique_ptr<TopologyPRM> topo_prm_;
   vector<BsplineOptimizer::Ptr> bspline_optimizers_;
 
-  // void updateTrajInfo();
+  void updateTrajInfo();
 
   // // topology guided optimization
 
@@ -75,7 +75,7 @@ private:
   //                     double& time_inc);
 
   // // heading planning
-  // void calcNextYaw(const double& last_yaw, double& yaw);
+  void calcNextYaw(const double& last_yaw, double& yaw);
 
   // !SECTION stable
 
