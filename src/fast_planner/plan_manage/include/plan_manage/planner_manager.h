@@ -4,7 +4,7 @@
 
 // #include <bspline/non_uniform_bspline.h>
 
-// #include <path_searching/astar.h>
+#include <path_searching/astar.h>
 // #include <path_searching/kinodynamic_astar.h>
 // #include <path_searching/topo_prm.hpp>
 
@@ -52,7 +52,7 @@ private:
   /* main planning algorithms & modules */
   SDFMap::Ptr sdf_map_;
 
-  // unique_ptr<Astar> geo_path_finder_;
+  unique_ptr<Astar> geo_path_finder_;
   // unique_ptr<KinodynamicAstar> kino_path_finder_;
   // unique_ptr<TopologyPRM> topo_prm_;
   // vector<BsplineOptimizer::Ptr> bspline_optimizers_;

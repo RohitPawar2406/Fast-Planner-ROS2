@@ -52,15 +52,15 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
   local_data_.traj_id_ = 0;
   sdf_map_.reset(new SDFMap);
   sdf_map_->initMap(nh);
-  // edt_environment_.reset(new EDTEnvironment);
-  // edt_environment_->setMap(sdf_map_);
+  edt_environment_.reset(new EDTEnvironment);
+  edt_environment_->setMap(sdf_map_);
 
-  // if (use_geometric_path) {
-  //   geo_path_finder_.reset(new Astar);
-  //   geo_path_finder_->setParam(nh);
-  //   geo_path_finder_->setEnvironment(edt_environment_);
-  //   geo_path_finder_->init();
-  // }
+  if (use_geometric_path) {
+    geo_path_finder_.reset(new Astar);
+    geo_path_finder_->setParam(nh);
+    geo_path_finder_->setEnvironment(edt_environment_);
+    geo_path_finder_->init();
+  }
 
   // if (use_kinodynamic_path) {
   //   kino_path_finder_.reset(new KinodynamicAstar);

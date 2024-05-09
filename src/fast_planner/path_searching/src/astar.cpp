@@ -176,7 +176,7 @@ int Astar::search(Eigen::Vector3d start_pt, Eigen::Vector3d end_pt, bool dynamic
   return NO_PATH;
 }
 
-void Astar::setParam(rclcpp::Node::SharedPtr& nh) {
+void Astar::setParam(std::shared_ptr<FastPlanner> nh) {
   nh->get_parameter("astar/resolution_astar", resolution_);
   nh->get_parameter("astar/time_resolution", time_resolution_);
   nh->get_parameter("astar/lambda_heu", lambda_heu_);
