@@ -106,36 +106,36 @@ void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
   // }
 }
 
-// void FastPlannerManager::setGlobalWaypoints(std::vector<Eigen::Vector3d>& waypoints) {
-//   plan_data_.global_waypoints_ = waypoints;
-// }
+void FastPlannerManager::setGlobalWaypoints(std::vector<Eigen::Vector3d>& waypoints) {
+  plan_data_.global_waypoints_ = waypoints;
+}
 
-// bool FastPlannerManager::checkTrajCollision(double& distance) {
-//   double t_now = (rclcpp::Clock().now() - local_data_.start_time_).seconds();
+bool FastPlannerManager::checkTrajCollision(double& distance) {
+  double t_now = (rclcpp::Clock().now() - local_data_.start_time_).seconds();
 
-//   double tm, tmp;
-//   local_data_.position_traj_.getTimeSpan(tm, tmp);
-//   Eigen::Vector3d cur_pt = local_data_.position_traj_.evaluateDeBoor(tm + t_now);
+  double tm, tmp;
+  local_data_.position_traj_.getTimeSpan(tm, tmp);
+  Eigen::Vector3d cur_pt = local_data_.position_traj_.evaluateDeBoor(tm + t_now);
 
-//   double          radius = 0.0;
-//   Eigen::Vector3d fut_pt;
-//   double          fut_t = 0.02;
+  double          radius = 0.0;
+  Eigen::Vector3d fut_pt;
+  double          fut_t = 0.02;
 
-//   while (radius < 6.0 && t_now + fut_t < local_data_.duration_) {
-//     fut_pt = local_data_.position_traj_.evaluateDeBoor(tm + t_now + fut_t);
+  while (radius < 6.0 && t_now + fut_t < local_data_.duration_) {
+    fut_pt = local_data_.position_traj_.evaluateDeBoor(tm + t_now + fut_t);
 
-//     double dist = edt_environment_->evaluateCoarseEDT(fut_pt, -1.0);
-//     if (dist < 0.1) {
-//       distance = radius;
-//       return false;
-//     }
+    double dist = edt_environment_->evaluateCoarseEDT(fut_pt, -1.0);
+    if (dist < 0.1) {
+      distance = radius;
+      return false;
+    }
 
-//     radius = (fut_pt - cur_pt).norm();
-//     fut_t += 0.02;
-//   }
+    radius = (fut_pt - cur_pt).norm();
+    fut_t += 0.02;
+  }
 
-//   return true;
-// }
+  return true;
+}
 
 bool FastPlannerManager::kinodynamicReplan( Eigen::Vector3d start_pt, Eigen::Vector3d start_vel, Eigen::Vector3d start_acc, Eigen::Vector3d end_pt, Eigen::Vector3d end_vel) {
 

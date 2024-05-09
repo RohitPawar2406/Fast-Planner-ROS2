@@ -36,6 +36,7 @@ find_package(cv_bridge REQUIRED)
 find_package(poly_traj REQUIRED)
 find_package(plan_env REQUIRED)
 find_package(NLopt REQUIRED)
+find_package(builtin_interfaces REQUIRED)
 
 include_directories(include
   ${Eigen3_INCLUDE_DIRS} 
@@ -64,6 +65,7 @@ ament_target_dependencies(fast_planner_node
   quadrotor_msgs
   traj_utils
   fast_planner
+  builtin_interfaces
 )
 
 target_link_libraries(fast_planner_node
@@ -72,7 +74,41 @@ target_link_libraries(fast_planner_node
   NLopt::nlopt
 )
 
+ ###########################################################
+add_executable(traj_server  
+  src/traj_server.cpp
+)
+
+ament_target_dependencies(traj_server 
+  rclcpp
+  std_msgs
+  nav_msgs
+  visualization_msgs
+  cv_bridge
+  poly_traj
+  plan_env
+  path_searching
+  bspline
+  bspline_opt
+  quadrotor_msgs
+  traj_utils
+  fast_planner
+  builtin_interfaces
+)
+
+target_link_libraries(traj_server
+  ${PCL_LIBRARIES}
+  ${Eigen3_LIBRARIES}
+  NLopt::nlopt
+)
+
+
 install(TARGETS fast_planner_node
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+
+install(TARGETS traj_server
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 

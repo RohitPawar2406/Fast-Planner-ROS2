@@ -38,9 +38,9 @@ public:
   void planYaw(const Eigen::Vector3d& start_yaw);
 
   void initPlanModules(std::shared_ptr<FastPlanner> nh);
-  // void setGlobalWaypoints(std::vector<Eigen::Vector3d>& waypoints);
+  void setGlobalWaypoints(std::vector<Eigen::Vector3d>& waypoints);
 
-  // bool checkTrajCollision(double& distance);
+  bool checkTrajCollision(double& distance);
 
   PlanParameters pp_;
   LocalTrajData local_data_;

@@ -98,9 +98,9 @@ private:
 
   /* ROS functions */
   void execFSMCallback();
-  // void checkCollisionCallback();
+  void checkCollisionCallback();
   void waypointCallback(const nav_msgs::msg::Path::SharedPtr msg);
-  // void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
+  void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
 
 public:
   KinoReplanFSM(/* args */);

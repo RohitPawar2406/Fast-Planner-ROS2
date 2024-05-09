@@ -13,13 +13,13 @@ using NonUniformBspline = fast_planner::NonUniformBspline;
 class TrajServer : public rclcpp::Node {
 public:
     TrajServer() : Node("traj_server") {
-        bspline_sub = this->create_subscription<quadrotor_msgs::msg::Bspline>("planning/bspline", 10, std::bind(&TrajServer::bsplineCallback, this, std::placeholders::_1));
+        //bspline_sub = this->create_subscription<quadrotor_msgs::msg::Bspline>("planning/bspline", 10, std::bind(&TrajServer::bsplineCallback, this, std::placeholders::_1));
         replan_sub = this->create_subscription<std_msgs::msg::Empty>("planning/replan", 10, std::bind(&TrajServer::replanCallback, this, std::placeholders::_1));
         new_sub = this->create_subscription<std_msgs::msg::Empty>("planning/new", 10, std::bind(&TrajServer::newCallback, this, std::placeholders::_1));
         odom_sub = this->create_subscription<nav_msgs::msg::Odometry>("/odom_world", 50, std::bind(&TrajServer::odomCallbck, this, std::placeholders::_1));
 
         cmd_vis_pub = this->create_publisher<visualization_msgs::msg::Marker>("planning/position_cmd_vis", 10);
-        pos_cmd_pub = this->create_publisher<quadrotor_msgs::msg::PositionCommand>("/position_cmd", 50);
+        //pos_cmd_pub = this->create_publisher<quadrotor_msgs::msg::PositionCommand>("/position_cmd", 50);
         traj_pub = this->create_publisher<visualization_msgs::msg::Marker>("planning/travel_traj", 10);
 
         cmd_timer = this->create_wall_timer(10ms, std::bind(&TrajServer::cmdCallback, this));

@@ -21,6 +21,7 @@
   <depend>poly_traj</depend>
   <depend>fast_planner</depend>
   <depend>quadrotor_msgs</depend>
+  <depend>builtin_interfaces</depend>
   <exec_depend>ros2launch</exec_depend>
   
   <exec_depend>rvizvisualisation</exec_depend>  
