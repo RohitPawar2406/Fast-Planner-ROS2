@@ -55,7 +55,7 @@ void KinoReplanFSM::init(std::shared_ptr<FastPlanner> nh) {
 
   replan_pub_ = nh->create_publisher<std_msgs::msg::Empty>("/planning/replan", 10);
   new_pub_ = nh->create_publisher<std_msgs::msg::Empty>("/planning/new", 10);
-  // bspline_pub_ = nh->create_publisher<quadrotor_msgs::msg::Bspline>("/planning/bspline", 10);
+  bspline_pub_ = nh->create_publisher<quadrotor_msgs::msg::Bspline>("/planning/bspline", 10);
 }
 
 void KinoReplanFSM::waypointCallback(const nav_msgs::msg::Path::SharedPtr msg) {
