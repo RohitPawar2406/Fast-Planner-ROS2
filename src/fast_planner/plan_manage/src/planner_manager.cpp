@@ -22,13 +22,13 @@ FastPlannerManager::~FastPlannerManager() {
 void FastPlannerManager::initPlanModules(std::shared_ptr<FastPlanner> nh) {
   /* read algorithm parameters */
 
-  nh->declare_parameter<float>("manager/max_vel", 0.0);
-  nh->declare_parameter<float>("manager/max_acc", 0.0);
-  nh->declare_parameter<float>("manager/max_jerk", 0.0);
+  nh->declare_parameter<double>("manager/max_vel", 0.0);
+  nh->declare_parameter<double>("manager/max_acc", 0.0);
+  nh->declare_parameter<double>("manager/max_jerk", 0.0);
   nh->declare_parameter<int>("manager/dynamic_environment", 0);
-  nh->declare_parameter<float>("manager/local_segment_length", 0.0);
-  nh->declare_parameter<float>("manager/clearance_threshold", 0.0);
-  nh->declare_parameter<float>("manager/control_points_distance", 0.0);
+  nh->declare_parameter<double>("manager/local_segment_length", 0.0);
+  nh->declare_parameter<double>("manager/clearance_threshold", 0.0);
+  nh->declare_parameter<double>("manager/control_points_distance", 0.0);
   nh->declare_parameter<bool>("manager/use_geometric_path", "false");
   nh->declare_parameter<bool>("manager/use_kinodynamic_path", "false");
   nh->declare_parameter<bool>("manager/use_topo_path", "false");

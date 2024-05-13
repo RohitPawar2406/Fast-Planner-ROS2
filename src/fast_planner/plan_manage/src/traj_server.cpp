@@ -6,14 +6,25 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "quadrotor_msgs/msg/bspline.hpp"
+#include "std_msgs/msg/string.hpp"
 
 using namespace std::chrono_literals;
 
 using NonUniformBspline = fast_planner::NonUniformBspline;
-class TrajServer : public rclcpp::Node {
-public:
-    TrajServer() : Node("traj_server") {
-        //bspline_sub = this->create_subscription<quadrotor_msgs::msg::Bspline>("planning/bspline", 10, std::bind(&TrajServer::bsplineCallback, this, std::placeholders::_1));
+
+
+using namespace std::chrono_literals;
+
+/* This example creates a subclass of Node and uses std::bind() to register a
+* member function as a callback from the timer. */
+
+class TrajServer : public rclcpp::Node
+{
+  public:
+    TrajServer()
+    : Node("traj_server")
+    {
+        bspline_sub = this->create_subscription<quadrotor_msgs::msg::Bspline>("planning/bspline", 10, std::bind(&TrajServer::bsplineCallback, this, std::placeholders::_1));
         replan_sub = this->create_subscription<std_msgs::msg::Empty>("planning/replan", 10, std::bind(&TrajServer::replanCallback, this, std::placeholders::_1));
         new_sub = this->create_subscription<std_msgs::msg::Empty>("planning/new", 10, std::bind(&TrajServer::newCallback, this, std::placeholders::_1));
         odom_sub = this->create_subscription<nav_msgs::msg::Odometry>("/odom_world", 50, std::bind(&TrajServer::odomCallbck, this, std::placeholders::_1));
@@ -25,9 +36,9 @@ public:
         cmd_timer = this->create_wall_timer(10ms, std::bind(&TrajServer::cmdCallback, this));
         vis_timer = this->create_wall_timer(250ms, std::bind(&TrajServer::visCallback, this));
 
-        // Set control parameters and other initializations...
     }
-  void displayTrajWithColor(const std::vector<Eigen::Vector3d>& path, double resolution, const Eigen::Vector4d& color, int id) {
+
+   void displayTrajWithColor(const std::vector<Eigen::Vector3d>& path, double resolution, const Eigen::Vector4d& color, int id) {
     auto mk = std::make_unique<visualization_msgs::msg::Marker>();
     mk->header.frame_id = "world";
     mk->header.stamp = this->now();
@@ -173,6 +184,7 @@ private:
 
   void cmdCallback() {
       /* no publishing before receive traj_ */
+      //std::cout<<receive_traj_<<"****************"<<std::endl;
       if (!receive_traj_) return;
 
       rclcpp::Time time_now = this->now();
@@ -180,18 +192,21 @@ private:
 
       Eigen::Vector3d pos, vel, acc, pos_f;
       double yaw, yawdot;
-
+      //std::cout<<"############ "<<t_cur <<" ####### " <<traj_duration_ << " ############ "<<t_cur <<std::endl;
       if (t_cur < traj_duration_ && t_cur >= 0.0) {
+        std::cout<<"************** " <<receive_traj_<<"***************"<<endl;
         pos = traj_[0].evaluateDeBoorT(t_cur);
         vel = traj_[1].evaluateDeBoorT(t_cur);
         acc = traj_[2].evaluateDeBoorT(t_cur);
         yaw = traj_[3].evaluateDeBoorT(t_cur)[0];
         yawdot = traj_[4].evaluateDeBoorT(t_cur)[0];
-
+        std::cout << "pos: [" << pos[0] << ", " << pos[1] << ", " << pos[2] << "]" << std::endl;
+        std::cout << "vel: [" << vel[0] << ", " << vel[1] << ", " << vel[2] << "]" << std::endl;
         double tf = std::min(traj_duration_, t_cur + 2.0);
         pos_f = traj_[0].evaluateDeBoorT(tf);
 
       } else if (t_cur >= traj_duration_) {
+        //std::cout<<"999999999999900000 " <<receive_traj_<<" 9999999999999 "<<endl;
         /* hover when finish traj_ */
         pos = traj_[0].evaluateDeBoorT(traj_duration_);
         vel.setZero();
@@ -269,14 +284,10 @@ private:
     quadrotor_msgs::msg::PositionCommand cmd;
 };
 
-int main(int argc, char** argv) {
-    rclcpp::init(argc, argv);
-    auto node = std::make_shared<TrajServer>();
-
-    RCLCPP_INFO(node->get_logger(), "[Traj server]: ready.");
-
-    rclcpp::spin(node);
-
-    rclcpp::shutdown();
-    return 0;
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<TrajServer>());
+  rclcpp::shutdown();
+  return 0;
 }

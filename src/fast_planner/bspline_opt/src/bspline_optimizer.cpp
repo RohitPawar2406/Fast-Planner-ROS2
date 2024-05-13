@@ -123,6 +123,9 @@ void BsplineOptimizer::optimize() {
     variable_num_ = std::max(0, dim_ * (pt_num - 2 * order_));
   }
 
+  std::cout << "Variable Num " << variable_num_<< std::endl;
+  std::cout << "Is quadratic " << isQuadratic()<< std::endl;
+
   /* do optimization using NLopt slover */
   nlopt::opt opt(nlopt::algorithm(isQuadratic() ? algorithm1_ : algorithm2_), variable_num_);
   opt.set_min_objective(BsplineOptimizer::costFunction, this);
@@ -151,11 +154,17 @@ void BsplineOptimizer::optimize() {
 
   try {
     double        final_cost;
+    RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", final_cost);
+    std::cout << "Vector size: " << q.size() << std::endl;
+    for (size_t i = 0; i < q.size(); ++i) {
+        std::cout << "q[" << i << "]: " << q[i] << std::endl;
+    }
     nlopt::result result = opt.optimize(q, final_cost);
+    // RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", result);
 
     /* retrieve the optimization result */
   } catch (std::exception& e) {
-    RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "[Optimization]: nlopt exception");
+    RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "[Optimization]: nlopt exception ANNA");
     std::cout << e.what() << std::endl;
   }
 
@@ -422,13 +431,21 @@ void BsplineOptimizer::combineCost(const std::vector<double>& x, std::vector<dou
   }
 }
 
-double BsplineOptimizer::costFunction(const std::vector<double>& x, std::vector<double>& grad, void* instance) {
-  BsplineOptimizer* bspline_opt = reinterpret_cast<BsplineOptimizer*>(instance);
-  std::vector<double>    g(x.size());
-  double                 f_combine;
-  bspline_opt->combineCost(x, grad, f_combine);
-  return f_combine;
+double BsplineOptimizer::costFunction(const std::vector<double>& x, std::vector<double>& grad,
+                                      void* func_data) {
+  BsplineOptimizer* opt = reinterpret_cast<BsplineOptimizer*>(func_data);
+  double            cost;
+  opt->combineCost(x, grad, cost);
+  opt->iter_num_++;
+
+  /* save the min cost result */
+  if (cost < opt->min_cost_) {
+    opt->min_cost_      = cost;
+    opt->best_variable_ = x;
+  }
+  return cost;
 }
+
 vector<Eigen::Vector3d> BsplineOptimizer::matrixToVectors(const Eigen::MatrixXd& ctrl_pts) {
   vector<Eigen::Vector3d> ctrl_q;
   for (int i = 0; i < ctrl_pts.rows(); ++i) {

@@ -1,12 +1,15 @@
 #include <traj_utils/planning_visualization.hpp>
-
+#include <typeinfo>
 using namespace std;
 
 namespace fast_planner {
 
 PlanningVisualization::PlanningVisualization(std::shared_ptr<FastPlanner> nh) {
-  RCUTILS_LOG_INFO("INSIDE PLANNING VISUALISATION!!!");
   node = nh;
+  RCUTILS_LOG_INFO("INSIDE PLANNING VISUALISATION!!!");
+  RCUTILS_LOG_INFO(typeid(node).name());
+
+  subscription_ = nh->create_subscription<std_msgs::msg::String>("topic_visualization", 10, std::bind(&PlanningVisualization::topic_callback, this, std::placeholders::_1));
 
   traj_pub_ = node->create_publisher<visualization_msgs::msg::Marker>("/planning_vis/trajectory", 20);
   pubs_.push_back(traj_pub_);
@@ -33,6 +36,10 @@ PlanningVisualization::PlanningVisualization(std::shared_ptr<FastPlanner> nh) {
   last_frontier_num_ = 0;
 }
 
+void PlanningVisualization::topic_callback(const std_msgs::msg::String::SharedPtr msg) const
+{
+  RCLCPP_INFO(node->get_logger(), "I heard: '%s'", msg->data.c_str());
+}
 void PlanningVisualization::displaySphereList(const vector<Eigen::Vector3d>& list, double resolution,
                                               const Eigen::Vector4d& color, int id, int pub_id) {
   visualization_msgs::msg::Marker mk;

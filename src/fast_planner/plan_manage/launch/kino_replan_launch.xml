@@ -5,15 +5,17 @@
   <arg name="map_size_z" default=" 5.0"/>
 
   <!-- topic of your odometry such as VIO or LIO -->
-  <arg name="odom_topic" default="/state_ukf/odom" />
+  <arg name="odom_topic" default="/state_ukf/odom" /> 
+
+  <node pkg="tf2_ros" name="static_transform_publisher" exec="static_transform_publisher"  args="0 0 0 0 0 0 map world" output="screen"/>
 
   <!-- Way generator -->
-  <!-- <node pkg="waypoint_generator" name="waypoint_generator1" exec="waypoint_generator" output="screen">
+  <node pkg="waypoint_generator" name="waypoint_generator" exec="waypoint_generator" output="screen">
     <remap from="/odom" to="$(var odom_topic)"/>        
-    <remap from="/goal" to="/move_base_simple/goal"/>
+    <remap from="move_base_simple/goal" to="/goal_pose"/>
     <remap from="traj_start_trigger" to="/traj_start_trigger" /> 
-    <param name="waypoint_type" value="manual-lonely-waypoint"/>    
-  </node> -->
+    <param name="waypoint_type" value="manual_lonely_waypoint"/>    
+  </node>
 
 
   <arg name="map_size_x_" default="$(var map_size_x)"/>
@@ -62,14 +64,21 @@
   <arg name="point2_y" default="19.0" />
   <arg name="point2_z" default="1.0" />
 
+      <!-- trajectory server -->
+  <node pkg="plan_manage" name="traj_server" exec="traj_server" output="screen">
+    <remap from="/position_cmd" to="planning/pos_cmd"/>
+    <remap from="/odom_world" to="$(var odom_topic)"/>
+    <param name="traj_server/time_forward" value="1.5" />
+  </node>
 
+<!-- launch-prefix="gdbserver localhost:3000" -->
   <!-- main node -->
-  <node pkg="plan_manage" name="fast_planner_node" exec="fast_planner_node" output="screen">
-    <!-- <remap from="/odom_world" to="$(var odometry_topic)"/>
+  <node pkg="plan_manage" name="fast_planner_node" exec="fast_planner_node"  output="screen">
+    <remap from="/odom_world" to="$(var odometry_topic)"/>
     <remap from="/sdf_map/odom" to="$(var odometry_topic)"/>
     <remap from="/sdf_map/cloud" to="$(var cloud_topic)"/>
-    <remap from = "/sdf_map/pose"   to = "$(var camera_pose_topic)"/> 
-    <remap from = "/sdf_map/depth" to = "$(var depth_topic)"/> -->
+    <!-- <remap from = "/sdf_map/pose"   to = "$(var camera_pose_topic)"/>  -->
+    <!-- <remap from = "/sdf_map/depth" to = "$(var depth_topic)"/>  -->
 
     <!-- replanning method -->
     <param name="planner_node/planner" value="1" type="int"/>
@@ -189,7 +198,6 @@
     <param name="bspline/limit_ratio" value="1.1" type="float"/>
 
 
-  </node>
-    
+  </node>  
 
 </launch>

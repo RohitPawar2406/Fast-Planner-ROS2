@@ -13,6 +13,7 @@
 // #include <path_searching/topo_prm.hpp> NOT TO DO
 #include <plan_env/obj_predictor.hpp>
 #include <fast_planner/fast_planner.h>
+#include "std_msgs/msg/string.hpp"
 
 
 namespace fast_planner {
@@ -43,6 +44,8 @@ private:
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr frontier_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr yaw_pub_;
     std::vector<rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr> pubs_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+    void topic_callback(const std_msgs::msg::String::SharedPtr msg) const;
 
     int last_topo_path1_num_;
     int last_topo_path2_num_;
@@ -90,7 +93,7 @@ public:
     void drawTopoPathsPhase2(std::vector<std::vector<Eigen::Vector3d>>& paths, double line_width);
 
     void drawGoal(Eigen::Vector3d goal, double resolution, const Eigen::Vector4d& color, int id = 0);
-    // void drawPrediction(ObjPrediction pred, double resolution, const Eigen::Vector4d& color, int id = 0);
+    void drawPrediction(ObjPrediction pred, double resolution, const Eigen::Vector4d& color, int id = 0);
 
     Eigen::Vector4d getColor(double h, double alpha = 1.0);
 

@@ -43,8 +43,7 @@ void KinoReplanFSM::init(std::shared_ptr<FastPlanner> nh) {
   //////////////////////// DOUBTS - NEXT 3 lines
   planner_manager_ = std::make_shared<FastPlannerManager>();
   planner_manager_->initPlanModules(nh);
-  std::shared_ptr<PlanningVisualization> visualization_ = std::make_shared<PlanningVisualization>(nh);
-
+  visualization_ = std::make_shared<PlanningVisualization>(nh);
   exec_timer_ = nh->create_wall_timer(std::chrono::milliseconds(10), std::bind(&KinoReplanFSM::execFSMCallback, this));
   safety_timer_ = nh->create_wall_timer(std::chrono::milliseconds(50), std::bind(&KinoReplanFSM::checkCollisionCallback, this));
 
