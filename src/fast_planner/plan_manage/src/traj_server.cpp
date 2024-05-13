@@ -194,7 +194,7 @@ private:
       double yaw, yawdot;
       //std::cout<<"############ "<<t_cur <<" ####### " <<traj_duration_ << " ############ "<<t_cur <<std::endl;
       if (t_cur < traj_duration_ && t_cur >= 0.0) {
-        std::cout<<"************** " <<receive_traj_<<"***************"<<endl;
+        //std::cout<<"************** " <<receive_traj_<<"***************"<<endl;
         pos = traj_[0].evaluateDeBoorT(t_cur);
         vel = traj_[1].evaluateDeBoorT(t_cur);
         acc = traj_[2].evaluateDeBoorT(t_cur);

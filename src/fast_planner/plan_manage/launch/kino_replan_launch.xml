@@ -73,7 +73,8 @@
 
 <!-- launch-prefix="gdbserver localhost:3000" -->
   <!-- main node -->
-  <node pkg="plan_manage" name="fast_planner_node" exec="fast_planner_node"  output="screen">
+  <!-- <node pkg="plan_manage" name="fast_planner_node" exec="fast_planner_node" launch-prefix="gdbserver localhost:3000" output="screen"> -->
+  <node pkg="plan_manage" name="fast_planner_node" exec="fast_planner_node" output="screen">
     <remap from="/odom_world" to="$(var odometry_topic)"/>
     <remap from="/sdf_map/odom" to="$(var odometry_topic)"/>
     <remap from="/sdf_map/cloud" to="$(var cloud_topic)"/>

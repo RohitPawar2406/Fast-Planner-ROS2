@@ -39,6 +39,17 @@ void KinoReplanFSM::init(std::shared_ptr<FastPlanner> nh) {
   nh->declare_parameter("fsm/waypoint2_y", -1.0);
   nh->declare_parameter("fsm/waypoint2_z", -1.0);
 
+  nh->get_parameter("fsm/waypoint0_x", waypoints_[0][0]);
+  nh->get_parameter("fsm/waypoint0_y", waypoints_[0][1]);
+  nh->get_parameter("fsm/waypoint0_z", waypoints_[0][2]);
+
+  nh->get_parameter("fsm/waypoint1_x", waypoints_[1][0]);
+  nh->get_parameter("fsm/waypoint1_y", waypoints_[1][1]);
+  nh->get_parameter("fsm/waypoint1_z", waypoints_[1][2]);
+
+  nh->get_parameter("fsm/waypoint2_x", waypoints_[2][0]);
+  nh->get_parameter("fsm/waypoint2_y", waypoints_[2][1]);
+  nh->get_parameter("fsm/waypoint2_z", waypoints_[2][2]);
 
   //////////////////////// DOUBTS - NEXT 3 lines
   planner_manager_ = std::make_shared<FastPlannerManager>();
