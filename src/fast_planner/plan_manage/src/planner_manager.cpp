@@ -150,6 +150,7 @@ bool FastPlannerManager::kinodynamicReplan( Eigen::Vector3d start_pt, Eigen::Vec
   }
 
   auto t1 = rclcpp::Clock().now();
+  local_data_.start_time_ = rclcpp::Clock().now();
   double t_search = 0.0, t_opt = 0.0, t_adjust = 0.0;
 
   Eigen::Vector3d init_pos = start_pt;

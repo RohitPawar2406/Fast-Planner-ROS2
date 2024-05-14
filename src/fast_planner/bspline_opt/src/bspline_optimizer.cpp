@@ -131,7 +131,7 @@ void BsplineOptimizer::optimize() {
   opt.set_min_objective(BsplineOptimizer::costFunction, this);
   opt.set_maxeval(max_iteration_num_[max_num_id_]);
   opt.set_maxtime(max_iteration_time_[max_time_id_]);
-  opt.set_xtol_rel(1e-5);
+  opt.set_xtol_rel(1e-4);
 
   std::vector<double> q(variable_num_);
   for (int i = order_; i < pt_num; ++i) {
@@ -152,36 +152,30 @@ void BsplineOptimizer::optimize() {
     opt.set_upper_bounds(ub);
   }
 
-  // try {
-  //   double        final_cost;
-  //   RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", final_cost);
-  //   std::cout << "Vector size: " << q.size() << std::endl;
-  //   for (size_t i = 0; i < q.size(); ++i) {
-  //       std::cout << "q[" << i << "]: " << q[i] << std::endl;
-  //   }
-  //   nlopt::result result = opt.optimize(q, final_cost);
-  //   // RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", result);
-
-  //   /* retrieve the optimization result */
-  // } catch (std::exception& e) {
-  //   RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "[Optimization]: nlopt exception ANNA");
-  //   std::cout << e.what() << std::endl;
-  // }
-
+  try {
     double        final_cost;
     RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", final_cost);
     std::cout << "Vector size: " << q.size() << std::endl;
     for (size_t i = 0; i < q.size(); ++i) {
         std::cout << "q[" << i << "]: " << q[i] << std::endl;
     }
+
     std::cout << "Hellllllllllllllo1 ... " << std::endl;
     std::cout << "Hellllllllllllllo2 ... " << std::endl;
     std::cout << "Hellllllllllllllo 3... " << std::endl;
     nlopt::result result = opt.optimize(q, final_cost);
-
+    std::cout << "REsult...." << result << std::endl;
     std::cout << "Hellllllllllllllo4 ... " << std::endl;
     std::cout << "Hellllllllllllllo5 ... " << std::endl;
     std::cout << "Hellllllllllllllo 6... " << std::endl;
+    // RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", result);
+
+    /* retrieve the optimization result */
+  } catch (std::exception& e) {
+    RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "[Optimization]: nlopt exception ANNA");
+    std::cout << e.what() << std::endl;
+  }
+
 
   for (int i = order_; i < control_points_.rows(); ++i) {
     if (!(cost_function_ & ENDPOINT) && i >= pt_num - order_) continue;

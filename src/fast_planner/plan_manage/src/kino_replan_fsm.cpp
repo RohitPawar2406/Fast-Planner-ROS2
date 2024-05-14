@@ -52,9 +52,9 @@ void KinoReplanFSM::init(std::shared_ptr<FastPlanner> nh) {
   nh->get_parameter("fsm/waypoint2_z", waypoints_[2][2]);
 
   //////////////////////// DOUBTS - NEXT 3 lines
-  planner_manager_ = std::make_shared<FastPlannerManager>();
+  planner_manager_.reset(new FastPlannerManager);
   planner_manager_->initPlanModules(nh);
-  visualization_ = std::make_shared<PlanningVisualization>(nh);
+  visualization_.reset(new PlanningVisualization(nh));
   exec_timer_ = nh->create_wall_timer(std::chrono::milliseconds(10), std::bind(&KinoReplanFSM::execFSMCallback, this));
   safety_timer_ = nh->create_wall_timer(std::chrono::milliseconds(50), std::bind(&KinoReplanFSM::checkCollisionCallback, this));
 
@@ -85,6 +85,9 @@ void KinoReplanFSM::waypointCallback(const nav_msgs::msg::Path::SharedPtr msg) {
     end_pt_(2) = waypoints_[current_wp_][2];
     current_wp_ = (current_wp_ + 1) % waypoint_num_;
   }
+
+  std::cout << "DEBugging waypoints .....................................ok done ! ";
+  std::cout << end_pt_ << std::endl;
 
   visualization_->drawGoal(end_pt_, 0.3, Eigen::Vector4d(1, 0, 0, 1.0));
   end_vel_.setZero();
@@ -171,16 +174,17 @@ void KinoReplanFSM::execFSMCallback() {
 
             /* && (end_pt_ - pos).norm() < 0.5 */
             if (t_cur > info->duration_ - 1e-2) {
+              std::cout << "Failing the replanning .............." << t_cur << "info.duration : "<< info->duration_ << std::endl;
               have_target_ = false;
               changeFSMExecState(WAIT_TARGET, "FSM");
               return;
 
             } else if ((end_pt_ - pos).norm() < no_replan_thresh_) {
-              // cout << "near end" << endl;
+              std::cout << "near end" << std::endl;
               return;
 
             } else if ((info->start_pos_ - pos).norm() < replan_thresh_) {
-              // cout << "near start" << endl;
+              std::cout << "near start" << std::endl;
               return;
 
             } else {

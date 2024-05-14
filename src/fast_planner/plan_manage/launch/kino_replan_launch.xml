@@ -8,6 +8,7 @@
   <arg name="odom_topic" default="/state_ukf/odom" /> 
 
   <node pkg="tf2_ros" name="static_transform_publisher" exec="static_transform_publisher"  args="0 0 0 0 0 0 map world" output="screen"/>
+  <node pkg="tf2_ros" name="static_transform_publisher2" exec="static_transform_publisher"  args="0 0 0 0 0 0 world simulator" output="screen"/>
 
   <!-- Way generator -->
   <node pkg="waypoint_generator" name="waypoint_generator" exec="waypoint_generator" output="screen">

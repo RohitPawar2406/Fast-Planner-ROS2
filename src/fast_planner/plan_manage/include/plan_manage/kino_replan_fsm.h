@@ -57,8 +57,8 @@ private:
   enum TARGET_TYPE { MANUAL_TARGET = 1, PRESET_TARGET = 2, REFENCE_PATH = 3 };
 
   /* planning utils */
-  std::shared_ptr<FastPlannerManager> planner_manager_;
-  std::shared_ptr<PlanningVisualization> visualization_;
+  FastPlannerManager::Ptr planner_manager_;
+  PlanningVisualization::Ptr visualization_;
 
   /* parameters */
   int target_type_;  // 1 mannual select, 2 hard code
