@@ -23,10 +23,17 @@ class TrajServer : public rclcpp::Node
   public:
     TrajServer()
     : Node("traj_server")
-    {
+    {   
+        cmd.kx[0] = pos_gain[0];
+        cmd.kx[1] = pos_gain[1];
+        cmd.kx[2] = pos_gain[2];
+
+        cmd.kv[0] = vel_gain[0];
+        cmd.kv[1] = vel_gain[1];
+        cmd.kv[2] = vel_gain[2];
         bspline_sub = this->create_subscription<quadrotor_msgs::msg::Bspline>("planning/bspline", 10, std::bind(&TrajServer::bsplineCallback, this, std::placeholders::_1));
         replan_sub = this->create_subscription<std_msgs::msg::Empty>("planning/replan", 10, std::bind(&TrajServer::replanCallback, this, std::placeholders::_1));
-        new_sub = this->create_subscription<std_msgs::msg::Empty>("planning/new", 10, std::bind(&TrajServer::newCallback, this, std::placeholders::_1));
+        new_sub = this->create_subscription<std_msgs::msg::Empty>("planning/new", 10, std::bind(&TrajServer::newCallback,    this, std::placeholders::_1));
         odom_sub = this->create_subscription<nav_msgs::msg::Odometry>("/odom_world", 50, std::bind(&TrajServer::odomCallbck, this, std::placeholders::_1));
 
         cmd_vis_pub = this->create_publisher<visualization_msgs::msg::Marker>("planning/position_cmd_vis", 10);
@@ -200,8 +207,8 @@ private:
         acc = traj_[2].evaluateDeBoorT(t_cur);
         yaw = traj_[3].evaluateDeBoorT(t_cur)[0];
         yawdot = traj_[4].evaluateDeBoorT(t_cur)[0];
-        std::cout << "pos: [" << pos[0] << ", " << pos[1] << ", " << pos[2] << "]" << std::endl;
-        std::cout << "vel: [" << vel[0] << ", " << vel[1] << ", " << vel[2] << "]" << std::endl;
+        // std::cout << "pos: [" << pos[0] << ", " << pos[1] << ", " << pos[2] << "]" << std::endl;
+        // std::cout << "vel: [" << vel[0] << ", " << vel[1] << ", " << vel[2] << "]" << std::endl;
         double tf = std::min(traj_duration_, t_cur + 2.0);
         pos_f = traj_[0].evaluateDeBoorT(tf);
 
@@ -249,7 +256,6 @@ private:
       // cmd.yaw_dot = 1.0;
 
       last_yaw_ = cmd.yaw;
-
       pos_cmd_pub->publish(cmd);
 
       // draw cmd
@@ -279,9 +285,12 @@ private:
     double traj_duration_;
     bool receive_traj_ = false;
     vector<Eigen::Vector3d> traj_cmd_, traj_real_;
-    double last_yaw_;
+    double last_yaw_ = 0.0;
     vector<NonUniformBspline> traj_;
     quadrotor_msgs::msg::PositionCommand cmd;
+
+    double pos_gain[3] = { 5.7, 5.7, 6.2 };
+    double vel_gain[3] = { 3.4, 3.4, 4.0 };
 };
 
 int main(int argc, char * argv[])

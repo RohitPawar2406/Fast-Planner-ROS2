@@ -67,7 +67,7 @@
 
       <!-- trajectory server -->
   <node pkg="plan_manage" name="traj_server" exec="traj_server" output="screen">
-    <remap from="/position_cmd" to="planning/pos_cmd"/>
+    <remap from="/position_cmd" to="/planning/pos_cmd"/>
     <remap from="/odom_world" to="$(var odom_topic)"/>
     <param name="traj_server/time_forward" value="1.5" />
   </node>
