@@ -180,11 +180,11 @@ void KinoReplanFSM::execFSMCallback() {
               return;
 
             } else if ((end_pt_ - pos).norm() < no_replan_thresh_) {
-              std::cout << "near end" << std::endl;
+              //std::cout << "near end" << std::endl;
               return;
 
             } else if ((info->start_pos_ - pos).norm() < replan_thresh_) {
-              std::cout << "near start" << std::endl;
+              // std::cout << "near start" << std::endl;
               return;
 
             } else {

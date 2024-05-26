@@ -123,8 +123,8 @@ void BsplineOptimizer::optimize() {
     variable_num_ = std::max(0, dim_ * (pt_num - 2 * order_));
   }
 
-  std::cout << "Variable Num " << variable_num_<< std::endl;
-  std::cout << "Is quadratic " << isQuadratic()<< std::endl;
+  // std::cout << "Variable Num " << variable_num_<< std::endl;
+  // std::cout << "Is quadratic " << isQuadratic()<< std::endl;
 
   /* do optimization using NLopt slover */
   nlopt::opt opt(nlopt::algorithm(isQuadratic() ? algorithm1_ : algorithm2_), variable_num_);
@@ -155,19 +155,19 @@ void BsplineOptimizer::optimize() {
   try {
     double        final_cost;
     RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", final_cost);
-    std::cout << "Vector size: " << q.size() << std::endl;
-    for (size_t i = 0; i < q.size(); ++i) {
-        std::cout << "q[" << i << "]: " << q[i] << std::endl;
-    }
+    // std::cout << "Vector size: " << q.size() << std::endl;
+    // for (size_t i = 0; i < q.size(); ++i) {
+    //     std::cout << "q[" << i << "]: " << q[i] << std::endl;
+    // }
 
-    std::cout << "Hellllllllllllllo1 ... " << std::endl;
-    std::cout << "Hellllllllllllllo2 ... " << std::endl;
-    std::cout << "Hellllllllllllllo 3... " << std::endl;
+    // std::cout << "Hellllllllllllllo1 ... " << std::endl;
+    // std::cout << "Hellllllllllllllo2 ... " << std::endl;
+    // std::cout << "Hellllllllllllllo 3... " << std::endl;
     nlopt::result result = opt.optimize(q, final_cost);
-    std::cout << "REsult...." << result << std::endl;
-    std::cout << "Hellllllllllllllo4 ... " << std::endl;
-    std::cout << "Hellllllllllllllo5 ... " << std::endl;
-    std::cout << "Hellllllllllllllo 6... " << std::endl;
+    // std::cout << "REsult...." << result << std::endl;
+    // std::cout << "Hellllllllllllllo4 ... " << std::endl;
+    // std::cout << "Hellllllllllllllo5 ... " << std::endl;
+    // std::cout << "Hellllllllllllllo 6... " << std::endl;
     // RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", result);
 
     /* retrieve the optimization result */

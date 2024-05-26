@@ -105,7 +105,7 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
       }
       else if (cur_node->parent != nullptr)
       {
-        std::cout << "near end" << std::endl;
+        // std::cout << "near end" << std::endl;
         return NEAR_END;
       }
       else
