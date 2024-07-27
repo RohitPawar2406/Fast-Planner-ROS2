@@ -8,10 +8,13 @@
 #include <rclcpp/rclcpp.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include <bspline/non_uniform_bspline.h>
-#include <iostream>
-#include <path_searching/topo_prm.hpp>
-#include <plan_env/obj_predictor.hpp>
 #include <poly_traj/polynomial_traj.h>
+#include <iostream>
+// #include <path_searching/topo_prm.hpp> NOT TO DO
+#include <plan_env/obj_predictor.hpp>
+#include <fast_planner/fast_planner.h>
+#include "std_msgs/msg/string.hpp"
+
 
 namespace fast_planner {
 
@@ -33,7 +36,7 @@ private:
         SELECT_PATH = 400
     };
 
-    rclcpp::Node::SharedPtr node;
+    std::shared_ptr<FastPlanner>  node;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr traj_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr topo_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr predict_pub_;
@@ -41,6 +44,8 @@ private:
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr frontier_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr yaw_pub_;
     std::vector<rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr> pubs_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+    void topic_callback(const std_msgs::msg::String::SharedPtr msg) const;
 
     int last_topo_path1_num_;
     int last_topo_path2_num_;
@@ -51,7 +56,7 @@ private:
 public:
     PlanningVisualization() {}
     ~PlanningVisualization() {}
-    PlanningVisualization(rclcpp::Node::SharedPtr& nh);
+    PlanningVisualization(std::shared_ptr<FastPlanner> nh);
 
     // draw basic shapes
     void displaySphereList(const std::vector<Eigen::Vector3d>& list, double resolution,
@@ -71,18 +76,18 @@ public:
 
     // draw a bspline trajectory
     void drawBspline(NonUniformBspline& bspline, double size, const Eigen::Vector4d& color,
-                     bool show_ctrl_pts = false, double size2 = 0.1,
-                     const Eigen::Vector4d& color2 = Eigen::Vector4d(1, 1, 0, 1), int id1 = 0,
-                     int id2 = 0);
+                   bool show_ctrl_pts = false, double size2 = 0.1,
+                   const Eigen::Vector4d& color2 = Eigen::Vector4d(1, 1, 0, 1), int id1 = 0,
+                   int id2 = 0);
 
     // draw a set of bspline trajectories generated in different phases
     void drawBsplinesPhase1(std::vector<NonUniformBspline>& bsplines, double size);
     void drawBsplinesPhase2(std::vector<NonUniformBspline>& bsplines, double size);
 
     // draw topological graph and paths
-    void drawTopoGraph(std::list<GraphNode::Ptr>& graph, double point_size, double line_width,
-                       const Eigen::Vector4d& color1, const Eigen::Vector4d& color2,
-                       const Eigen::Vector4d& color3, int id = 0);
+    // void drawTopoGraph(std::list<GraphNode::Ptr>& graph, double point_size, double line_width,
+    //                    const Eigen::Vector4d& color1, const Eigen::Vector4d& color2,
+    //                    const Eigen::Vector4d& color3, int id = 0);
 
     void drawTopoPathsPhase1(std::vector<std::vector<Eigen::Vector3d>>& paths, double line_width);
     void drawTopoPathsPhase2(std::vector<std::vector<Eigen::Vector3d>>& paths, double line_width);
@@ -94,6 +99,7 @@ public:
 
     typedef std::shared_ptr<PlanningVisualization> Ptr;
 
+    void displayBSplineTrajectory(vector<NonUniformBspline>& bsplines, const double& size);
     // SECTION developing
     void drawYawTraj(NonUniformBspline& pos, NonUniformBspline& yaw, const double& dt);
     void drawYawPath(NonUniformBspline& pos, const std::vector<double>& yaw, const double& dt);

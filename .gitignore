@@ -1,1 +1,8 @@
 .vscode/**
+devel/**
+log/**
+install/**
+**/devel/**
+**/build/**
+**/log/**
+**/install/**

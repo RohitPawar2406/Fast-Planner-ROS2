@@ -23,14 +23,15 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
-find_package(Eigen3 REQUIRED)
 find_package(std_msgs REQUIRED) 
+find_package(builtin_interfaces REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "src/quadrotor_msgs/msg/PositionCommand.msg"
-  "src/quadrotor_msgs/msg/Bspline.msg"
+  "msg/PositionCommand.msg"
+  "msg/Bspline.msg"
+  DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
  )
 
 ament_export_dependencies(rosidl_default_runtime)

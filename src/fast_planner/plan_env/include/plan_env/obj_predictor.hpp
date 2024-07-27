@@ -141,7 +141,7 @@ private:
   ObjScale obj_scale_;
   vector<bool> scale_init_;
 
-  void markerCallback(const visualization_msgs::msg::Marker::SharedPtr msg);
+  void markerCallback(const visualization_msgs::msg::Marker::SharedPtr &msg);
 
   void predictCallback();
 

@@ -17,7 +17,8 @@ const int BsplineOptimizer::GUIDE_PHASE = BsplineOptimizer::SMOOTHNESS | Bspline
 const int BsplineOptimizer::NORMAL_PHASE =
     BsplineOptimizer::SMOOTHNESS | BsplineOptimizer::DISTANCE | BsplineOptimizer::FEASIBILITY;
 
-void BsplineOptimizer::setParam(rclcpp::Node::SharedPtr& nh) {
+void BsplineOptimizer::setParam(std::shared_ptr<FastPlanner> nh) {
+
   nh->get_parameter("optimization/lambda1", lambda1_);
   nh->get_parameter("optimization/lambda2", lambda2_);
   nh->get_parameter("optimization/lambda3", lambda3_);
@@ -122,12 +123,15 @@ void BsplineOptimizer::optimize() {
     variable_num_ = std::max(0, dim_ * (pt_num - 2 * order_));
   }
 
+  // std::cout << "Variable Num " << variable_num_<< std::endl;
+  // std::cout << "Is quadratic " << isQuadratic()<< std::endl;
+
   /* do optimization using NLopt slover */
   nlopt::opt opt(nlopt::algorithm(isQuadratic() ? algorithm1_ : algorithm2_), variable_num_);
   opt.set_min_objective(BsplineOptimizer::costFunction, this);
   opt.set_maxeval(max_iteration_num_[max_num_id_]);
   opt.set_maxtime(max_iteration_time_[max_time_id_]);
-  opt.set_xtol_rel(1e-5);
+  opt.set_xtol_rel(1e-4);
 
   std::vector<double> q(variable_num_);
   for (int i = order_; i < pt_num; ++i) {
@@ -150,13 +154,28 @@ void BsplineOptimizer::optimize() {
 
   try {
     double        final_cost;
+    RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", final_cost);
+    // std::cout << "Vector size: " << q.size() << std::endl;
+    // for (size_t i = 0; i < q.size(); ++i) {
+    //     std::cout << "q[" << i << "]: " << q[i] << std::endl;
+    // }
+
+    // std::cout << "Hellllllllllllllo1 ... " << std::endl;
+    // std::cout << "Hellllllllllllllo2 ... " << std::endl;
+    // std::cout << "Hellllllllllllllo 3... " << std::endl;
     nlopt::result result = opt.optimize(q, final_cost);
+    // std::cout << "REsult...." << result << std::endl;
+    // std::cout << "Hellllllllllllllo4 ... " << std::endl;
+    // std::cout << "Hellllllllllllllo5 ... " << std::endl;
+    // std::cout << "Hellllllllllllllo 6... " << std::endl;
+    // RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "%f", result);
 
     /* retrieve the optimization result */
   } catch (std::exception& e) {
-    RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "[Optimization]: nlopt exception");
+    RCLCPP_WARN(rclcpp::get_logger("BsplineOptimizer"), "[Optimization]: nlopt exception ANNA");
     std::cout << e.what() << std::endl;
   }
+
 
   for (int i = order_; i < control_points_.rows(); ++i) {
     if (!(cost_function_ & ENDPOINT) && i >= pt_num - order_) continue;
@@ -421,13 +440,21 @@ void BsplineOptimizer::combineCost(const std::vector<double>& x, std::vector<dou
   }
 }
 
-double BsplineOptimizer::costFunction(const std::vector<double>& x, std::vector<double>& grad, void* instance) {
-  BsplineOptimizer* bspline_opt = reinterpret_cast<BsplineOptimizer*>(instance);
-  std::vector<double>    g(x.size());
-  double                 f_combine;
-  bspline_opt->combineCost(x, grad, f_combine);
-  return f_combine;
+double BsplineOptimizer::costFunction(const std::vector<double>& x, std::vector<double>& grad,
+                                      void* func_data) {
+  BsplineOptimizer* opt = reinterpret_cast<BsplineOptimizer*>(func_data);
+  double            cost;
+  opt->combineCost(x, grad, cost);
+  opt->iter_num_++;
+
+  /* save the min cost result */
+  if (cost < opt->min_cost_) {
+    opt->min_cost_      = cost;
+    opt->best_variable_ = x;
+  }
+  return cost;
 }
+
 vector<Eigen::Vector3d> BsplineOptimizer::matrixToVectors(const Eigen::MatrixXd& ctrl_pts) {
   vector<Eigen::Vector3d> ctrl_q;
   for (int i = 0; i < ctrl_pts.rows(); ++i) {

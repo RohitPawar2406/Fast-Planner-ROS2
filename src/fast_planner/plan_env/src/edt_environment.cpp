@@ -30,6 +30,7 @@ void EDTEnvironment::init() {
 }
 
 void EDTEnvironment::setMap(std::shared_ptr<SDFMap> map) {
+  std::cout << "EDT Envirnoment INSIDE" << std::endl;
   this->sdf_map_ = map;
   resolution_inv_ = 1 / sdf_map_->getResolution();
 }

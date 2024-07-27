@@ -1,19 +1,19 @@
 #include "rclcpp/rclcpp.hpp"
-#include "nav_msgs/msg/Path.hpp"
-#include "nav_msgs/msg/Odometry.hpp"
-#include "std_msgs/msg/Empty.hpp"
-#include "visualization_msgs/msg/Marker.hpp"
-#include "geometry_msgs/msg/Point.hpp"
-#include "plan_manage/bspline.hpp"
+#include "nav_msgs/msg/path.hpp"
+#include "nav_msgs/msg/odometry.hpp"
+#include "std_msgs/msg/empty.hpp"
+#include "visualization_msgs/msg/marker.hpp"
+#include "geometry_msgs/msg/point.hpp"
+#include "quadrotor_msgs/msg/bspline.hpp"
 
-#include "TopoReplanFSM.hpp"
+#include "plan_manage/topo_replan_fsm.h"
 
 using namespace std;
 using namespace Eigen;
 
 namespace fast_planner {
 
-void TopoReplanFSM::init() {
+void TopoReplanFSM::init(rclcpp::Node::SharedPtr &nh) {
     this->declare_parameter<int>("fsm/flight_type", -1);
     this->declare_parameter<double>("fsm/thresh_replan", -1.0);
     this->declare_parameter<double>("fsm/thresh_no_replan", -1.0);
@@ -37,8 +37,9 @@ void TopoReplanFSM::init() {
         this->get_parameter("fsm/waypoint" + to_string(i) + "_z", waypoints_[i][2]);
     }
 
-    planner_manager_ = make_shared<FastPlannerManager>();
-    visualization_ = make_shared<PlanningVisualization>(this->shared_from_this());
+std::shared_ptr<FastPlannerManager> planner_manager_ = make_shared<FastPlannerManager>();
+
+std::shared_ptr<PlanningVisualization> visualization_ = make_shared<PlanningVisualization>(this->shared_from_this());
 
     exec_timer_ = this->create_wall_timer(10ms, std::bind(&TopoReplanFSM::execFSMCallback, this));
     safety_timer_ = this->create_wall_timer(50ms, std::bind(&TopoReplanFSM::checkCollisionCallback, this));
@@ -50,7 +51,7 @@ void TopoReplanFSM::init() {
 
     replan_pub_ = this->create_publisher<std_msgs::msg::Empty>("/planning/replan", 20);
     new_pub_ = this->create_publisher<std_msgs::msg::Empty>("/planning/new", 20);
-    bspline_pub_ = this->create_publisher<plan_manage::msg::Bspline>("/planning/bspline", 20);
+    bspline_pub_ = this->create_publisher<quadrotor_msgs::msg::Bspline>("/planning/bspline", 20);
 }
 
 void TopoReplanFSM::waypointCallback(const nav_msgs::msg::Path::SharedPtr msg) {

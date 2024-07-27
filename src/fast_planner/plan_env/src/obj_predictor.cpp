@@ -42,7 +42,8 @@ void ObjHistory::poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr m
 ObjPredictor::ObjPredictor(/* args */) {
 }
 
-ObjPredictor::ObjPredictor(rclcpp::Node::SharedPtr node) : node_handle_(node) {
+ObjPredictor::ObjPredictor(rclcpp::Node::SharedPtr node) {
+  node_handle_ = node;
 }
 
 ObjPredictor::~ObjPredictor() {
@@ -159,7 +160,7 @@ void ObjPredictor::predictCallback() {
   predictConstVel();
 }
 
-void ObjPredictor::markerCallback(const visualization_msgs::msg::Marker::SharedPtr msg) {
+void ObjPredictor::markerCallback(const visualization_msgs::msg::Marker::SharedPtr &msg) {
   int idx = msg->id;
   (*obj_scale_)[idx](0) = msg->scale.x;
   (*obj_scale_)[idx](1) = msg->scale.y;

@@ -31,6 +31,7 @@ find_package(cv_bridge REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 find_package(plan_env REQUIRED)
+find_package(fast_planner REQUIRED)
 
 include_directories( 
     include 
@@ -46,26 +47,40 @@ include_directories(
     ${poly_traj_INCLUDE_DIRS}
 )
 
-
-link_directories(${PCL_LIBRARY_DIRS})
-
-add_library( traj_utils
+add_library( traj_utils SHARED
     src/planning_visualization.cpp 
-    )
+  )
 
 ament_target_dependencies(traj_utils
     rclcpp
     rclpy
     std_msgs
+    visualization_msgs
     bspline
     path_searching
     plan_env
     poly_traj
-    ) 
-target_link_libraries( traj_utils
-  ${bspline_LIBRARIES}
-  ${poly_traj_LIBRARIES}
-)  
+    fast_planner
+  ) 
+
+target_link_libraries(traj_utils
+  ${PCL_LIBRARIES}
+)
+
+target_include_directories(traj_utils PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
 
 
+install(DIRECTORY include/
+  DESTINATION include/)  
+
+install(TARGETS traj_utils
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
+ament_export_libraries(traj_utils)
+ament_export_include_directories(include)
 ament_package()

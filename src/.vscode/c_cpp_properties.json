@@ -1,0 +1,37 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/plan_manage/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/traj_utils/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/quadrotor_msgs/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/poly_traj/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/path_searching/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/bspline_opt/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/plan_env/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/fast_planner/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/install/bspline/include/**",
+        "/opt/ros/foxy/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/src/Fast-Planner-ROS2/src/fast_planner/bspline/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/src/Fast-Planner-ROS2/src/fast_planner/bspline_opt/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/src/Fast-Planner-ROS2/src/fast_planner/fast_planner/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/src/Fast-Planner-ROS2/src/fast_planner/path_searching/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/src/Fast-Planner-ROS2/src/fast_planner/plan_env/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/src/Fast-Planner-ROS2/src/fast_planner/plan_manage/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/src/Fast-Planner-ROS2/src/fast_planner/poly_traj/include/**",
+        "/home/charvi/workspace/iiit-r/fastplanner_ws2/src/Fast-Planner-ROS2/src/fast_planner/traj_utils/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

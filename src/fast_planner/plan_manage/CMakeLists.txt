@@ -29,27 +29,26 @@ find_package(nav_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(bspline REQUIRED)
 find_package(bspline_opt REQUIRED)
+find_package(fast_planner REQUIRED)
 find_package(path_searching REQUIRED)
+find_package(traj_utils REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(poly_traj REQUIRED)
 find_package(plan_env REQUIRED)
 find_package(NLopt REQUIRED)
+find_package(builtin_interfaces REQUIRED)
 
 include_directories(include
-  include/bspline
-  include/bspline_opt
-  include/path_searching
-  include/plan_env
-  include/poly_traj
   ${Eigen3_INCLUDE_DIRS} 
   ${PCL_INCLUDE_DIRS}
-  ${bspline_INCLUDE_DIRS}
-  ${bspline_opt_INCLUDE_DIRS}
 )  
 
 
 add_executable(fast_planner_node  
   src/planner_manager.cpp
+  src/kino_replan_fsm.cpp
+  #src/topo_replan_fsm.cpp
+  src/fast_planner_node.cpp
 )
 
 ament_target_dependencies(fast_planner_node 
@@ -63,7 +62,10 @@ ament_target_dependencies(fast_planner_node
   path_searching
   bspline
   bspline_opt
-
+  quadrotor_msgs
+  traj_utils
+  fast_planner
+  builtin_interfaces
 )
 
 target_link_libraries(fast_planner_node
@@ -72,10 +74,43 @@ target_link_libraries(fast_planner_node
   NLopt::nlopt
 )
 
+ ###########################################################
+add_executable(traj_server  
+  src/traj_server.cpp
+)
+
+ament_target_dependencies(traj_server 
+  rclcpp
+  std_msgs
+  nav_msgs
+  visualization_msgs
+  cv_bridge
+  poly_traj
+  plan_env
+  path_searching
+  bspline
+  bspline_opt
+  quadrotor_msgs
+  traj_utils
+  fast_planner
+  builtin_interfaces
+)
+
+target_link_libraries(traj_server
+  ${PCL_LIBRARIES}
+  ${Eigen3_LIBRARIES}
+  NLopt::nlopt
+)
+
+
 install(TARGETS fast_planner_node
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
+
+install(TARGETS traj_server
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 install(DIRECTORY
   launch
@@ -84,5 +119,7 @@ install(DIRECTORY
 install(DIRECTORY include/
   DESTINATION include)          # this line works
 
+ament_export_include_directories(include)
+ament_export_libraries(plan_manage)
 ament_package()
 

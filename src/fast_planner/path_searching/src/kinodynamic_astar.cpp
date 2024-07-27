@@ -105,7 +105,7 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
       }
       else if (cur_node->parent != nullptr)
       {
-        std::cout << "near end" << std::endl;
+        // std::cout << "near end" << std::endl;
         return NEAR_END;
       }
       else
@@ -300,8 +300,21 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
   cout << "iter num: " << iter_num_ << endl;
   return NO_PATH;
 }
-void KinodynamicAstar::setParam(rclcpp::Node::SharedPtr &nh)
+void KinodynamicAstar::setParam(std::shared_ptr<FastPlanner> nh)
 {
+  nh->declare_parameter<float>("search/max_tau", 0);
+  nh->declare_parameter<float>("search/init_max_tau", 0);
+  nh->declare_parameter<float>("search/max_vel", 0);
+  nh->declare_parameter<float>("search/max_acc", 0);
+  nh->declare_parameter<float>("search/w_time", 0);
+  nh->declare_parameter<float>("search/horizon", 0);
+  nh->declare_parameter<float>("search/lambda_heu", 0);
+  nh->declare_parameter<float>("search/resolution_astar", 0);
+  nh->declare_parameter<float>("search/time_resolution", 0);
+  nh->declare_parameter<float>("search/margin", 0);
+  nh->declare_parameter<int>("search/allocate_num", 0);
+  nh->declare_parameter<int>("search/check_num", 0);
+
   nh->get_parameter("search/max_tau", max_tau_);
   nh->get_parameter("search/init_max_tau", init_max_tau_);
   nh->get_parameter("search/max_vel", max_vel_);

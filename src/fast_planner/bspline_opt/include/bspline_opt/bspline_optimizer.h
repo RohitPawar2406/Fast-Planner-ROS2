@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "plan_env/edt_environment.hpp"
+#include <fast_planner/fast_planner.h>
 #include "rclcpp/rclcpp.hpp"
 
 namespace fast_planner {
@@ -27,7 +28,7 @@ public:
 
   /* main API */ 
   void setEnvironment(const std::shared_ptr<EDTEnvironment> env);
-  void setParam(rclcpp::Node::SharedPtr& nh);
+  void setParam(std::shared_ptr<FastPlanner> nh);
   Eigen::MatrixXd BsplineOptimizeTraj(const Eigen::MatrixXd& points, const double& ts,
                                       const int& cost_function, int max_num_id, int max_time_id);
 

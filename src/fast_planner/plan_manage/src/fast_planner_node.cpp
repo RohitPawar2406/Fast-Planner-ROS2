@@ -1,36 +1,36 @@
-#include "rclcpp/rclcpp.hpp"
-#include "visualization_msgs/msg/Marker.hpp"
 
-#include "plan_manage/kino_replan_fsm.hpp"
-#include "plan_manage/topo_replan_fsm.hpp"
-
-#include "plan_manage/backward.hpp"
-namespace backward {
-    backward::SignalHandling sh;
-}
+#include <fast_planner/fast_planner.h>
+#include <plan_manage/kino_replan_fsm.h>
 
 using namespace fast_planner;
 
-int main(int argc, char** argv) {
-    rclcpp::init(argc, argv);
-    auto node = rclcpp::Node::make_shared("fast_planner_node");
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  auto node = std::make_shared<FastPlanner>();
 
-    int planner;
-    node->declare_parameter<int>("planner_node.planner", -1);
-    node->get_parameter("planner_node.planner", planner);
+  node->declare_parameter<float>("bspline/limit_vel", 0);
+  node->declare_parameter<float>("bspline/limit_acc", 0);
+  node->declare_parameter<float>("bspline/limit_ratio", 0);
 
-    std::shared_ptr<TopoReplanFSM> topo_replan = std::make_shared<TopoReplanFSM>(rclcpp::NodeOptions());
-    std::shared_ptr<KinoReplanFSM> kino_replan = std::make_shared<KinoReplanFSM>(rclcpp::NodeOptions());
+  node->declare_parameter<int>("planner_node/planner", -1);
+  rclcpp::Parameter planner_param = node->get_parameter("planner_node/planner"); 
 
-    if (planner == 1) {
-        kino_replan->init();
-    } else if (planner == 2) {
-        topo_replan->init();
-    }
+  int planner = planner_param.as_int();
+  // RCLCPP_INFO(node->get_logger(), "The planner value is (int) : %s",
+  //               planner_param.value_to_string().c_str());
 
-    rclcpp::sleep_for(std::chrono::seconds(1));
-    rclcpp::spin(node);
+  // # Initialize the kino Class
+  std::shared_ptr<KinoReplanFSM> kino_replan = std::make_shared<KinoReplanFSM>();
+  
+  if (planner == 1) {
+      kino_replan->init(node);
+  } else if (planner == 2) {
+      std::cout << ("TOPO Commented for now ");
+  }
 
-    rclcpp::shutdown();
-    return 0;
+  rclcpp::spin(node);
+  rclcpp::shutdown();
+  return 0;
+  
 }
