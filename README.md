@@ -84,4 +84,6 @@ Note : For rviz you may need to manually load the rviz file from visualizer
 
 - [] Port Topo replan to the ros2
 - [] Port the uav simulator ros package to ros2 and remove dependency of ros2 bridge
-- [] **Bug Fix :** Drone Yaw is not updating after reaching the goal position 
+- [] **Bug Fix :** Drone Yaw is not updating after reaching the goal position
+
+Reach out for any further queries or discussion at : rohit.pawar@research.iiit.ac.in
