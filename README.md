@@ -31,7 +31,7 @@ colcon build
 
 ## Setup & Run ROS1 (uav_simulator code)
 
-- Clone the ros1 package as [here]() and build it using catkin_make.
+- Clone the ros1 package as [here](https://drive.google.com/drive/folders/1pp719-OzWbkKzpKJr9hex8ed_URTt6tO?usp=drive_link) and build it using catkin_make.
 - Run the uav simulator ros node, as given below. 
 ```bash
 source devel/setup.bash
