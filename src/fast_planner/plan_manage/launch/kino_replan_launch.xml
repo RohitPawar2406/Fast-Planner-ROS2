@@ -175,6 +175,8 @@
     <param name="optimization/lambda2" value="5.0" type="float"/>
     <param name="optimization/lambda3" value="0.00001" type="float"/>
     <param name="optimization/lambda4" value="0.01" type="float"/>
+    <param name="optimization/lambda5" value="0.0" type="float"/>
+    <param name="optimization/lambda6" value="0.0" type="float"/>
     <param name="optimization/lambda7" value="100.0" type="float"/>
     <param name="optimization/dist0" value="0.4" type="float"/>
     <param name="optimization/max_vel" value="$(var max_vel)" type="float"/>
