@@ -379,65 +379,51 @@ void BsplineOptimizer::combineCost(const std::vector<double>& x, std::vector<dou
     }
   }
 
-  double cost_smoothness, cost_distance, cost_feasibility, cost_endpoint, cost_guide, cost_waypoints;
+  f_combine = 0.0;
+  grad.resize(variable_num_);
+  fill(grad.begin(), grad.end(), 0.0);
 
-  std::vector<Eigen::Vector3d> g_smoothness(g_q_.size(), Eigen::Vector3d::Zero()),
-      g_distance(g_q_.size(), Eigen::Vector3d::Zero()),
-      g_feasibility(g_q_.size(), Eigen::Vector3d::Zero()),
-      g_endpoint(g_q_.size(), Eigen::Vector3d::Zero()),
-      g_waypoints(g_q_.size(), Eigen::Vector3d::Zero()),
-      g_guide(g_q_.size(), Eigen::Vector3d::Zero());
+  /*  evaluate costs and their gradient  */
+  double f_smoothness, f_distance, f_feasibility, f_endpoint, f_guide, f_waypoints;
+  f_smoothness = f_distance = f_feasibility = f_endpoint = f_guide = f_waypoints = 0.0;
 
-  calcSmoothnessCost(g_q_, cost_smoothness, g_smoothness);
-  calcDistanceCost(g_q_, cost_distance, g_distance);
-  calcFeasibilityCost(g_q_, cost_feasibility, g_feasibility);
-
-  cost_waypoints = 0.0;
-  if (cost_function_ & WAYPOINTS) {
-    calcWaypointsCost(g_q_, cost_waypoints, g_waypoints);
+  if (cost_function_ & SMOOTHNESS) {
+    calcSmoothnessCost(g_q_, f_smoothness, g_smoothness_);
+    f_combine += lambda1_ * f_smoothness;
+    for (int i = 0; i < variable_num_ / dim_; i++)
+      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda1_ * g_smoothness_[i + order_](j);
   }
-
-  cost_guide = 0.0;
-  if (cost_function_ & GUIDE) {
-    calcGuideCost(g_q_, cost_guide, g_guide);
+  if (cost_function_ & DISTANCE) {
+    calcDistanceCost(g_q_, f_distance, g_distance_);
+    f_combine += lambda2_ * f_distance;
+    for (int i = 0; i < variable_num_ / dim_; i++)
+      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda2_ * g_distance_[i + order_](j);
   }
-
-  f_combine = lambda1_ * cost_smoothness + lambda2_ * cost_distance + lambda3_ * cost_feasibility;
-
+  if (cost_function_ & FEASIBILITY) {
+    calcFeasibilityCost(g_q_, f_feasibility, g_feasibility_);
+    f_combine += lambda3_ * f_feasibility;
+    for (int i = 0; i < variable_num_ / dim_; i++)
+      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda3_ * g_feasibility_[i + order_](j);
+  }
   if (cost_function_ & ENDPOINT) {
-    calcEndpointCost(g_q_, cost_endpoint, g_endpoint);
-    f_combine += lambda4_ * cost_endpoint;
+    calcEndpointCost(g_q_, f_endpoint, g_endpoint_);
+    f_combine += lambda4_ * f_endpoint;
+    for (int i = 0; i < variable_num_ / dim_; i++)
+      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda4_ * g_endpoint_[i + order_](j);
   }
-
   if (cost_function_ & GUIDE) {
-    f_combine += lambda5_ * cost_guide;
+    calcGuideCost(g_q_, f_guide, g_guide_);
+    f_combine += lambda5_ * f_guide;
+    for (int i = 0; i < variable_num_ / dim_; i++)
+      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda5_ * g_guide_[i + order_](j);
   }
-
   if (cost_function_ & WAYPOINTS) {
-    f_combine += lambda6_ * cost_waypoints;
+    calcWaypointsCost(g_q_, f_waypoints, g_waypoints_);
+    f_combine += lambda7_ * f_waypoints;
+    for (int i = 0; i < variable_num_ / dim_; i++)
+      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda7_ * g_waypoints_[i + order_](j);
   }
 
-  // accumulate gradient
-  if (!grad.empty()) {
-    for (int i = 0; i < grad.size(); i++) {
-      for (int j = 0; j < 3; j++) {
-        grad[i] = lambda1_ * g_smoothness[i][j] + lambda2_ * g_distance[i][j] +
-            lambda3_ * g_feasibility[i][j];
-
-        if (cost_function_ & ENDPOINT) {
-          grad[i] += lambda4_ * g_endpoint[i][j];
-        }
-
-        if (cost_function_ & GUIDE) {
-          grad[i] += lambda5_ * g_guide[i][j];
-        }
-
-        if (cost_function_ & WAYPOINTS) {
-          grad[i] += lambda6_ * g_waypoints[i][j];
-        }
-      }
-    }
-  }
 }
 
 double BsplineOptimizer::costFunction(const std::vector<double>& x, std::vector<double>& grad,
