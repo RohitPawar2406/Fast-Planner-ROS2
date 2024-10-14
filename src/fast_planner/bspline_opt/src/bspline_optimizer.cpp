@@ -391,37 +391,43 @@ void BsplineOptimizer::combineCost(const std::vector<double>& x, std::vector<dou
     calcSmoothnessCost(g_q_, f_smoothness, g_smoothness_);
     f_combine += lambda1_ * f_smoothness;
     for (int i = 0; i < variable_num_ / dim_; i++)
-      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda1_ * g_smoothness_[i + order_](j);
+      for (int j = 0; j < dim_; j++) 
+        grad[dim_ * i + j] += lambda1_ * g_smoothness_[i + order_](j);
   }
   if (cost_function_ & DISTANCE) {
     calcDistanceCost(g_q_, f_distance, g_distance_);
     f_combine += lambda2_ * f_distance;
     for (int i = 0; i < variable_num_ / dim_; i++)
-      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda2_ * g_distance_[i + order_](j);
+      for (int j = 0; j < dim_; j++) 
+        grad[dim_ * i + j] += lambda2_ * g_distance_[i + order_](j);
   }
   if (cost_function_ & FEASIBILITY) {
     calcFeasibilityCost(g_q_, f_feasibility, g_feasibility_);
     f_combine += lambda3_ * f_feasibility;
     for (int i = 0; i < variable_num_ / dim_; i++)
-      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda3_ * g_feasibility_[i + order_](j);
+      for (int j = 0; j < dim_; j++) 
+        grad[dim_ * i + j] += lambda3_ * g_feasibility_[i + order_](j);
   }
   if (cost_function_ & ENDPOINT) {
     calcEndpointCost(g_q_, f_endpoint, g_endpoint_);
     f_combine += lambda4_ * f_endpoint;
     for (int i = 0; i < variable_num_ / dim_; i++)
-      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda4_ * g_endpoint_[i + order_](j);
+      for (int j = 0; j < dim_; j++) \
+        grad[dim_ * i + j] += lambda4_ * g_endpoint_[i + order_](j);
   }
   if (cost_function_ & GUIDE) {
     calcGuideCost(g_q_, f_guide, g_guide_);
     f_combine += lambda5_ * f_guide;
     for (int i = 0; i < variable_num_ / dim_; i++)
-      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda5_ * g_guide_[i + order_](j);
+      for (int j = 0; j < dim_; j++) 
+        grad[dim_ * i + j] += lambda5_ * g_guide_[i + order_](j);
   }
   if (cost_function_ & WAYPOINTS) {
     calcWaypointsCost(g_q_, f_waypoints, g_waypoints_);
     f_combine += lambda7_ * f_waypoints;
     for (int i = 0; i < variable_num_ / dim_; i++)
-      for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda7_ * g_waypoints_[i + order_](j);
+      for (int j = 0; j < dim_; j++) 
+      grad[dim_ * i + j] += lambda7_ * g_waypoints_[i + order_](j);
   }
 
 }
